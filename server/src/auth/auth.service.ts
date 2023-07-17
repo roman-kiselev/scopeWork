@@ -14,14 +14,14 @@ export class AuthService {
   ) {}
 
   private async generateToken(user: User) {
-    const payload = { login: user.login, id: user.id, roles: user.roles };
+    const payload = { login: user.email, id: user.id, roles: user.roles };
     return {
       token: this.jwtService.sign(payload),
     };
   }
 
   private async validateUser(userDto: CreateUserDto) {
-    const user = await this.userService.findUserByLogin(userDto.login);
+    const user = await this.userService.findUserByEmail(userDto.email);
     if (!user) {
       throw new UnauthorizedException({ message: 'Неверный логин или пароль' });
     }
@@ -41,7 +41,7 @@ export class AuthService {
 
   async registration(userDto: CreateUserDto) {
     try {
-      const candidate = await this.userService.checkLogin(userDto.login);
+      const candidate = await this.userService.checkEmail(userDto.email);
       // Проверяем есть ли в БД такой логин
       if (candidate) {
         throw new HttpException(
@@ -74,7 +74,7 @@ export class AuthService {
 
   async registrationAdmin(userDto: CreateUserDto) {
     try {
-      const candidate = await this.userService.checkLogin(userDto.login);
+      const candidate = await this.userService.checkEmail(userDto.email);
       // Проверяем есть ли в БД такой логин
       if (candidate) {
         throw new HttpException(

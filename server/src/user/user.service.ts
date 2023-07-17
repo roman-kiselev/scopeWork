@@ -21,7 +21,7 @@ export class UserService {
       }
       const [admin, created] = await this.userRepository.findOrCreate({
         where: {
-          login: dto.login,
+          email: dto.email,
         },
         defaults: {
           password: dto.password,
@@ -58,7 +58,7 @@ export class UserService {
       }
       const [user, created] = await this.userRepository.findOrCreate({
         where: {
-          login: dto.login,
+          email: dto.email,
         },
         defaults: {
           password: dto.password,
@@ -88,11 +88,11 @@ export class UserService {
   }
 
   //  Поиск по login пользователя
-  async findUserByLogin(login: string) {
+  async findUserByEmail(email: string) {
     try {
       const user = await this.userRepository.findOne({
         where: {
-          login,
+          email,
         },
       });
       if (!user) {
@@ -116,11 +116,11 @@ export class UserService {
     }
   }
 
-  async checkLogin(login: string) {
+  async checkEmail(email: string) {
     try {
       const user = await this.userRepository.findOne({
         where: {
-          login,
+          email,
         },
       });
       if (!user) {

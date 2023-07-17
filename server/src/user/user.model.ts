@@ -14,7 +14,7 @@ import { UserDescription } from 'src/user-description/user-description.model';
 
 export interface UserCreationAttr {
   id: number;
-  login: string;
+  email: string;
   password: string;
   banned: boolean;
 }
@@ -30,9 +30,9 @@ export class User extends Model<User, UserCreationAttr> {
   })
   id: number;
 
-  @ApiProperty({ example: 'admin', description: 'Логин' })
+  @ApiProperty({ example: 'email@email.ru', description: 'Email' })
   @Column({ type: DataType.STRING, unique: true, allowNull: false })
-  login: string;
+  email: string;
 
   @ApiProperty({ example: 'admin', description: 'Пароль' })
   @Column({ type: DataType.STRING, allowNull: false })

@@ -1,7 +1,8 @@
 import React from "react";
+import { FormLoginFeatures } from "../../features";
 
 const LoginPage = () => {
-    return <div>LoginPage</div>;
+    return <FormLoginFeatures />;
 };
 
 export default LoginPage;

@@ -1,6 +1,7 @@
 import React from "react";
 import { Form, Card, Row, Typography, Button } from "antd";
 import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
+import { Link as LinkDom } from "react-router-dom";
 import {
     IInputFormItemProps,
     IInputPasswordFormItemProps,
@@ -145,7 +146,8 @@ const FormRegister = () => {
                     />
                     <Row>
                         <Text>У Вас уже есть аккаунт?</Text>
-                        <Link href="https://localhost:3000/login">Вход</Link>
+                        <LinkDom to={"/login"}>Войти</LinkDom>
+                        {/* <Link href="http://192.168.3.16:3000/login">Вход</Link> */}
                     </Row>
                     <Row style={{ marginTop: 10 }}>
                         <Button type="primary" htmlType="submit">

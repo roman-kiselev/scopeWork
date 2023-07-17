@@ -32,7 +32,7 @@ async function bootstrap() {
   await rolesService.createRole(roleUserDto);
   const authService = app.get(AuthService);
   const adminDto: CreateUserDto = {
-    login: 'admin',
+    email: 'admin@admin.ru',
     password: 'admin',
   };
 

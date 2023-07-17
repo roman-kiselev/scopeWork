@@ -29,7 +29,7 @@ const LayoutAuth: React.FC<LayoutAuthProps> = ({ children }) => {
                     justify="center"
                     style={{ minHeight: "100vh" }}
                 >
-                    <Col xs={24} sm={12} md={8} lg={6}>
+                    <Col xs={20} sm={12} md={8} lg={6}>
                         {children}
                     </Col>
                 </Row>

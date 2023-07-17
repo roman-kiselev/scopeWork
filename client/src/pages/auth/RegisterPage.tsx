@@ -1,7 +1,15 @@
 import React from "react";
+import FormRegister from "../../entities/formRegister/FormRegister";
+import { LayoutAuth } from "../../entities/layoutAuth";
 
 const RegisterPage = () => {
-    return <div>RegisterPage</div>;
+    return (
+        <>
+            <LayoutAuth>
+                <FormRegister />
+            </LayoutAuth>
+        </>
+    );
 };
 
 export default RegisterPage;
