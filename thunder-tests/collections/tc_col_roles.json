@@ -1,0 +1,118 @@
+{
+    "_id": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+    "colName": "roles",
+    "created": "2023-07-13T13:12:58.509Z",
+    "sortNum": 20000,
+    "folders": [
+        {
+            "_id": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "standart",
+            "containerId": "",
+            "created": "2023-07-13T13:34:08.339Z",
+            "sortNum": 10000
+        },
+        {
+            "_id": "d665d180-48d0-44af-8daa-4d15111709a1",
+            "name": "notStandart",
+            "containerId": "",
+            "created": "2023-07-13T13:37:23.057Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "b59c5a9f-eebd-486a-ac3e-f723808059f3",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "create",
+            "url": "localhost:6000/roles",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-07-13T13:13:10.765Z",
+            "modified": "2023-07-13T13:41:12.081Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"user\",\n  \"description\":\"User\" \n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "00e617fa-d809-4de4-9b93-a51b059aaa34",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "getAll",
+            "url": "localhost:6000/roles",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-07-13T13:31:41.461Z",
+            "modified": "2023-07-13T13:32:07.403Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "5551c7d9-22cd-4f54-b19b-2695e5ae17cf",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "getOneById",
+            "url": "localhost:6000/roles/1",
+            "method": "GET",
+            "sortNum": 30000,
+            "created": "2023-07-13T13:33:29.910Z",
+            "modified": "2023-07-13T13:34:56.808Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "6a3b7125-13d5-46f9-a329-387cead272a3",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "d665d180-48d0-44af-8daa-4d15111709a1",
+            "name": "getOneByName",
+            "url": "localhost:6000/roles/findByName/admin",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-07-13T13:35:45.691Z",
+            "modified": "2023-07-13T13:37:48.696Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "1f98598d-deba-4d75-a511-fd2b27889c9c",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "update",
+            "url": "localhost:6000/roles/1",
+            "method": "PUT",
+            "sortNum": 40000,
+            "created": "2023-07-13T13:38:07.879Z",
+            "modified": "2023-07-13T13:41:01.739Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"admin\",\n  \"description\": \"Admin\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "46a68ea6-d03e-4f5e-818b-03bf46303ec2",
+            "colId": "35cf695e-9b3b-47c7-a74d-4d96f62a9535",
+            "containerId": "5ebb66a8-c35f-43cc-8f9b-2c5012f812c7",
+            "name": "update Copy",
+            "url": "localhost:6000/roles/2",
+            "method": "DELETE",
+            "sortNum": 50000,
+            "created": "2023-07-13T13:41:22.174Z",
+            "modified": "2023-07-13T13:41:33.244Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ]
+}
