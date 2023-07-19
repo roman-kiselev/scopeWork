@@ -6,6 +6,7 @@ import {
     IInputFormItemProps,
     IInputPasswordFormItemProps,
 } from "../../shared/interfaces";
+import { FormInstance } from "antd/lib/form";
 const { Link, Text } = Typography;
 
 const propsEmail: IInputFormItemProps = {
@@ -102,13 +103,16 @@ const propsConfirm: IInputPasswordFormItemProps = {
     ],
 };
 
-const FormRegister = () => {
-    const [form] = Form.useForm();
+interface IFormRegisterProps {
+    form: any;
+    onFinish: (values: any) => void;
+}
 
+const FormRegister: React.FC<IFormRegisterProps> = ({ form, onFinish }) => {
     return (
         <>
             <Card title="Регистрация" bordered={true} style={{ maxWidth: 400 }}>
-                <Form form={form} name="register" onFinish={() => {}}>
+                <Form form={form} name="register" onFinish={onFinish}>
                     <InputFormItem
                         input={propsEmail.input}
                         name={propsEmail.name}
@@ -147,7 +151,6 @@ const FormRegister = () => {
                     <Row>
                         <Text>У Вас уже есть аккаунт?</Text>
                         <LinkDom to={"/login"}>Войти</LinkDom>
-                        {/* <Link href="http://192.168.3.16:3000/login">Вход</Link> */}
                     </Row>
                     <Row style={{ marginTop: 10 }}>
                         <Button type="primary" htmlType="submit">

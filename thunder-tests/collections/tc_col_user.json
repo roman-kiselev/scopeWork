@@ -1,0 +1,36 @@
+{
+    "_id": "6c64cc7b-0503-4ea7-b54e-f83812e1a566",
+    "colName": "user",
+    "created": "2023-07-19T09:11:30.173Z",
+    "sortNum": 30000,
+    "folders": [
+        {
+            "_id": "ab2a69e1-c0c4-40fd-8590-8731bf3bbcd6",
+            "name": "standart",
+            "containerId": "",
+            "created": "2023-07-19T09:11:38.348Z",
+            "sortNum": 10000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "c7912b78-6a0a-48c8-8aed-88fd715e3dd0",
+            "colId": "6c64cc7b-0503-4ea7-b54e-f83812e1a566",
+            "containerId": "ab2a69e1-c0c4-40fd-8590-8731bf3bbcd6",
+            "name": "create",
+            "url": "192.168.3.16:6000/user-description",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-07-19T09:11:55.236Z",
+            "modified": "2023-07-19T11:55:05.495Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"firstname\": \"admin\",\n  \"lastname\": \"admin\",\n  \"userId\": 1\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}

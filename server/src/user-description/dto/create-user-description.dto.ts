@@ -5,4 +5,6 @@ export class CreateUserDescriptionDto {
   readonly firstname: string;
   @ApiProperty({ example: 'Иванов', description: 'Фамилия пользователя' })
   readonly lastname: string;
+  @ApiProperty({ example: '1', description: 'ID пользователя' })
+  readonly userId?: number;
 }

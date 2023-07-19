@@ -1,4 +1,8 @@
-import { IUserLogin, IUserResponseToken } from "../../interfaces";
+import {
+    IUserLogin,
+    IUserRegister,
+    IUserResponseToken,
+} from "../../interfaces";
 import { mainApi } from "../main";
 
 export const authApi = mainApi.injectEndpoints({
@@ -8,6 +12,22 @@ export const authApi = mainApi.injectEndpoints({
                 url: "/auth/login",
                 method: "POST",
                 body: userData,
+            }),
+        }),
+        register: builder.mutation<IUserResponseToken, IUserRegister>({
+            query: (userData) => {
+                console.log(userData);
+                return {
+                    url: "/auth/registration",
+                    method: "POST",
+                    body: userData,
+                };
+            },
+        }),
+        check: builder.query<IUserResponseToken, void>({
+            query: () => ({
+                url: "/auth/check",
+                method: "GET",
             }),
         }),
     }),

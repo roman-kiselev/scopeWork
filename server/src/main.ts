@@ -1,9 +1,10 @@
 import { NestFactory } from '@nestjs/core';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, OmitType, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AuthService } from './auth/auth.service';
 import { CreateRoleDto } from './roles/dto/create-role.dto';
 import { RolesService } from './roles/roles.service';
+import { CreateUserAndDescription } from './user/dto/create-user-and-description.dto';
 import { CreateUserDto } from './user/dto/create-user.dto';
 
 async function bootstrap() {
@@ -31,12 +32,15 @@ async function bootstrap() {
   await rolesService.createRole(roleDto);
   await rolesService.createRole(roleUserDto);
   const authService = app.get(AuthService);
-  const adminDto: CreateUserDto = {
+
+  const adminDto: CreateUserAndDescription = {
     email: 'admin@admin.ru',
     password: 'admin',
+    firstname: 'Админ',
+    lastname: 'Админ',
   };
 
-  await authService.registrationAdmin(adminDto);
+  await authService.registrationAdminWithDescription(adminDto);
   await app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
   });

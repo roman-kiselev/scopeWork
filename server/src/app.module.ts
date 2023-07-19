@@ -22,7 +22,7 @@ import { UserDescriptionModule } from './user-description/user-description.modul
       models: [],
       autoLoadModels: true,
       synchronize: true,
-      sync: { force: true },
+      //sync: { force: true },
     }),
     UserModule,
     AuthModule,

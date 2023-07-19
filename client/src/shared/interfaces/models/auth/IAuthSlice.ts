@@ -1,11 +1,9 @@
+import { IDataError } from "../../api";
+
 export interface IAuthSlice {
-    login: string;
-    password: string;
-    firstname: string;
-    lastname: string;
     isAuth: boolean;
     isLoading: boolean;
     isError: boolean;
-    dataError: null;
+    dataError: IDataError | null;
     token: string | null;
 }

@@ -1,3 +1,3 @@
-import { FormLoginFeatures } from "./formAuth";
+import { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
 
-export { FormLoginFeatures };
+export { FormLoginFeatures, FormRegistrationFeatures };

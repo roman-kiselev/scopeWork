@@ -3,6 +3,34 @@
     "colName": "auth",
     "created": "2023-07-13T09:39:28.916Z",
     "sortNum": 10000,
-    "folders": [],
-    "requests": []
+    "folders": [
+        {
+            "_id": "499807ec-c7be-4e2a-b634-3c843faa467c",
+            "name": "standart",
+            "containerId": "",
+            "created": "2023-07-19T08:33:21.213Z",
+            "sortNum": 20000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "ae2b2223-dee3-439d-bef1-87dfa09cbfc1",
+            "colId": "a1854ae4-c94b-4e88-ad76-0f19136b0aa7",
+            "containerId": "499807ec-c7be-4e2a-b634-3c843faa467c",
+            "name": "registerWithDescription",
+            "url": "http://192.168.3.16:6000/auth/registration",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-07-19T08:33:34.835Z",
+            "modified": "2023-07-19T12:29:53.746Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"email\": \"email@email.ru\",\n  \"password\": \"email\",\n  \"firstname\": \"Email\",\n  \"lastname\": \"Email\"\n}\n",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
 }

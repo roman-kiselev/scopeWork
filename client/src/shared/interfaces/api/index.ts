@@ -1,3 +1,5 @@
-import { IUserLogin, IUserResponseToken } from "./authApi";
+import { IUserLogin, IUserResponseToken, IUserRegister } from "./authApi";
+import { IDataError } from "./error";
 
-export type { IUserLogin, IUserResponseToken };
+export type { IUserLogin, IUserResponseToken, IUserRegister };
+export type { IDataError };

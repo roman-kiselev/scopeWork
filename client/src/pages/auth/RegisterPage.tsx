@@ -1,13 +1,10 @@
 import React from "react";
-import FormRegister from "../../entities/formRegister/FormRegister";
-import { LayoutAuth } from "../../entities/layoutAuth";
+import { FormRegistrationFeatures } from "../../features";
 
 const RegisterPage = () => {
     return (
         <>
-            <LayoutAuth>
-                <FormRegister />
-            </LayoutAuth>
+            <FormRegistrationFeatures />
         </>
     );
 };

@@ -7,6 +7,7 @@ import {
   DataType,
   HasOne,
   BelongsToMany,
+  AfterDestroy,
 } from 'sequelize-typescript';
 import { Roles } from 'src/roles/roles.model';
 import { UserRole } from 'src/roles/user-role.model';
@@ -51,4 +52,11 @@ export class User extends Model<User, UserCreationAttr> {
 
   @HasOne(() => UserDescription)
   userDescription: UserDescription;
+
+  @AfterDestroy
+  static async deleteDescription(user: User) {
+    if (user.userDescription) {
+      await UserDescription.destroy({ where: { userId: user.id } });
+    }
+  }
 }

@@ -12,14 +12,24 @@ export class UserDescriptionService {
     private userService: UserService,
   ) {}
 
-  async create(dto: CreateUserDescriptionDto, userId: number) {
+  async create(dto: CreateUserDescriptionDto) {
     try {
-      const user = await this.userService.findUserById(userId);
+      const isUser = await this.userDescriptionRepository.findOne({
+        where: {
+          userId: dto.userId,
+        },
+      });
+      if (isUser) {
+        throw new HttpException('Данные существуют', HttpStatus.BAD_REQUEST);
+      }
+      const user = await this.userService.findUserById(dto.userId);
+
       const userDescription = await this.userDescriptionRepository.create(dto);
       if (user && userDescription) {
-        userDescription.$set('userId', user);
+        userDescription.userId = user.id;
         return userDescription;
       }
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

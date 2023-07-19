@@ -9,6 +9,7 @@ import { forwardRef } from '@nestjs/common/utils';
 import { AuthModule } from 'src/auth/auth.module';
 import { UserRole } from 'src/roles/user-role.model';
 import { UserDescription } from 'src/user-description/user-description.model';
+import { UserDescriptionModule } from 'src/user-description/user-description.module';
 
 @Module({
   providers: [UserService],
