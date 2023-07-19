@@ -1,9 +1,30 @@
-import React from 'react'
+import React from "react";
+import { useLocation } from "react-router";
+import { IRole } from "../../shared/interfaces";
 
-const CheckRole = () => {
-  return (
-    <div>CheckRole</div>
-  )
+function findRole(roles: string[], roleState: IRole[]): boolean {
+    //const { role, roleState } = arg;
+    // Пробегаеимся по roleState
+    // Разрешённые роли в массиве role
+    let foundMatch = false;
+    roleState.forEach((oneRole: IRole) => {
+        roles.forEach((role: string) => {
+            if (role === oneRole.name) {
+                foundMatch = true;
+            }
+        });
+    });
+    return foundMatch;
 }
 
-export default CheckRole
+interface CheckRoleProps {
+    children: React.ReactNode;
+    role: IRole;
+}
+
+const CheckRole: React.FC<CheckRoleProps> = ({ children, role }) => {
+    const location = useLocation();
+    return <div>CheckRole</div>;
+};
+
+export default CheckRole;
