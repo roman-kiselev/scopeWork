@@ -5,6 +5,14 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { RolesModule } from './roles/roles.module';
 import { UserDescriptionModule } from './user-description/user-description.module';
+import { ObjectsModule } from './objects/objects.module';
+import { TypeWorkModule } from './type-work/type-work.module';
+import { ScopeWorkModule } from './scope-work/scope-work.module';
+import { NameWorkModule } from './name-work/name-work.module';
+import { UnitModule } from './unit/unit.module';
+import { TotalVolumeModule } from './total-volume/total-volume.module';
+import { ListWorkModule } from './list-work/list-work.module';
+import { LogListWorkModule } from './log-list-work/log-list-work.module';
 
 @Module({
   imports: [
@@ -28,6 +36,14 @@ import { UserDescriptionModule } from './user-description/user-description.modul
     AuthModule,
     RolesModule,
     UserDescriptionModule,
+    ObjectsModule,
+    TypeWorkModule,
+    ScopeWorkModule,
+    NameWorkModule,
+    UnitModule,
+    TotalVolumeModule,
+    ListWorkModule,
+    LogListWorkModule,
   ],
   controllers: [],
   providers: [],
