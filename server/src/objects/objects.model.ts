@@ -7,6 +7,7 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { TypeWork } from 'src/type-work/type-work.model';
+import { ObjectTypeWork } from './objects-type_work.model';
 
 interface ObjectsAttr {
   id: number;
@@ -43,6 +44,6 @@ export class Objects extends Model<Objects, ObjectsAttr> {
   @Column({ type: DataType.DATE })
   deletedAt!: Date;
 
-  @BelongsToMany(() => Objects, () => TypeWork)
+  @BelongsToMany(() => TypeWork, () => ObjectTypeWork)
   typeWorks: TypeWork[];
 }

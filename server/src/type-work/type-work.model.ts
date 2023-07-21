@@ -6,6 +6,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { Objects } from 'src/objects/objects.model';
 
 interface TypeWorkAttr {
@@ -36,7 +37,7 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
   @ApiProperty({ example: 'Работы', description: 'Описание' })
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   description: string;
 
@@ -44,6 +45,6 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
   @Column({ type: DataType.DATE })
   deletedAt!: Date;
 
-  @BelongsToMany(() => TypeWork, () => Objects)
+  @BelongsToMany(() => Objects, () => ObjectTypeWork)
   objects: Objects[];
 }

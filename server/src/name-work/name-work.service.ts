@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { CreateUniteDto } from 'src/unit/dto/unit.dto';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
 import { NameWork } from './name-work.model';
@@ -10,6 +11,27 @@ export class NameWorkService {
     @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
     private unitService: UnitService,
   ) {}
+
+  async checkOneByName(name: string) {
+    try {
+      const nameWork = await this.nameWorkRepository.findOne({
+        where: {
+          name,
+        },
+      });
+
+      if (!nameWork) {
+        return false;
+      }
+
+      return nameWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   async findOneByName(name: string) {
     try {
@@ -36,39 +58,86 @@ export class NameWorkService {
 
   async createNameWorkDefault(dto: CreateNameWorkDto) {
     try {
-      const findName = this.findOneByName(dto.name);
-      if (findName) {
+      // Проверяем существование штук
+      const nameUnite = 'шт';
+      const unit = await this.unitService.checkByName(nameUnite);
+      // Проверяем существование товара
+      const nameWork = await this.checkOneByName(dto.name);
+      // Если нет товара и есть единица
+      if (unit && !nameWork) {
+        const foundUnit = await this.unitService.findByName(nameUnite);
+        if (dto.unitId) {
+          const newNameWork = await this.nameWorkRepository.create(dto);
+          return newNameWork;
+        }
+        const newNameWork = await this.nameWorkRepository.create({
+          ...dto,
+          unitId: foundUnit.id,
+        });
+        return newNameWork;
+      }
+      if (!unit && !nameWork) {
+        const dtoUnit: CreateUniteDto = {
+          name: 'шт',
+          description: 'Штуки',
+        };
+        const newUnit = await this.unitService.createUnit(dtoUnit);
+        if (dto.unitId) {
+          const newNameWork = await this.nameWorkRepository.create(dto);
+          return newNameWork;
+        }
+        const newNameWork = await this.nameWorkRepository.create({
+          ...dto,
+          unitId: newUnit.id,
+        });
+        return newNameWork;
+      }
+      if (!unit && nameWork) {
+        const dtoUnit: CreateUniteDto = {
+          name: 'шт',
+          description: 'Штуки',
+        };
+        await this.unitService.createUnit(dtoUnit);
         throw new HttpException(
-          'Наименование существует',
-          HttpStatus.NOT_FOUND,
+          'Наименование уже существует',
+          HttpStatus.BAD_REQUEST,
         );
       }
-      // Нужно добавить штуки по умолчанию
-      const nameUnite = 'шт';
-      const findUnit = await this.unitService.checkByName(nameUnite);
-      if (findUnit instanceof HttpException) {
-        const name = await this.unitService.findByName(nameUnite);
-        const newNameUnite = await this.nameWorkRepository.create({
-          ...dto,
-          unitId: name.id,
-        });
-        if (!newNameUnite) {
-          throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
-        }
-      }
-      const name = await this.unitService.createUnit({
-        name: 'шт',
-        description: 'Штуки',
-      });
-      const newNameUnite = await this.nameWorkRepository.create({
-        ...dto,
-        unitId: name.id,
-      });
-      if (!newNameUnite) {
-        throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
-      }
 
-      return newNameUnite;
+      throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findAllNames() {
+    try {
+      const names = await this.nameWorkRepository.findAll({
+        include: { all: true },
+        where: {
+          deletedAt: null,
+        },
+      });
+
+      const newNames = Promise.all(
+        names.map(async (name) => {
+          // Получим по id единицу измерения
+          const unit = await this.unitService.getOneUnitById(name.unitId);
+          return {
+            id: name.id,
+            name: name.name,
+            deletedAt: name.deletedAt,
+            createdAt: name.createdAt,
+            updatedAt: name.updatedAt,
+            unit: unit.name,
+          };
+        }),
+      );
+
+      return newNames;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

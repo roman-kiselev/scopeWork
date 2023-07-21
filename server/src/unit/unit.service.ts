@@ -16,13 +16,10 @@ export class UnitService {
         },
       });
       if (unit) {
-        throw new HttpException('Уже существует', HttpStatus.BAD_REQUEST);
+        return true;
       }
-      return unit;
+      return false;
     } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -49,7 +46,7 @@ export class UnitService {
   async createUnit(dto: CreateUniteDto) {
     try {
       const unit = await this.checkByName(dto.name);
-      if (unit instanceof HttpException) {
+      if (unit) {
         throw new HttpException('Уже существует', HttpStatus.BAD_REQUEST);
       }
       const newUnit = await this.unitRepository.create(dto);
@@ -87,6 +84,31 @@ export class UnitService {
         throw new HttpException('Не найдено', HttpStatus.NOT_FOUND);
       }
       return unit;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async createUniteOrPieces(id?: number) {
+    try {
+      const dtoUnit: CreateUniteDto = {
+        name: 'шт',
+        description: 'Штуки',
+      };
+      // Если нет id
+      if (!id) {
+        const checkUnit = this.checkByName(dtoUnit.name);
+        if (!checkUnit) {
+          const unit = await this.createUnit(dtoUnit);
+          return unit;
+        }
+      }
+      // Если есть id
+      const foundUnit = this.getOneUnitById(id);
+      return foundUnit;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -1,0 +1,50 @@
+{
+    "_id": "3a41a91d-1547-4c97-a1a5-f3328c68abb6",
+    "colName": "nameWork",
+    "created": "2023-07-20T13:38:56.360Z",
+    "sortNum": 50000,
+    "folders": [
+        {
+            "_id": "65c3e23b-9757-4601-b73f-986c2bae6799",
+            "name": "standart",
+            "containerId": "",
+            "created": "2023-07-20T13:39:02.050Z",
+            "sortNum": 10000
+        }
+    ],
+    "requests": [
+        {
+            "_id": "f6f23c1a-136b-49a1-b364-89f7aa499efc",
+            "colId": "3a41a91d-1547-4c97-a1a5-f3328c68abb6",
+            "containerId": "65c3e23b-9757-4601-b73f-986c2bae6799",
+            "name": "create",
+            "url": "192.168.3.16:7000/name-work",
+            "method": "POST",
+            "sortNum": 10000,
+            "created": "2023-07-20T13:39:12.163Z",
+            "modified": "2023-07-21T08:08:45.935Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Краны\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "90a3cbb3-d0dd-4dd4-a9e3-d7c4f70ed628",
+            "colId": "3a41a91d-1547-4c97-a1a5-f3328c68abb6",
+            "containerId": "65c3e23b-9757-4601-b73f-986c2bae6799",
+            "name": "getAll",
+            "url": "192.168.3.16:7000/name-work",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2023-07-21T08:12:55.708Z",
+            "modified": "2023-07-21T08:13:10.383Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        }
+    ]
+}

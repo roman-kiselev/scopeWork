@@ -1,0 +1,42 @@
+{
+    "_id": "fcfa9681-a9a3-4983-98a0-1d9ad243664e",
+    "colName": "objects",
+    "created": "2023-07-21T10:30:00.724Z",
+    "sortNum": 60000,
+    "folders": [],
+    "requests": [
+        {
+            "_id": "30ddee5b-5b43-492d-a70f-3b38ffc13782",
+            "colId": "fcfa9681-a9a3-4983-98a0-1d9ad243664e",
+            "containerId": "",
+            "name": "getAll",
+            "url": "192.168.3.16:7000/objects",
+            "method": "GET",
+            "sortNum": 10000,
+            "created": "2023-07-21T10:30:15.133Z",
+            "modified": "2023-07-21T10:57:38.618Z",
+            "headers": [],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "47bc52e0-1393-4679-bd83-022736b71a61",
+            "colId": "fcfa9681-a9a3-4983-98a0-1d9ad243664e",
+            "containerId": "",
+            "name": "create",
+            "url": "192.168.3.16:7000/objects",
+            "method": "POST",
+            "sortNum": 20000,
+            "created": "2023-07-21T11:03:00.905Z",
+            "modified": "2023-07-21T11:03:49.472Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"name\": \"Зеландия\",\n  \"address\": \"г. Пенза\"\n}",
+                "form": []
+            },
+            "tests": []
+        }
+    ]
+}
