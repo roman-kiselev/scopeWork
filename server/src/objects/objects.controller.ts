@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { Param } from '@nestjs/common/decorators';
 import { Body } from '@nestjs/common/decorators/http';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateObjectDto } from './dto/create-object.dto';
@@ -28,7 +29,21 @@ export class ObjectsController {
   @ApiResponse({ status: HttpStatus.OK, type: Objects })
   @ApiResponse({ type: HttpException })
   @Post('/')
-  createOneObject(@Body() dto: CreateObjectDto) {
+  async createOneObject(@Body() dto: CreateObjectDto) {
     return this.objectsService.createObject(dto);
+  }
+
+  @ApiOperation({ summary: 'Добавляем связь с типом работ' })
+  @ApiResponse({ status: HttpStatus.OK, type: Objects })
+  @ApiResponse({ type: HttpException })
+  @Post('/addAssign/:id')
+  async addAssignTypeWork(
+    @Body('idTypeWork') idTypeWork: number,
+    @Param('id') id: number,
+  ) {
+    return this.objectsService.assignTypeWorkById({
+      idObject: id,
+      idTypeWork: idTypeWork,
+    });
   }
 }

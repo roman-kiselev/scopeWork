@@ -3,11 +3,13 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { Objects } from 'src/objects/objects.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 
 interface TypeWorkAttr {
   id: number;

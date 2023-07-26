@@ -2,9 +2,11 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { Objects } from './objects.model';
 
@@ -23,4 +25,7 @@ export class ObjectTypeWork extends Model<ObjectTypeWork> {
 
   @ForeignKey(() => TypeWork)
   typeWorkId: number;
+
+  @HasMany(() => ScopeWork)
+  scopeWorks: ScopeWork[];
 }

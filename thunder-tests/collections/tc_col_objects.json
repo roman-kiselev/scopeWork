@@ -3,7 +3,15 @@
     "colName": "objects",
     "created": "2023-07-21T10:30:00.724Z",
     "sortNum": 60000,
-    "folders": [],
+    "folders": [
+        {
+            "_id": "6cb57196-d50a-4bf2-bd02-68491971ee1a",
+            "name": "notstandart",
+            "containerId": "",
+            "created": "2023-07-25T07:48:14.430Z",
+            "sortNum": 30000
+        }
+    ],
     "requests": [
         {
             "_id": "30ddee5b-5b43-492d-a70f-3b38ffc13782",
@@ -34,6 +42,25 @@
             "body": {
                 "type": "json",
                 "raw": "{\n  \"name\": \"Зеландия\",\n  \"address\": \"г. Пенза\"\n}",
+                "form": []
+            },
+            "tests": []
+        },
+        {
+            "_id": "eccf4eb6-c03f-4487-9996-c3061c16cb19",
+            "colId": "fcfa9681-a9a3-4983-98a0-1d9ad243664e",
+            "containerId": "6cb57196-d50a-4bf2-bd02-68491971ee1a",
+            "name": "addAssign",
+            "url": "192.168.3.16:7000/objects/addAssign/1",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2023-07-25T07:48:25.445Z",
+            "modified": "2023-07-25T07:49:14.634Z",
+            "headers": [],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"idTypeWork\": 1\n}",
                 "form": []
             },
             "tests": []

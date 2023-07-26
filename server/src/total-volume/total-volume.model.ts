@@ -1,9 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  ForeignKey,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { NameWork } from 'src/name-work/name-work.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 
 interface TotalVolumeAttr {
   number: number;
   quantity: number;
+  nameWorkId: number;
+  scopeWorkId: number;
 }
 
 @Table({ tableName: 'total_volume', paranoid: true })
@@ -20,19 +30,18 @@ export class TotalVolume extends Model<TotalVolume, TotalVolumeAttr> {
   @ApiProperty({ example: '3', description: 'Порядковый номер' })
   @Column({
     type: DataType.INTEGER,
-    autoIncrement: true,
   })
   number: number;
 
-  @ApiProperty({ example: '100', description: 'Порядковый номер' })
+  @ApiProperty({ example: '100', description: 'Количество' })
   @Column({
     type: DataType.INTEGER,
-    autoIncrement: true,
   })
   quantity: number;
 
-  @Column({
-    type: DataType.DATE,
-  })
-  deletedAt: Date;
+  @ForeignKey(() => NameWork)
+  nameWorkId: number;
+
+  @ForeignKey(() => ScopeWork)
+  scopeWorkId: number;
 }

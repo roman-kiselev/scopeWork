@@ -1,4 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Inject } from '@nestjs/common/decorators';
+import { forwardRef } from '@nestjs/common/utils';
 import { InjectModel } from '@nestjs/sequelize';
 import { ObjectsService } from 'src/objects/objects.service';
 import { CreateTypeWorkDto } from './dto/create-type-work.dto';
@@ -8,7 +10,6 @@ import { TypeWork } from './type-work.model';
 export class TypeWorkService {
   constructor(
     @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
-    private objectsService: ObjectsService,
   ) {}
 
   async checkOneObjectByName(name: string) {

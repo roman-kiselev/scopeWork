@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { Objects } from 'src/objects/objects.model';
@@ -12,7 +12,7 @@ import { TypeWorkService } from './type-work.service';
   providers: [TypeWorkService],
   imports: [
     SequelizeModule.forFeature([TypeWork, Objects, ObjectTypeWork]),
-    ObjectsModule,
+    forwardRef(() => ObjectsModule),
   ],
   exports: [TypeWorkService],
 })

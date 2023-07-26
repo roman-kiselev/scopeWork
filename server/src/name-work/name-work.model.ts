@@ -3,9 +3,11 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { TotalVolume } from 'src/total-volume/total-volume.model';
 import { Unit } from 'src/unit/unit.model';
 
 interface NameWorkAttr {
@@ -39,4 +41,7 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
   @ForeignKey(() => Unit)
   unitId: number;
+
+  @HasMany(() => TotalVolume)
+  totalVolume: TotalVolume[];
 }

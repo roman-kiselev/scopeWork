@@ -1,8 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import {
+  BeforeCreate,
+  Column,
+  DataType,
+  ForeignKey,
+  HasMany,
+  Model,
+  Table,
+} from 'sequelize-typescript';
+import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
+import { TotalVolume } from 'src/total-volume/total-volume.model';
 
 interface ScopeWorkAttr {
-  value: number;
+  // value?: number;
+  objectTypeWorkId: number;
 }
 
 @Table({ tableName: 'scope_work' })
@@ -25,4 +36,16 @@ export class ScopeWork extends Model<ScopeWork, ScopeWorkAttr> {
 
   @Column({ type: DataType.DATE })
   deletedAt!: Date;
+
+  @ForeignKey(() => ObjectTypeWork)
+  @Column({ type: DataType.INTEGER })
+  objectTypeWorkId: number;
+
+  @HasMany(() => TotalVolume)
+  totalVolume: TotalVolume[];
+  // @BeforeCreate
+  // static setFieldValue(instance: ScopeWork) {
+  //   console.log(instance);
+  //   instance.value = instance.id;
+  // }
 }
