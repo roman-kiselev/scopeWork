@@ -3,6 +3,7 @@ import { authApi } from "../../api";
 import { IAuthSlice, IDataError } from "../../interfaces";
 
 const initialState: IAuthSlice = {
+    roles: [],
     isAuth: false,
     isLoading: false,
     isError: false,

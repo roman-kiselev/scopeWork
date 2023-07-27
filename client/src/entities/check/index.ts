@@ -1,3 +1,5 @@
 import CheckAuth from "./CheckAuth";
+import CheckRole from "./CheckRole";
+import SuspenseLoad from "./SuspenseLoad";
 
-export { CheckAuth };
+export { CheckAuth, CheckRole, SuspenseLoad };
