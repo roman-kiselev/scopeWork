@@ -7,16 +7,21 @@ import { useAppSelector } from "../../shared/hooks";
 interface ICheckR {
     children: React.ReactNode;
     roles: RoleString[];
+    location: any;
 }
 
-const CheckR: React.FC<ICheckR> = ({ children, roles }) => {
-    const location = useLocation();
+const CheckR: React.FC<ICheckR> = ({ children, roles, location }) => {
     const { roles: rolesState, isLoading } = useAppSelector(
         (state) => state.auth
     );
 
     return (
-        <CheckRole location isLoading rolesState={rolesState} roles={roles}>
+        <CheckRole
+            location={location}
+            isLoading={isLoading}
+            rolesState={rolesState}
+            roles={roles}
+        >
             {children}
         </CheckRole>
     );

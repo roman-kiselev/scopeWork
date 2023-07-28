@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { InjectModel } from '@nestjs/sequelize';
+import { Roles } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './user.model';
@@ -94,7 +95,14 @@ export class UserService {
         where: {
           email,
         },
+        include: {
+          model: Roles,
+          through: {
+            attributes: [],
+          },
+        },
       });
+
       if (!user) {
         throw new HttpException(
           'Пользователя с таким логином не существует',

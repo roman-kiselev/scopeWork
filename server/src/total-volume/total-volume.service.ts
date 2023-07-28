@@ -29,7 +29,7 @@ export class TotalVolumeService {
 
   async createTotalVolume(dto: CreateTotalVolumeDto) {
     try {
-      const { nameWorkId, quantity, scopeWorkId } = dto;
+      const { nameWorkId, scopeWorkId } = dto;
       // Проверяем существование наименования
       const nameWork = await this.nameWorkRepository.findByPk(nameWorkId);
       if (!nameWork) {

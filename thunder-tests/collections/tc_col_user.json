@@ -1,33 +1,25 @@
 {
-    "_id": "6c64cc7b-0503-4ea7-b54e-f83812e1a566",
+    "_id": "8d51b85d-e11c-410c-a04f-82aa36d5cfea",
     "colName": "user",
-    "created": "2023-07-19T09:11:30.173Z",
-    "sortNum": 30000,
-    "folders": [
-        {
-            "_id": "ab2a69e1-c0c4-40fd-8590-8731bf3bbcd6",
-            "name": "standart",
-            "containerId": "",
-            "created": "2023-07-19T09:11:38.348Z",
-            "sortNum": 10000
-        }
-    ],
+    "created": "2023-07-28T07:10:20.128Z",
+    "sortNum": 90000,
+    "folders": [],
     "requests": [
         {
-            "_id": "c7912b78-6a0a-48c8-8aed-88fd715e3dd0",
-            "colId": "6c64cc7b-0503-4ea7-b54e-f83812e1a566",
-            "containerId": "ab2a69e1-c0c4-40fd-8590-8731bf3bbcd6",
-            "name": "create",
-            "url": "192.168.3.16:6000/user-description",
-            "method": "POST",
+            "_id": "84b7a294-eef0-4800-b6d3-fe1212fbf2da",
+            "colId": "8d51b85d-e11c-410c-a04f-82aa36d5cfea",
+            "containerId": "",
+            "name": "findUserByEmail",
+            "url": "192.168.3.16:7000/user/findByName",
+            "method": "GET",
             "sortNum": 10000,
-            "created": "2023-07-19T09:11:55.236Z",
-            "modified": "2023-07-19T11:55:05.495Z",
+            "created": "2023-07-28T07:11:21.036Z",
+            "modified": "2023-07-28T07:20:44.815Z",
             "headers": [],
             "params": [],
             "body": {
                 "type": "json",
-                "raw": "{\n  \"firstname\": \"admin\",\n  \"lastname\": \"admin\",\n  \"userId\": 1\n}",
+                "raw": "{\n  \"email\": \"admin@admin.ru\"\n}",
                 "form": []
             },
             "tests": []

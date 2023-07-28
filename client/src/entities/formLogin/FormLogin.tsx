@@ -1,8 +1,9 @@
 import React from "react";
-import { Form, Card, Button, Typography, Row } from "antd";
+import { Form, Card, Button, Typography, Row, Alert } from "antd";
 import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
 import { Link as LinkDom } from "react-router-dom";
 import {
+    IDataError,
     IInputFormItemProps,
     IInputPasswordFormItemProps,
 } from "../../shared/interfaces";
@@ -47,12 +48,16 @@ const propsPassword: IInputPasswordFormItemProps = {
 interface IFormLoginProps {
     form: any;
     onFinish: (values: any) => void;
+    isError: boolean;
+    dataError: IDataError | null;
 }
 
-const FormLogin: React.FC<IFormLoginProps> = ({ form, onFinish }) => {
-    // const [form] = Form.useForm();
-    // const data = Form.useWatch([], form);
-
+const FormLogin: React.FC<IFormLoginProps> = ({
+    form,
+    onFinish,
+    isError,
+    dataError,
+}) => {
     return (
         <>
             <Card title="Вход" bordered={true} style={{ maxWidth: 400 }}>
@@ -71,6 +76,14 @@ const FormLogin: React.FC<IFormLoginProps> = ({ form, onFinish }) => {
                         tooltip={propsPassword.tooltip}
                         rules={propsPassword.rules}
                     />
+                    {isError && (
+                        <Row>
+                            <Alert
+                                message={dataError?.data.message}
+                                type="error"
+                            />
+                        </Row>
+                    )}
                     <Row>
                         <Text>Нет аккаунта?</Text>
                         <LinkDom to={"/register"}>Зарегистрироваться</LinkDom>

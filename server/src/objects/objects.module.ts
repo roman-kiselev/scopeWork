@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common/utils';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { TypeWorkModule } from 'src/type-work/type-work.module';
 import { ObjectTypeWork } from './objects-type_work.model';

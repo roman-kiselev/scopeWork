@@ -1,18 +1,32 @@
 import React, { lazy } from "react";
 import { Routes, Route } from "react-router";
 import { SuspenseLoad } from "../entities";
-import { FormLogin } from "../entities/formLogin";
-import FormRegister from "../entities/formRegister/FormRegister";
-import { LayoutAuth } from "../entities/layoutAuth";
-import { HomePage } from "./home";
+import {
+    CheckA,
+    SuspenseLoadCheckA,
+    SuspenseLoadCheckAR,
+    SuspenseLoadCheckR,
+} from "../features";
+import { RoleString } from "../shared/config";
 import NoAccess from "./noAccess";
 
 const LoginPage = lazy(() => import("./auth/LoginPage"));
 const RegisterPage = lazy(() => import("./auth/RegisterPage"));
+const HomePage = lazy(() => import("./home/HomePage"));
+
 const Routing = () => {
     return (
         <Routes>
-            <Route path="/" element={<HomePage />} />
+            <Route
+                path="/"
+                element={
+                    <SuspenseLoadCheckAR
+                        roles={[RoleString.ADMIN, RoleString.USER]}
+                    >
+                        <HomePage />
+                    </SuspenseLoadCheckAR>
+                }
+            />
             <Route
                 path="/login"
                 element={

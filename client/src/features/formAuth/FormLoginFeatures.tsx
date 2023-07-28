@@ -7,11 +7,13 @@ import { authApi } from "../../shared/api";
 import { useAppSelector } from "../../shared/hooks";
 
 const FormLoginFeatures = () => {
-    const navigate = useNavigate();
     const location = useLocation();
+    const navigate = useNavigate();
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
-    const { isAuth } = useAppSelector((state) => state.auth);
+    const { isAuth, dataError, isError } = useAppSelector(
+        (state) => state.auth
+    );
     if (isAuth) {
         navigate(location.state?.from || "/", { replace: true });
     }
@@ -22,7 +24,12 @@ const FormLoginFeatures = () => {
     };
     return (
         <LayoutAuth>
-            <FormLogin form={form} onFinish={onFinish} />
+            <FormLogin
+                isError={isError}
+                dataError={dataError}
+                form={form}
+                onFinish={onFinish}
+            />
         </LayoutAuth>
     );
 };

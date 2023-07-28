@@ -25,6 +25,11 @@ export class AuthService {
 
   private async validateUser(userDto: CreateUserDto) {
     const user = await this.userService.findUserByEmail(userDto.email);
+
+    if (user.banned) {
+      throw new UnauthorizedException({ message: 'У вас нет доступа' });
+    }
+
     if (!user) {
       throw new UnauthorizedException({ message: 'Неверный логин или пароль' });
     }
@@ -191,12 +196,14 @@ export class AuthService {
 
   async login(userDto: CreateUserDto) {
     const user = await this.validateUser(userDto);
+
     return this.generateToken(user);
   }
 
   async checkAuth(user: User) {
     try {
       const token = this.generateToken(user);
+
       return token;
     } catch (e) {
       throw new HttpException(

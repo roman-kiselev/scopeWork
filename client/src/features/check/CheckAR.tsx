@@ -8,14 +8,15 @@ import { useAppSelector } from "../../shared/hooks";
 interface ICheckAR {
     children: React.ReactNode;
     roles: RoleString[];
+    location: any;
 }
-const CheckAR: React.FC<ICheckAR> = ({ children, roles }) => {
-    const location = useLocation();
+const CheckAR: React.FC<ICheckAR> = ({ children, roles, location }) => {
     const {
         isAuth,
         isLoading,
         roles: rolesState,
     } = useAppSelector((state) => state.auth);
+
     const { isSuccess, isLoading: isLoadingCheck } = authApi.useCheckQuery();
     return (
         <CheckAuth

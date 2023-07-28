@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-  BeforeCreate,
   Column,
   DataType,
   ForeignKey,

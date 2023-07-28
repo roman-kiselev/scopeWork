@@ -6,12 +6,12 @@ import { useAppSelector } from "../../shared/hooks";
 
 interface ICheckA {
     children: React.ReactNode;
+    location: any;
 }
 
-const CheckA: React.FC<ICheckA> = ({ children }) => {
-    const location = useLocation();
-    const { isAuth, isLoading } = useAppSelector((state) => state.auth);
+const CheckA: React.FC<ICheckA> = ({ children, location }) => {
     const { isSuccess, isLoading: isLoadingCheck } = authApi.useCheckQuery();
+    const { isAuth, isLoading } = useAppSelector((state) => state.auth);
     return (
         <CheckAuth
             isAuth={isAuth}
