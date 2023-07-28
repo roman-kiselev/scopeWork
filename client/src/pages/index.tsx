@@ -21,7 +21,7 @@ const Routing = () => {
                 path="/"
                 element={
                     <SuspenseLoadCheckAR
-                        roles={[RoleString.ADMIN, RoleString.USER]}
+                        roles={[RoleString.USER, RoleString.ADMIN]}
                     >
                         <HomePage />
                     </SuspenseLoadCheckAR>

@@ -1,6 +1,7 @@
+import jwt_decode from "jwt-decode";
 import { createSlice } from "@reduxjs/toolkit";
 import { authApi } from "../../api";
-import { IAuthSlice, IDataError } from "../../interfaces";
+import { IAuthSlice, IDataError, IUserToken } from "../../interfaces";
 
 const initialState: IAuthSlice = {
     roles: [],
@@ -33,6 +34,7 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = false;
                 state.isAuth = true;
+
                 state.token = action.payload.token;
             }
         );
@@ -60,7 +62,11 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = false;
                 state.isAuth = true;
-                state.token = action.payload.token;
+                const { token } = action.payload;
+                const user: IUserToken = jwt_decode(token);
+                const { roles } = user;
+                state.roles = roles;
+                state.token = token;
             }
         );
         builder.addMatcher(
@@ -89,8 +95,11 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = false;
                 state.isAuth = true;
-
-                state.token = action.payload.token;
+                const { token } = action.payload;
+                const user: IUserToken = jwt_decode(token);
+                const { roles } = user;
+                state.roles = roles;
+                state.token = token;
             }
         );
         builder.addMatcher(

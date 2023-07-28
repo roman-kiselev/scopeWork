@@ -15,7 +15,8 @@ const FormLoginFeatures = () => {
         (state) => state.auth
     );
     if (isAuth) {
-        navigate(location.state?.from || "/", { replace: true });
+        navigate("/");
+        // navigate(location.state?.from || "/", { replace: true });
     }
     const [login, { isSuccess }] = authApi.useLoginMutation();
     const onFinish = async () => {
