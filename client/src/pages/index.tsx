@@ -1,12 +1,7 @@
 import React, { lazy } from "react";
 import { Routes, Route } from "react-router";
 import { SuspenseLoad } from "../entities";
-import {
-    CheckA,
-    SuspenseLoadCheckA,
-    SuspenseLoadCheckAR,
-    SuspenseLoadCheckR,
-} from "../features";
+import { CheckA, SuspenseLoadCheckA, SuspenseLoadCheckAR } from "../features";
 import { RoleString } from "../shared/config";
 import NoAccess from "./noAccess";
 

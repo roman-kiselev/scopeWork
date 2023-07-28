@@ -1,5 +1,5 @@
-import { Form } from "antd";
-import React from "react";
+import { Form, Spin } from "antd";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { FormLogin } from "../../entities";
 import { LayoutAuth } from "../../entities/layoutAuth";
@@ -11,18 +11,26 @@ const FormLoginFeatures = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
-    const { isAuth, dataError, isError } = useAppSelector(
+
+    const { isSuccess: isSuccessCheck, isLoading: isLoadingCheck } =
+        authApi.useCheckQuery();
+    const { dataError, isError, isLoading } = useAppSelector(
         (state) => state.auth
     );
-    if (isAuth) {
-        navigate("/");
-        // navigate(location.state?.from || "/", { replace: true });
-    }
+    useEffect(() => {
+        if (isSuccessCheck) {
+            navigate(location.state?.from || "/", { replace: true });
+        }
+    }, [isSuccessCheck, navigate]);
+
     const [login, { isSuccess }] = authApi.useLoginMutation();
     const onFinish = async () => {
         const res = await login(data);
         console.log(res);
     };
+    if (isLoading || isLoadingCheck) {
+        return <Spin />;
+    }
     return (
         <LayoutAuth>
             <FormLogin
