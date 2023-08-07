@@ -22,11 +22,13 @@ export const authSlice = createSlice({
             state.token = null;
         },
     },
+    // Start Register //
     extraReducers(builder) {
         builder.addMatcher(
             authApi.endpoints.register.matchPending,
             (state, action) => {
                 state.isLoading = true;
+                state.isError = false;
             }
         );
         builder.addMatcher(
@@ -34,7 +36,6 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = false;
                 state.isAuth = true;
-
                 state.token = action.payload.token;
             }
         );
@@ -51,10 +52,13 @@ export const authSlice = createSlice({
                 };
             }
         );
+        // End Register //
+        // Start Login //
         builder.addMatcher(
             authApi.endpoints.login.matchPending,
             (state, action) => {
                 state.isLoading = true;
+                state.isError = false;
             }
         );
         builder.addMatcher(
@@ -84,10 +88,13 @@ export const authSlice = createSlice({
                 };
             }
         );
+        // End Login //
+        // Start Check //
         builder.addMatcher(
             authApi.endpoints.check.matchPending,
             (state, action) => {
                 state.isLoading = true;
+                state.isError = false;
             }
         );
         builder.addMatcher(
@@ -117,6 +124,7 @@ export const authSlice = createSlice({
                 };
             }
         );
+        // End Check //
     },
 });
 

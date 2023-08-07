@@ -4,7 +4,8 @@ import { useLocation, useNavigate } from "react-router";
 import { FormLogin } from "../../entities";
 import { LayoutAuth } from "../../entities/layoutAuth";
 import { authApi } from "../../shared/api";
-import { useAppSelector } from "../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useQuery } from "react-query";
 
 const FormLoginFeatures = () => {
     const location = useLocation();
@@ -12,21 +13,31 @@ const FormLoginFeatures = () => {
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
 
-    const { isSuccess: isSuccessCheck, isLoading: isLoadingCheck } =
-        authApi.useCheckQuery();
-    const { dataError, isError, isLoading } = useAppSelector(
+    const {
+        isSuccess: isSuccessCheck,
+        isLoading: isLoadingCheck,
+        data: dataCheck,
+    } = authApi.useCheckQuery();
+    const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
+    // Извлечение токена при загрузке страницы
+    const storedToken = localStorage.getItem("token");
+    if (storedToken && isSuccessCheck) {
+        navigate(location.state?.from || "/", { replace: true });
+    }
     useEffect(() => {
-        if (isSuccessCheck) {
+        if (isSuccessCheck && token !== null) {
             navigate(location.state?.from || "/", { replace: true });
         }
     }, [isSuccessCheck, navigate]);
-
+    const dataRes = useQuery("checkQuery", () => authApi.useCheckQuery().data);
     const [login, { isSuccess }] = authApi.useLoginMutation();
     const onFinish = async () => {
         const res = await login(data);
-        console.log(res);
+        if (dataRes) {
+            navigate(location.state?.from || "/", { replace: true });
+        }
     };
     if (isLoading || isLoadingCheck) {
         return <Spin />;
