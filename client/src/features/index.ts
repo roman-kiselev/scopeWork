@@ -7,8 +7,9 @@ import {
     SuspenseLoadCheckR,
     SuspenseLoadCheckAR,
 } from "./check";
+import { LeftMenu } from "./menu";
 
-export { FormLoginFeatures, FormRegistrationFeatures };
+export { FormLoginFeatures, FormRegistrationFeatures, LeftMenu };
 export {
     CheckA,
     CheckR,

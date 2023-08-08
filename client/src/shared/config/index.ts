@@ -1,3 +1,5 @@
 import { RoleString } from "./RoleString";
 
-export { RoleString };
+import { getItem } from "./menu";
+
+export { RoleString, getItem };
