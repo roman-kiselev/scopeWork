@@ -7,6 +7,12 @@ import {
     BuildOutlined,
     UserAddOutlined,
     UnorderedListOutlined,
+    ContainerOutlined,
+    PlusCircleOutlined,
+    DeploymentUnitOutlined,
+    AppstoreAddOutlined,
+    FileAddOutlined,
+    ToolOutlined,
 } from "@ant-design/icons";
 import { useAppSelector } from "../../shared/hooks";
 const LeftMenu = () => {
@@ -61,11 +67,72 @@ const LeftMenu = () => {
                     ]
                 ),
                 getItem("Объекты", "13", [RoleString.ADMIN], rolesState, null, [
-                    getItem("Option 9", "9", [RoleString.ADMIN], rolesState),
-                    getItem("Option 10", "10", [RoleString.ADMIN], rolesState),
-                    getItem("Option 11", "11", [RoleString.ADMIN], rolesState),
-                    getItem("Option 12", "12", [RoleString.ADMIN], rolesState),
+                    getItem(
+                        "Создать",
+                        "9",
+                        [RoleString.ADMIN],
+                        rolesState,
+                        <PlusCircleOutlined />
+                    ),
+                    getItem(
+                        "Создать объём",
+                        "10",
+                        [RoleString.ADMIN],
+                        rolesState,
+                        <AppstoreAddOutlined />
+                    ),
+                    getItem(
+                        "Создать вид работ",
+                        "11",
+                        [RoleString.ADMIN],
+                        rolesState,
+                        <FileAddOutlined />
+                    ),
+                    getItem(
+                        "Конфигурирование",
+                        "12",
+                        [RoleString.ADMIN],
+                        rolesState,
+                        <ToolOutlined />
+                    ),
                 ]),
+                getItem(
+                    "Номенклатура",
+                    "тomenclature",
+                    [RoleString.ADMIN],
+                    rolesState,
+                    <ContainerOutlined />,
+                    [
+                        getItem(
+                            "Добавить",
+                            "9",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <PlusCircleOutlined />
+                        ),
+                        getItem(
+                            "Каталог",
+                            "10",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <UnorderedListOutlined />
+                        ),
+                        getItem(
+                            "Ед.измерения",
+                            "11",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <DeploymentUnitOutlined />
+                        ),
+                        getItem(
+                            "Доп. операции",
+                            "12",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <ToolOutlined />
+                        ),
+                    ]
+                ),
             ],
             "group"
         ),

@@ -89,7 +89,7 @@ const contentList: Record<string, React.ReactNode> = {
 const ObjectPage = () => {
     const [collapsed, setCollapsed] = useState(false);
 
-    const [activeTabKey1, setActiveTabKey1] = useState<string>("tab1");
+    const [activeTabKey1, setActiveTabKey1] = useState<string>("main");
     const onTab1Change = (key: string) => {
         setActiveTabKey1(key);
     };
