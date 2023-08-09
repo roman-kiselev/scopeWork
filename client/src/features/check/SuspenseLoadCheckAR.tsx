@@ -17,7 +17,8 @@ const SuspenseLoadCheckAR: React.FC<ISuspenseLoadCheckAR> = ({
     const location = useLocation();
     return (
         <SuspenseLoad>
-            <CheckA location={location}>
+
+                            <CheckA location={location}>
                 <CheckR location={location} roles={roles}>
                     {children}
                 </CheckR>
