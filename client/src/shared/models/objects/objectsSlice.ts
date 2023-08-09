@@ -1,11 +1,35 @@
-import React from 'react'
+import { createSlice } from '@reduxjs/toolkit'
 
-const ObjectsSlice = () => {
-    return (
-        <div>
-            <h1>ObjectsSlice</h1>
-        </div>
-    )
+interface ICreateObject {
+    name: string;
+    address: string;
 }
 
-export default ObjectsSlice
+interface IListObjects {
+    id: number;
+
+}
+
+interface IObjectsSlice {
+    createObject: ICreateObject,
+
+}
+
+
+const initialState: IObjectsSlice = {
+    createObject: {
+        name: '',
+        address: ''
+    }
+}
+
+
+export const objectSlice = createSlice({
+    name: 'objects',
+    initialState,
+    reducers: {}
+
+})
+
+
+export {}
