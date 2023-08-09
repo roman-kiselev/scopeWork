@@ -16,6 +16,7 @@ const RegisterPage = lazy(() => import("./auth/RegisterPage"));
 const HomePage = lazy(() => import("./home/HomePage"));
 const LayoutPage = lazy(() => import("./home/LayoutPage"));
 const ObjectsRoutes = lazy(() => import("./objects/index"));
+const AdminRoutes = lazy(() => import("./admin/index"));
 
 const Routing = () => {
     return (
@@ -33,7 +34,7 @@ const Routing = () => {
                 <Route index element={<HomePage />} />
 
                 <Route
-                    path="objects"
+                    path="objects/*"
                     element={
                         <SuspenseLoadCheckR
                             roles={[
@@ -43,6 +44,17 @@ const Routing = () => {
                             ]}
                         >
                             <ObjectsRoutes />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+
+                <Route
+                    path="admin/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[RoleString.ADMIN, RoleString.DEV]}
+                        >
+                            <AdminRoutes />
                         </SuspenseLoadCheckR>
                     }
                 />

@@ -99,7 +99,8 @@ const LayoutPage = () => {
                 width={230}
                 theme="light"
                 style={{
-                    height: "100vh",
+                    minHeight: "100vh",
+                    height: "100%",
                 }}
             >
                 <div style={{ margin: "10px" }}>

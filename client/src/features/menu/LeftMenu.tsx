@@ -13,6 +13,7 @@ import {
     AppstoreAddOutlined,
     FileAddOutlined,
     ToolOutlined,
+    UserOutlined,
 } from "@ant-design/icons";
 import { useAppSelector } from "../../shared/hooks";
 const LeftMenu = () => {
@@ -48,85 +49,93 @@ const LeftMenu = () => {
                     "users",
                     [RoleString.ADMIN],
                     rolesState,
-                    null,
+                    <UserOutlined />,
                     [
                         getItem(
-                            "Создать",
-                            "create",
+                            <Link to="/admin/users/create">Создать</Link>,
+                            "usersCreate",
                             [RoleString.ADMIN],
                             rolesState,
                             <UserAddOutlined />
                         ),
                         getItem(
-                            "Лист пользователей",
-                            "list",
+                            <Link to="/admin/users">Лист пользователей</Link>,
+
+                            "usersList",
                             [RoleString.ADMIN],
                             rolesState,
                             <UnorderedListOutlined />
                         ),
                     ]
                 ),
-                getItem("Объекты", "13", [RoleString.ADMIN], rolesState, null, [
-                    getItem(
-                        "Создать",
-                        "9",
-                        [RoleString.ADMIN],
-                        rolesState,
-                        <PlusCircleOutlined />
-                    ),
-                    getItem(
-                        "Создать объём",
-                        "10",
-                        [RoleString.ADMIN],
-                        rolesState,
-                        <AppstoreAddOutlined />
-                    ),
-                    getItem(
-                        "Создать вид работ",
-                        "11",
-                        [RoleString.ADMIN],
-                        rolesState,
-                        <FileAddOutlined />
-                    ),
-                    getItem(
-                        "Конфигурирование",
-                        "12",
-                        [RoleString.ADMIN],
-                        rolesState,
-                        <ToolOutlined />
-                    ),
-                ]),
+                getItem(
+                    "Объекты",
+                    "adminObjects",
+                    [RoleString.ADMIN],
+                    rolesState,
+                    <BuildOutlined />,
+                    [
+                        getItem(
+                            //"Создать",
+                            <Link to="/admin/object/create">Создать</Link>,
+                            "objectsCreate",
+                            [RoleString.ADMIN, RoleString.USER],
+                            rolesState,
+                            <PlusCircleOutlined />
+                        ),
+                        getItem(
+                            <Link to="/admin/object/scope">Создать объём</Link>,
+                            "createScope",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <AppstoreAddOutlined />
+                        ),
+                        getItem(
+                            <Link to="/admin/object">Конфигурирование</Link>,
+                            "configuration",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <ToolOutlined />
+                        ),
+                    ]
+                ),
                 getItem(
                     "Номенклатура",
-                    "тomenclature",
+                    "nomenclature",
                     [RoleString.ADMIN],
                     rolesState,
                     <ContainerOutlined />,
                     [
                         getItem(
-                            "Добавить",
-                            "9",
+                            <Link to="/admin/nomenclature/create">
+                                Добавить
+                            </Link>,
+                            "addNomenclature",
                             [RoleString.ADMIN],
                             rolesState,
                             <PlusCircleOutlined />
                         ),
                         getItem(
-                            "Каталог",
-                            "10",
+                            <Link to="/admin/nomenclature">Каталог</Link>,
+                            "catalog",
                             [RoleString.ADMIN],
                             rolesState,
                             <UnorderedListOutlined />
                         ),
                         getItem(
-                            "Ед.измерения",
-                            "11",
+                            <Link to="/admin/nomenclature/unit">
+                                Ед.измерения
+                            </Link>,
+                            "unit",
                             [RoleString.ADMIN],
                             rolesState,
                             <DeploymentUnitOutlined />
                         ),
                         getItem(
-                            "Доп. операции",
-                            "12",
+                            <Link to="/admin/nomenclature/othersOperation">
+                                Доп. операции
+                            </Link>,
+                            "othersOperation",
                             [RoleString.ADMIN],
                             rolesState,
                             <ToolOutlined />
