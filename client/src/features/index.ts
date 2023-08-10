@@ -1,20 +1,16 @@
-import { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
-import {
-    CheckA,
-    CheckR,
-    CheckAR,
-    SuspenseLoadCheckA,
-    SuspenseLoadCheckR,
-    SuspenseLoadCheckAR,
-} from "./check";
-import { LeftMenu } from "./menu";
+import { FormLoginFeatures, FormRegistrationFeatures } from './formAuth'
+import { CheckA, CheckAR, CheckR, SuspenseLoadCheckA, SuspenseLoadCheckAR, SuspenseLoadCheckR } from './check'
+import { LeftMenu } from './menu'
+import { CreateObjectFeatures } from './objects'
 
-export { FormLoginFeatures, FormRegistrationFeatures, LeftMenu };
+
+export { FormLoginFeatures, FormRegistrationFeatures, LeftMenu }
 export {
     CheckA,
     CheckR,
     CheckAR,
     SuspenseLoadCheckA,
     SuspenseLoadCheckR,
-    SuspenseLoadCheckAR,
-};
+    SuspenseLoadCheckAR
+}
+export { CreateObjectFeatures }

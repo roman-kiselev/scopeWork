@@ -11,6 +11,7 @@ export class UnitService {
     async checkByName(name: string) {
         try {
             const unit = await this.unitRepository.findOne({
+                
                 where: {
                     name,
                     deletedAt: null
