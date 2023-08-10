@@ -1,6 +1,7 @@
-import { Button, Divider, Form, Input, List, Row, Skeleton } from 'antd'
+import { Divider, Form, List, Row, Skeleton } from 'antd'
 import React, { useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
+import { CreateObjectFeatures } from '../../../features'
 
 interface DataType {
     id: number;
@@ -73,42 +74,7 @@ const CreateObject = () => {
         <Row style={{ display: 'flex', flexDirection: 'column', margin: 10 }}>
             <h2>Создание объекта</h2>
             <Row style={{ display: 'flex', margin: 10 }}>
-                <Form
-                    form={form}
-                    name='control-hooks'
-                    onFinish={onFinish}
-                    style={{ width: '70vw' }}
-                >
-                    <Form.Item
-                        name='name'
-                        label='Наименование объекта'
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Наименование обязательное поле'
-                            }
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item
-                        name='address'
-                        label='Адрес объекта'
-                        rules={[
-                            {
-                                required: true,
-                                message: 'Адрес обязательное поле'
-                            }
-                        ]}
-                    >
-                        <Input />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type='primary' htmlType='submit'>
-                            Создать
-                        </Button>
-                    </Form.Item>
-                </Form>
+                <CreateObjectFeatures />
             </Row>
             <Row>
                 <div
