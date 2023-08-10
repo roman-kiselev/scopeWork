@@ -4,3 +4,4 @@ client/.env
 server/developmentJob.env
 server/productionJob.env
 .idea
+server/developmentHome.env
