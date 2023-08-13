@@ -70,7 +70,7 @@ const LeftMenu = () => {
                 ),
                 getItem(
                     'Объекты',
-                    'objects',
+                    'objectsAdmin',
                     [RoleString.ADMIN],
                     rolesState,
                     <BuildOutlined />,

@@ -1,34 +1,15 @@
-import React, { useState } from "react";
-import {
-    Button,
-    Card,
-    Col,
-    Dropdown,
-    Layout,
-    Menu,
-    MenuProps,
-    Progress,
-    Row,
-    Space,
-} from "antd";
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
-    DownOutlined,
-} from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { getItem } from "../../shared/config";
-import { LeftMenu } from "../../features";
-import { setMaxIdleHTTPParsers } from "http";
-const { Header, Sider, Content, Footer } = Layout;
+import React, {useState} from "react";
+import {Button, Card, Col, Layout, Progress, Row,} from "antd";
+
+const {Header, Sider, Content, Footer} = Layout;
 
 const tabList = [
     {
-        key: "main",
+        key: "Главная",
         tab: "Главная",
     },
     {
-        key: "askue",
+        key: "АСКУЭ",
         tab: "АСКУЭ",
     },
     {
@@ -54,7 +35,7 @@ const contentList: Record<string, React.ReactNode> = {
         <div>
             <ul>
                 <li>Общий прогресс</li>
-                <Progress type="circle" percent={75} />
+                <Progress type="circle" percent={75}/>
                 <li>Количество наименований: 380 шт</li>
                 Принимают участие
                 <ul>
@@ -71,7 +52,7 @@ const contentList: Record<string, React.ReactNode> = {
         <div>
             <ul>
                 <li>Общий прогресс</li>
-                <Progress type="circle" percent={25} />
+                <Progress type="circle" percent={25}/>
                 <li>Количество наименований: 380 шт</li>
                 Принимают участие
                 <ul>
@@ -99,7 +80,7 @@ const ObjectPage = () => {
 
     return (
         <Row>
-            <Row style={{ margin: 10, flexDirection: "column" }}>
+            <Row style={{margin: 10, flexDirection: "column"}}>
                 <h1>Доступные объекты</h1>
             </Row>
             <Row>
@@ -111,7 +92,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>
@@ -124,7 +105,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>
@@ -137,7 +118,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>
@@ -150,7 +131,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>
@@ -163,7 +144,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>
@@ -176,7 +157,7 @@ const ObjectPage = () => {
                         tabList={tabList}
                         activeTabKey={activeTabKey1}
                         onTabChange={onTab1Change}
-                        style={{ margin: 10 }}
+                        style={{margin: 10}}
                     >
                         {contentList[activeTabKey1]}
                     </Card>

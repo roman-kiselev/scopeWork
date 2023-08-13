@@ -1,10 +1,6 @@
-import {
-    configureStore,
-    combineReducers,
-    createListenerMiddleware,
-} from "@reduxjs/toolkit";
-import { authApi, mainApi } from "../../shared/api";
-import { authReducer } from "../../shared/models";
+import {combineReducers, configureStore, createListenerMiddleware,} from "@reduxjs/toolkit";
+import {authApi, mainApi, objectMainApi} from "../../shared/api";
+import {authReducer, objectReducer} from "../../shared/models";
 
 const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
@@ -19,7 +15,9 @@ listenerMiddleware.startListening({
 
 const rootReducer = combineReducers({
     auth: authReducer,
+    objects: objectReducer,
     [mainApi.reducerPath]: mainApi.reducer,
+    [objectMainApi.reducerPath]: objectMainApi.reducer
 });
 
 const store = configureStore({

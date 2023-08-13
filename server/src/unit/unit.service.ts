@@ -1,17 +1,18 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
-import { CreateUniteDto } from './dto/unit.dto'
-import { Unit } from './unit.model'
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common'
+import {InjectModel} from '@nestjs/sequelize'
+import {CreateUniteDto} from './dto/unit.dto'
+import {Unit} from './unit.model'
 
 @Injectable()
 export class UnitService {
-    constructor(@InjectModel(Unit) private unitRepository: typeof Unit) {
+    constructor(
+        @InjectModel(Unit) private unitRepository: typeof Unit,
+    ) {
     }
 
     async checkByName(name: string) {
         try {
             const unit = await this.unitRepository.findOne({
-                
                 where: {
                     name,
                     deletedAt: null
@@ -119,4 +120,7 @@ export class UnitService {
             throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR)
         }
     }
+
+
+    // Создать ед.измерения с
 }

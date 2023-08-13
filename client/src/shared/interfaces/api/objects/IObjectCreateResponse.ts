@@ -1,4 +1,4 @@
-import {IObjectCreateAttr} from "./IUserCreateAttr";
+import {IObjectCreateAttr} from "./IObjectCreateAttr";
 
 
 export interface IObjectCreateResponse extends IObjectCreateAttr {

@@ -1,9 +1,9 @@
-import { fetchBaseQuery, createApi, retry } from "@reduxjs/toolkit/query/react";
-import { RootState } from "../../app/store";
+import {createApi, fetchBaseQuery, retry} from "@reduxjs/toolkit/query/react";
+import {RootState} from "../../app/store";
 
 const baseQuery = fetchBaseQuery({
     baseUrl: process.env.REACT_APP_URL_API,
-    prepareHeaders: (headers, { getState }) => {
+    prepareHeaders: (headers, {getState}) => {
         const token =
             (getState() as RootState).auth.token ||
             localStorage.getItem("token");
@@ -13,7 +13,7 @@ const baseQuery = fetchBaseQuery({
     },
 });
 
-const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 });
+const baseQueryWithRetry = retry(baseQuery, {maxRetries: 1});
 
 export const mainApi = createApi({
     reducerPath: "main",
@@ -22,3 +22,12 @@ export const mainApi = createApi({
     refetchOnMountOrArgChange: true,
     endpoints: () => ({}),
 });
+
+
+export const objectMainApi = createApi({
+    reducerPath: "objectsMain",
+    tagTypes: ["Objects"],
+    baseQuery: baseQueryWithRetry,
+    refetchOnMountOrArgChange: true,
+    endpoints: () => ({})
+})
