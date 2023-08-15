@@ -1,12 +1,12 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common'
-import {InjectModel} from '@nestjs/sequelize'
-import {CreateUniteDto} from './dto/unit.dto'
-import {Unit} from './unit.model'
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
+import { CreateUniteDto } from './dto/unit.dto'
+import { Unit } from './unit.model'
 
 @Injectable()
 export class UnitService {
     constructor(
-        @InjectModel(Unit) private unitRepository: typeof Unit,
+        @InjectModel(Unit) private unitRepository: typeof Unit
     ) {
     }
 
@@ -50,6 +50,7 @@ export class UnitService {
     async createUnit(dto: CreateUniteDto) {
         try {
             const unit = await this.checkByName(dto.name)
+
             if (unit) {
                 throw new HttpException('Уже существует', HttpStatus.BAD_REQUEST)
             }

@@ -1,21 +1,21 @@
-import {mainApi} from "../main";
-import {IObjectCreateAttr, IObjectCreateResponse} from "../../interfaces";
+import { objectMainApi } from '../main'
+import { IObjectCreateAttr, IObjectCreateResponse } from '../../interfaces'
 
 
-export const objectsApi = mainApi.injectEndpoints({
+export const objectsApi = objectMainApi.injectEndpoints({
 
     endpoints: (builder) => ({
         create: builder.mutation<IObjectCreateResponse, IObjectCreateAttr>({
             query: (objectData) => ({
-                url: "/objects/",
-                method: "POST",
+                url: '/',
+                method: 'POST',
                 body: objectData
             })
         }),
         getAllObjects: builder.query<IObjectCreateResponse[], void>({
             query: () => ({
-                url: "/objects/",
-                method: "GET",
+                url: '/',
+                method: 'GET'
             })
         })
 

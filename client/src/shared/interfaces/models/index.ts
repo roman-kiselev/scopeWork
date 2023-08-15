@@ -1,10 +1,10 @@
-import {IAuthSlice} from "./auth";
-import {IRole} from "./roles";
-import {IUserToken} from "./users";
-import {IUnit} from "./unit"
+import { IAuthSlice } from './auth'
+import { IRole } from './roles'
+import { IUserToken } from './users'
+import { IUnit, IUnitsCreateAttr } from './unit'
 
 
-export type {IAuthSlice};
-export type {IRole};
-export type {IUserToken};
-export type {IUnit}
+export type { IAuthSlice }
+export type { IRole }
+export type { IUserToken }
+export type { IUnit, IUnitsCreateAttr }

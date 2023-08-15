@@ -1,4 +1,4 @@
-import {IUnit} from "./IUnit"
+import { IUnit } from './IUnit'
+import { IUnitsCreateAttr } from './IUnitCreateAttr'
 
-
-export type {IUnit}
+export type { IUnit, IUnitsCreateAttr }

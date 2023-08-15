@@ -1,7 +1,7 @@
-export interface IUnit {
+import { IUnitsCreateAttr } from './IUnitCreateAttr'
+
+export interface IUnit extends IUnitsCreateAttr {
     id: number;
-    name: string;
-    description: string;
     createdAt: Date;
     updatedAt: Date;
 }
