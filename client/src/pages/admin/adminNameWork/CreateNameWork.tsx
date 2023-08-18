@@ -1,28 +1,29 @@
-import React from "react";
-import {Button, Divider, Form, Input, Row, Select} from "antd";
+import React from 'react'
+import { Divider, Form, Row } from 'antd'
+import { CreateNameWorkFeatures } from '../../../features'
 
 const CreateNameWork = () => {
 
-    const [form] = Form.useForm();
+    const [form] = Form.useForm()
 
 
     const onFinish = (values: any) => {
-        console.log(values);
-    };
+        console.log(values)
+    }
 
     const onReset = () => {
-        form.resetFields();
-    };
+        form.resetFields()
+    }
 
     const onFill = () => {
-        form.setFieldsValue({note: 'Hello world!', gender: 'male'});
-    };
+        form.setFieldsValue({ note: 'Hello world!', gender: 'male' })
+    }
 
     return (
         <Row>
             <Row>
 
-                <Form
+                {/* <Form
 
                     form={form}
                     name="control-hooks"
@@ -71,11 +72,12 @@ const CreateNameWork = () => {
                     </Form.Item>
                 </Form
 
-                >
+                >*/}
+                <CreateNameWorkFeatures />
             </Row>
-            <Divider/>
+            <Divider />
         </Row>
-    );
-};
+    )
+}
 
-export default CreateNameWork;
+export default CreateNameWork

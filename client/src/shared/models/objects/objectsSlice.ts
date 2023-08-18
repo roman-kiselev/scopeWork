@@ -1,26 +1,23 @@
-import {createSlice} from '@reduxjs/toolkit'
-import {IDataError, IObjectCreateResponse} from "../../interfaces";
-import {objectsApi} from "../../api";
-
+import { createSlice } from "@reduxjs/toolkit";
+import { IDataError, IObjectCreateResponse } from "../../interfaces";
+import { objectsApi } from "../../api";
 
 interface IObjectsSlice {
     listObject: IObjectCreateResponse[] | [];
     isLoading: boolean;
     isError: boolean;
-    dataError: IDataError | null
+    dataError: IDataError | null;
 }
-
 
 const initialState: IObjectsSlice = {
     listObject: [],
     isLoading: false,
     isError: false,
-    dataError: null
-}
-
+    dataError: null,
+};
 
 export const objectSlice = createSlice({
-    name: 'objects',
+    name: "objects",
     initialState,
     reducers: {},
     extraReducers(builder) {
@@ -32,27 +29,28 @@ export const objectSlice = createSlice({
                 state.isError = false;
                 state.dataError = null;
             }
-        )
+        );
         builder.addMatcher(
             objectsApi.endpoints.create.matchFulfilled,
             (state, action) => {
                 state.isLoading = false;
                 const object = action.payload;
-                state.listObject = [...state.listObject, object]
+                state.listObject = [...state.listObject, object];
             }
-        )
+        );
         builder.addMatcher(
             objectsApi.endpoints.create.matchRejected,
             (state, action) => {
+                console.log(action.payload);
                 state.isLoading = false;
                 state.isError = true;
-                const {data, status} = action.payload as IDataError;
+                const { data, status } = action.payload as IDataError;
                 state.dataError = {
                     status: Number(status),
-                    data
-                }
+                    data,
+                };
             }
-        )
+        );
         // Create End //
         // GetAll Objects Start //
         builder.addMatcher(
@@ -63,7 +61,7 @@ export const objectSlice = createSlice({
                 state.dataError = null;
                 state.listObject = [];
             }
-        )
+        );
         builder.addMatcher(
             objectsApi.endpoints.getAllObjects.matchFulfilled,
             (state, action) => {
@@ -71,23 +69,21 @@ export const objectSlice = createSlice({
                 state.listObject = data;
                 state.isLoading = false;
             }
-        )
+        );
         builder.addMatcher(
             objectsApi.endpoints.getAllObjects.matchRejected,
             (state, action) => {
                 state.isLoading = false;
                 state.isError = true;
-                const {data, status} = action.payload as IDataError;
+                const { data, status } = action.payload as IDataError;
                 state.dataError = {
                     status: Number(status),
-                    data
-                }
+                    data,
+                };
             }
-        )
+        );
         // GetAll Objects End //
-
-    }
-})
-
+    },
+});
 
 export const objectReducer = objectSlice.reducer;
