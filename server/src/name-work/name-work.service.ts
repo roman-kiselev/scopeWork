@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
@@ -9,6 +10,7 @@ import { NameWork } from './name-work.model';
 export class NameWorkService {
   constructor(
     @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
+    @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
     private unitService: UnitService,
   ) {}
 
@@ -25,6 +27,28 @@ export class NameWorkService {
       }
 
       return nameWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async checkNameWithDto(dto: CreateNameWorkDto) {
+    try {
+      const { name, typeWorkId, unitId } = dto;
+      const isName = await this.nameWorkRepository.findOne({
+        where: {
+          name,
+        },
+      });
+      const isTypeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+      const isUnit = await this.unitService.getOneUnitById(unitId);
+      if (!isName || !isTypeWork || !isUnit) {
+        return false;
+      }
+      return true;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -105,6 +129,33 @@ export class NameWorkService {
       }
 
       throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async create(dto: CreateNameWorkDto) {
+    try {
+      const { name, typeWorkId, unitId } = dto;
+      // Проверим существование товара
+      const nameWork = await this.checkOneByName(name);
+      if (!nameWork) {
+        throw new HttpException(
+          'Наименование существует',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+      // Создаём наименование и связь
+      const newNameWork = await this.nameWorkRepository.create({
+        name: name,
+        unitId: unitId,
+      });
+      await newNameWork.$add('typeWorks', typeWorkId);
+
+      return newNameWork;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -41,7 +41,6 @@ export const objectSlice = createSlice({
         builder.addMatcher(
             objectsApi.endpoints.create.matchRejected,
             (state, action) => {
-                console.log(action.payload);
                 state.isLoading = false;
                 state.isError = true;
                 const { data, status } = action.payload as IDataError;

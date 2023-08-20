@@ -5,4 +5,6 @@ export class CreateNameWorkDto {
   name: string;
   @ApiProperty({ example: '1', description: 'id еденицы измерения' })
   unitId?: number;
+  @ApiProperty({ example: '1', description: 'id Типа работ' })
+  typeWorkId: number;
 }

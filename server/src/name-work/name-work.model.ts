@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -8,7 +9,9 @@ import {
   Table,
 } from 'sequelize-typescript';
 import { TotalVolume } from 'src/total-volume/total-volume.model';
+import { TypeWork } from 'src/type-work/type-work.model';
 import { Unit } from 'src/unit/unit.model';
+import { NameWorkTypeWork } from './name-work-typework';
 
 interface NameWorkAttr {
   id: number;
@@ -44,4 +47,7 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
   @HasMany(() => TotalVolume)
   totalVolume: TotalVolume[];
+
+  @BelongsToMany(() => TypeWork, () => NameWorkTypeWork)
+  typeWorks: TypeWork[];
 }

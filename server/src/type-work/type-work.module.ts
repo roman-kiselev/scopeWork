@@ -1,21 +1,25 @@
-import {forwardRef, Module} from '@nestjs/common';
-import {SequelizeModule} from '@nestjs/sequelize';
-import {ObjectTypeWork} from 'src/objects/objects-type_work.model';
-import {Objects} from 'src/objects/objects.model';
-import {ObjectsModule} from 'src/objects/objects.module';
-import {TypeWorkController} from './type-work.controller';
-import {TypeWork} from './type-work.model';
-import {TypeWorkService} from './type-work.service';
-
+import { forwardRef, Module } from '@nestjs/common';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { NameWorkTypeWork } from 'src/name-work/name-work-typework';
+import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
+import { Objects } from 'src/objects/objects.model';
+import { ObjectsModule } from 'src/objects/objects.module';
+import { TypeWorkController } from './type-work.controller';
+import { TypeWork } from './type-work.model';
+import { TypeWorkService } from './type-work.service';
 
 @Module({
-    controllers: [TypeWorkController],
-    providers: [TypeWorkService],
-    imports: [
-        SequelizeModule.forFeature([TypeWork, Objects, ObjectTypeWork]),
-        forwardRef(() => ObjectsModule),
-    ],
-    exports: [TypeWorkService],
+  controllers: [TypeWorkController],
+  providers: [TypeWorkService],
+  imports: [
+    SequelizeModule.forFeature([
+      TypeWork,
+      Objects,
+      ObjectTypeWork,
+      NameWorkTypeWork,
+    ]),
+    forwardRef(() => ObjectsModule),
+  ],
+  exports: [TypeWorkService],
 })
-export class TypeWorkModule {
-}
+export class TypeWorkModule {}

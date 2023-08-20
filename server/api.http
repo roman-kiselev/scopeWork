@@ -1,4 +1,8 @@
-@host = http://192.168.3.16:7000
+@hostJob = http://192.168.3.16:7000
+@hostHome = http://192.168.1.14:7000
+
+@host = {{hostHome}}
+
 @email = "admin@admin.ru"
 @password = "admin"
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLnJ1IiwiaWQiOjEsInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiLQkNC00LzQuNC90LjRgdGC0YDQsNGC0L7RgCIsImRlbGV0ZWRBdCI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyMy0wNy0yNVQxMzozODoyNS4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wNy0yNVQxMzozODoyNS4wMDBaIn1dLCJiYW5uZWQiOmZhbHNlLCJpYXQiOjE2OTIzNTQ3MDcsImV4cCI6MTY5MjM5MDcwN30.EyWInl8M_mjIOsxiKIrS1kjcG61mFrjaf6exta58bos
@@ -87,3 +91,8 @@ Content-type: application/json; charset=utf-8
     "name": "Зеландия",
     "address": "г. Пенза"
 }
+
+
+### ------ Наименования работ ------
+### Создание наименования
+POST {{host}}/name-work HTTP/1.1
