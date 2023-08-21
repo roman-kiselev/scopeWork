@@ -119,5 +119,22 @@ export class UnitService {
     }
   }
 
-  // Создать ед.измерения с
+  // Возвращает значение
+  async getUnitName(id: number) {
+    try {
+      console.log(id);
+      const unit = await this.unitRepository.findByPk(id);
+      console.log(unit);
+      if (!unit) {
+        throw new HttpException('Не найдено', HttpStatus.NOT_FOUND);
+      }
+
+      return unit.name;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

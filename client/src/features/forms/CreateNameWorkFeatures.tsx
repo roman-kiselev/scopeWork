@@ -1,6 +1,6 @@
 import { useForm, useWatch } from "antd/es/form/Form";
 import FormCreateNameWork from "../../entities/nameWork/FormCreateNameWork";
-import { typeWorkApi, unitsApi } from "../../shared/api";
+import { nameWorkApi, typeWorkApi, unitsApi } from "../../shared/api";
 import { useAppSelector } from "../../shared/hooks";
 
 const CreateNameWorkFeatures = () => {
@@ -8,11 +8,19 @@ const CreateNameWorkFeatures = () => {
     const data = useWatch([], form);
     const { data: dataUnit } = unitsApi.useGetAllUnitsQuery();
     const { data: dataType } = typeWorkApi.useGetAllTypeWorkQuery();
+    const [createNameWork, { isSuccess }] =
+        nameWorkApi.useCreateNameWorkMutation();
+    
+    const {data: dataNameWorks} = nameWorkApi.useGetAllNameWorkQuery();
+    console.log(dataNameWorks)
 
-    const onFinish = () => {};
+    const onFinish = async () => {
+        const res = await createNameWork(data);
+        console.log(res);
+    };
     const { listUnits } = useAppSelector((state) => state.unit);
     const { listTypeWork } = useAppSelector((state) => state.typeWork);
-    console.log(data);
+
     return (
         <FormCreateNameWork
             form={form}

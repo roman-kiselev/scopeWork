@@ -6,7 +6,16 @@ import {
     IUserRegister,
     IUserResponseToken,
 } from "./api";
-import { IAuthSlice, IRole, ITypeWork, IUserToken } from "./models";
+import {
+    IAuthSlice,
+    IRole,
+    ITypeWork,
+    IUserToken,
+    ICreateNameWorkAttr,
+    INameWorkCreateResponse,
+    IUnit,
+    IUnitsCreateAttr,
+} from "./models";
 import { IInputFormItemProps, IInputPasswordFormItemProps } from "./ui";
 
 export type {
@@ -22,4 +31,8 @@ export type {
     IUserRegister,
     IUserResponseToken,
     IUserToken,
+    ICreateNameWorkAttr,
+    INameWorkCreateResponse,
+    IUnit,
+    IUnitsCreateAttr,
 };

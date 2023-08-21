@@ -2,8 +2,10 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
+import { Unit } from 'src/unit/unit.model';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
+import { NameWorkTypeWork } from './name-work-typework';
 import { NameWork } from './name-work.model';
 
 @Injectable()
@@ -141,10 +143,9 @@ export class NameWorkService {
     try {
       const { name, typeWorkId, unitId } = dto;
       // Проверим существование товара
-      const nameWork = await this.checkOneByName(name);
-      if (!nameWork) {
+      if (!this.checkNameWithDto(dto)) {
         throw new HttpException(
-          'Наименование существует',
+          'Не удалось создать наименование',
           HttpStatus.BAD_REQUEST,
         );
       }
@@ -153,9 +154,39 @@ export class NameWorkService {
         name: name,
         unitId: unitId,
       });
-      await newNameWork.$add('typeWorks', typeWorkId);
+      await newNameWork.$set('typeWorks', typeWorkId);
 
-      return newNameWork;
+      const nameWork = await this.nameWorkRepository.findOne({
+        where: { id: newNameWork.id },
+        include: [
+          {
+            model: TypeWork,
+            attributes: {
+              exclude: ['NameWorkTypeWork'],
+            },
+            through: { attributes: [] },
+          },
+        ],
+      });
+      if (!nameWork) {
+        throw new HttpException(
+          'Наименование не найдено',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const unit = await this.unitService.getOneUnitById(nameWork.unitId);
+
+      const finishNameWork = {
+        id: nameWork.id,
+        name: nameWork.name,
+        deletedAt: nameWork.deletedAt,
+        createdAt: nameWork.createdAt,
+        updatedAt: nameWork.updatedAt,
+        unit: unit.name,
+        typeWorks: nameWork.typeWorks,
+      };
+
+      return finishNameWork;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -189,6 +220,46 @@ export class NameWorkService {
       );
 
       return newNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getOneById(id: number) {
+    try {
+      const nameWork = await this.nameWorkRepository.findOne({
+        where: { id },
+        include: [
+          {
+            model: TypeWork,
+            attributes: {
+              exclude: ['NameWorkTypeWork'],
+            },
+            through: { attributes: [] },
+          },
+        ],
+      });
+      if (!nameWork) {
+        throw new HttpException(
+          'Наименование не найдено',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const unit = await this.unitService.getOneUnitById(nameWork.unitId);
+
+      const finishNameWork = {
+        id: nameWork.id,
+        name: nameWork.name,
+        deletedAt: nameWork.deletedAt,
+        createdAt: nameWork.createdAt,
+        updatedAt: nameWork.updatedAt,
+        unit: unit.name,
+        typeWorks: nameWork.typeWorks,
+      };
+      return finishNameWork;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

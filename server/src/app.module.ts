@@ -27,10 +27,11 @@ import { UserModule } from './user/user.module';
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
       //timezone: '+03:00',
+
       models: [],
       autoLoadModels: true,
       synchronize: true,
-      sync: { force: true },
+      //sync: { force: true },
     }),
     UserModule,
     AuthModule,

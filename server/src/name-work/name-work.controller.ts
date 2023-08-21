@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -28,6 +29,14 @@ export class NameWorkController {
   @ApiResponse({ type: HttpException })
   @Post('/')
   create(@Body() dto: CreateNameWorkDto) {
-    return this.nameWorkService.createNameWorkDefault(dto);
+    return this.nameWorkService.create(dto);
+  }
+
+  @ApiOperation({ summary: 'Получить по id' })
+  @ApiResponse({ status: HttpStatus.OK, type: NameWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/:id')
+  getById(@Param('id') id: number) {
+    return this.nameWorkService.getOneById(id);
   }
 }

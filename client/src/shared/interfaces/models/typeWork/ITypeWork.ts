@@ -7,5 +7,5 @@ export interface ITypeWork {
     deletedAt: boolean | null;
     createdAt: Date;
     updatedAt: Date;
-    objects: IObjectCreateResponse[] | [];
+    // objects: IObjectCreateResponse[] | [];
 }

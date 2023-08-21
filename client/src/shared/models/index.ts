@@ -2,6 +2,8 @@ import { authReducer } from "./auth";
 import { objectReducer, objectSlice } from "./objects";
 import { typeWorkReducer, typeWorkSlice } from "./typeWork/typeWorkSlice";
 import { unitReducer, unitSlice } from "./units";
+import {nameWorkReducer, nameWorkSlice} from "./nameWork"
+
 
 export {
     authReducer,
@@ -11,4 +13,5 @@ export {
     typeWorkSlice,
     unitReducer,
     unitSlice,
+    nameWorkReducer, nameWorkSlice
 };

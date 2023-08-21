@@ -3,9 +3,10 @@ import { IRole } from "./roles";
 import { IUserToken } from "./users";
 import { IUnit, IUnitsCreateAttr } from "./unit";
 import { ITypeWork } from "./typeWork";
-
+import { INameWorkCreateResponse, ICreateNameWorkAttr } from "./nameWork";
 export type { IAuthSlice };
 export type { IRole };
 export type { IUserToken };
 export type { IUnit, IUnitsCreateAttr };
 export type { ITypeWork };
+export type { INameWorkCreateResponse, ICreateNameWorkAttr };
