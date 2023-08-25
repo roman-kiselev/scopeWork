@@ -2,10 +2,8 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
-import { Unit } from 'src/unit/unit.model';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
-import { NameWorkTypeWork } from './name-work-typework';
 import { NameWork } from './name-work.model';
 
 @Injectable()
@@ -182,7 +180,7 @@ export class NameWorkService {
         deletedAt: nameWork.deletedAt,
         createdAt: nameWork.createdAt,
         updatedAt: nameWork.updatedAt,
-        unit: unit.name,
+        unit: unit,
         typeWorks: nameWork.typeWorks,
       };
 
@@ -198,10 +196,18 @@ export class NameWorkService {
   async findAllNames() {
     try {
       const names = await this.nameWorkRepository.findAll({
-        include: { all: true },
         where: {
           deletedAt: null,
         },
+        include: [
+          {
+            model: TypeWork,
+            attributes: {
+              exclude: ['NameWorkTypeWork'],
+            },
+            through: { attributes: [] },
+          },
+        ],
       });
 
       const newNames = Promise.all(
@@ -214,7 +220,8 @@ export class NameWorkService {
             deletedAt: name.deletedAt,
             createdAt: name.createdAt,
             updatedAt: name.updatedAt,
-            unit: unit.name,
+            typeWorks: name.typeWorks,
+            unit: unit,
           };
         }),
       );
@@ -256,7 +263,7 @@ export class NameWorkService {
         deletedAt: nameWork.deletedAt,
         createdAt: nameWork.createdAt,
         updatedAt: nameWork.updatedAt,
-        unit: unit.name,
+        unit: unit,
         typeWorks: nameWork.typeWorks,
       };
       return finishNameWork;

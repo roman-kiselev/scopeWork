@@ -1,8 +1,7 @@
+import { Table } from "antd";
+import type { ColumnsType, TableProps } from "antd/es/table";
 import React from "react";
-import { Table } from 'antd';
-import type { ColumnsType, TableProps } from 'antd/es/table';
-
-
+import { nameWorkApi } from "../../../shared/api";
 
 interface NewDataType {
     key: React.Key;
@@ -16,20 +15,19 @@ const newColumns: ColumnsType<NewDataType> = [
         title: "Наименование",
         dataIndex: "name",
         filters: [
-           {
-            text: "Кран",
-            value: "Кран"
-           }
+            {
+                text: "Кран",
+                value: "Кран",
+            },
         ],
         filterSearch: true,
         onFilter: (value, record) => record.name.startsWith(value as string),
-        width :"30%"
+        width: "30%",
     },
     {
         title: "Ед.измерения",
         dataIndex: "unit",
-        sortDirections: ['descend'],
-        
+        sortDirections: ["descend"],
     },
     {
         title: "Тип работ",
@@ -37,44 +35,54 @@ const newColumns: ColumnsType<NewDataType> = [
         filters: [
             {
                 text: "АСКУЭ",
-                value: "АСКУЭ"
+                value: "АСКУЭ",
             },
             {
                 text: "Водоснабжение",
-                value: "Водоснабжение"
-            }
+                value: "Водоснабжение",
+            },
         ],
-        onFilter: (value, record) => record.typeWork.startsWith(value as string),
+        onFilter: (value, record) =>
+            record.typeWork.startsWith(value as string),
         filterSearch: true,
-        width: "40%"
-    }
-]
+        width: "40%",
+    },
+    {
+        title: "Действия",
+        dataIndex: "action",
+    },
+];
 
 const newData: NewDataType[] = [
     {
         key: 1,
         name: "Краны",
         unit: "шт",
-        typeWork: "Водоснабжение"
+        typeWork: "Водоснабжение",
     },
     {
         key: 2,
         name: "Провода",
         unit: "м",
-        typeWork: "АСКУЭ"
+        typeWork: "АСКУЭ",
+    },
+];
 
-    }
-] 
+const onChange: TableProps<NewDataType>["onChange"] = (
+    pagination,
+    filters,
+    sorter,
+    extra
+) => {
+    console.log("params", pagination, filters, sorter, extra);
+};
 
-
-  const onChange: TableProps<NewDataType>['onChange'] = (pagination, filters, sorter, extra) => {
-    console.log('params', pagination, filters, sorter, extra);
-  };
-  
 const Catalog = () => {
+    const { isSuccess, data, isLoading } = nameWorkApi.useGetAllNameWorkQuery();
+
     return (
         <Table columns={newColumns} dataSource={newData} onChange={onChange} />
-    )
+    );
 };
 
 export default Catalog;

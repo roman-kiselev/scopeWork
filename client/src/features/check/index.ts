@@ -1,16 +1,15 @@
 import CheckA from "./CheckA";
-import CheckR from "./CheckR";
 import CheckAR from "./CheckAR";
+import CheckR from "./CheckR";
 import SuspenseLoadCheckA from "./SuspenseLoadCheckA";
-import SuspenseLoadCheckR from "./SuspenseLoadCheckR";
 import SuspenseLoadCheckAR from "./SuspenseLoadCheckAR";
-
+import SuspenseLoadCheckR from "./SuspenseLoadCheckR";
 
 export {
     CheckA,
-    CheckR,
     CheckAR,
+    CheckR,
     SuspenseLoadCheckA,
-    SuspenseLoadCheckR,
     SuspenseLoadCheckAR,
+    SuspenseLoadCheckR,
 };
