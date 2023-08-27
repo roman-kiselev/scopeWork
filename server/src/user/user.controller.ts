@@ -11,6 +11,14 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @ApiOperation({ summary: 'Получаем всех пользователей' })
+  @ApiResponse({ status: HttpStatus.OK, type: [User] })
+  @ApiResponse({ type: HttpException })
+  @Get('/')
+  async getAllUsers() {
+    return await this.userService.getAllUsers();
+  }
+
   @ApiOperation({ summary: 'Получаем объект по email' })
   @ApiResponse({ status: HttpStatus.OK, type: User })
   @ApiResponse({ type: HttpException })

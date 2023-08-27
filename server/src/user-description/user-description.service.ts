@@ -1,8 +1,8 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { UserDescription } from './user-description.model';
-import { CreateUserDescriptionDto } from './dto/create-user-description.dto';
 import { UserService } from 'src/user/user.service';
+import { CreateUserDescriptionDto } from './dto/create-user-description.dto';
+import { UserDescription } from './user-description.model';
 
 @Injectable()
 export class UserDescriptionService {

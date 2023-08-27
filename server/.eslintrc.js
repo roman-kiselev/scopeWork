@@ -22,4 +22,7 @@ module.exports = {
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
   },
+  prettier: {
+    endOfLine: 'auto', // Change this value to 'lf' for LF line endings or 'crlf' for CRLF line endings
+  },
 };

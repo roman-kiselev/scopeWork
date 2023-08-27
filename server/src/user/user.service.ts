@@ -170,4 +170,19 @@ export class UserService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  // Получим всех пользователей
+  async getAllUsers() {
+    try {
+      const users = await this.userRepository.findAll({
+        include: { all: true },
+      });
+      return users;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
