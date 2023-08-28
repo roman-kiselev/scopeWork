@@ -1,7 +1,7 @@
 @hostJob = http://192.168.3.16:7000
 @hostHome = http://192.168.1.14:7000
 
-@host = {{hostHome}}
+@host = {{hostJob}}
 
 @email = "admin@admin.ru"
 @password = "admin"
@@ -133,3 +133,19 @@ GET {{host}}/name-work/4 HTTP/1.1
 ### Получение всех пользователей
 GET {{host}}/user HTTP/1.1
 Authorization: Bearer {{token}}
+
+
+
+### ------ Объём работ ---------------------------------------------------------
+### Получение всех объёмов
+GET {{host}}/scope-work HTTP/1.1
+
+###
+### Создание объёма
+POST {{host}}/scope-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "idTypeWork": 1
+}
+
