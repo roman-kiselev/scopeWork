@@ -1,10 +1,10 @@
 import { Controller } from '@nestjs/common';
-import { ScopeWorkService } from './scope-work.service';
+import { Body, Get, Post } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
+import { HttpException } from '@nestjs/common/exceptions';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ScopeWork } from './scope-work.model';
-import { HttpException } from '@nestjs/common/exceptions';
-import { Body, Post, Get } from '@nestjs/common/decorators';
+import { ScopeWorkService } from './scope-work.service';
 
 @ApiTags('Объём работ')
 @Controller('scope-work')
@@ -23,7 +23,7 @@ export class ScopeWorkController {
   @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
   @ApiResponse({ type: HttpException })
   @Post('/')
-  async createScope(@Body('idScopeWork') idScopeWork: number) {
-    return await this.scopeWorkService.createScopeWork(idScopeWork);
+  async createScope(@Body('idTypeWork') idTypeWork: number) {
+    return await this.scopeWorkService.create(idTypeWork);
   }
 }

@@ -3,6 +3,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -10,6 +11,7 @@ import { NameWorkTypeWork } from 'src/name-work/name-work-typework';
 import { NameWork } from 'src/name-work/name-work.model';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { Objects } from 'src/objects/objects.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 
 interface TypeWorkAttr {
   id: number;
@@ -52,4 +54,7 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
 
   @BelongsToMany(() => NameWork, () => NameWorkTypeWork)
   nameWorks: NameWork[];
+
+  @HasMany(() => ScopeWork)
+  scopeWork: ScopeWork[];
 }

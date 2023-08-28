@@ -9,6 +9,7 @@ import {
 } from 'sequelize-typescript';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { TotalVolume } from 'src/total-volume/total-volume.model';
+import { TypeWork } from 'src/type-work/type-work.model';
 
 interface ScopeWorkAttr {
   // value?: number;
@@ -35,6 +36,10 @@ export class ScopeWork extends Model<ScopeWork, ScopeWorkAttr> {
 
   @Column({ type: DataType.DATE })
   deletedAt!: Date;
+
+  @ForeignKey(() => TypeWork)
+  @Column({ type: DataType.INTEGER })
+  typeWorkId: number;
 
   @ForeignKey(() => ObjectTypeWork)
   @Column({ type: DataType.INTEGER })

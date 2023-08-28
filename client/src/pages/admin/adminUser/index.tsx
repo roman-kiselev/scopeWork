@@ -1,11 +1,12 @@
-import React from "react";
 import { Route, Routes } from "react-router";
+import CreateUser from "./CreateUser";
+import ListUser from "./ListUser";
 
 const AdminUserRoutes = () => {
     return (
         <Routes>
-            <Route index element={<h3>Список</h3>} />
-            <Route path="create" element={<h3>Создать пользователя</h3>} />
+            <Route index element={<ListUser />} />
+            <Route path="create" element={<CreateUser />} />
         </Routes>
     );
 };

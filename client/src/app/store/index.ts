@@ -10,6 +10,7 @@ import {
     objectReducer,
     typeWorkReducer,
     unitReducer,
+    usersReducer,
 } from "../../shared/models";
 
 const listenerMiddleware = createListenerMiddleware();
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     unit: unitReducer,
     typeWork: typeWorkReducer,
     nameWork: nameWorkReducer,
+    users: usersReducer,
     [mainApi.reducerPath]: mainApi.reducer,
     [objectMainApi.reducerPath]: objectMainApi.reducer,
 });
