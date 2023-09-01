@@ -1,11 +1,12 @@
-import React, {lazy} from "react";
-import {Route, Routes} from "react-router";
-import {SuspenseLoad} from "../../../entities";
+import { lazy } from "react";
+import { Route, Routes } from "react-router";
+import { SuspenseLoad } from "../../../entities";
 
 const CreateObject = lazy(() => import("./CreateObject"));
 const ScopeObject = lazy(() => import("./ScopeObject"));
 const ConfigAndListObjects = lazy(() => import("./ConfigAndListObjects"));
-const OneObjectconfig = lazy(() => import("./OneObjectConfig"))
+const OneObjectconfig = lazy(() => import("./OneObjectConfig"));
+const CreateListNameWork = lazy(() => import("./CreateListNameWork"));
 const AdminObjectsRoutes = () => {
     return (
         <Routes>
@@ -13,7 +14,7 @@ const AdminObjectsRoutes = () => {
                 index
                 element={
                     <SuspenseLoad>
-                        <ConfigAndListObjects/>
+                        <ConfigAndListObjects />
                     </SuspenseLoad>
                 }
             />
@@ -21,7 +22,7 @@ const AdminObjectsRoutes = () => {
                 path=":id"
                 element={
                     <SuspenseLoad>
-                        <OneObjectconfig/>
+                        <OneObjectconfig />
                     </SuspenseLoad>
                 }
             />
@@ -29,7 +30,7 @@ const AdminObjectsRoutes = () => {
                 path="create"
                 element={
                     <SuspenseLoad>
-                        <CreateObject/>
+                        <CreateObject />
                     </SuspenseLoad>
                 }
             />
@@ -37,7 +38,15 @@ const AdminObjectsRoutes = () => {
                 path="scope"
                 element={
                     <SuspenseLoad>
-                        <ScopeObject/>
+                        <ScopeObject />
+                    </SuspenseLoad>
+                }
+            />
+            <Route
+                path="list"
+                element={
+                    <SuspenseLoad>
+                        <CreateListNameWork />
                     </SuspenseLoad>
                 }
             />
