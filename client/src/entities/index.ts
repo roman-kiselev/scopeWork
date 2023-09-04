@@ -1,13 +1,22 @@
-import { FormLogin } from './formLogin'
-import { FormRegister } from './formRegister'
-import { CheckAuth, CheckRole, SuspenseLoad } from './check'
-import { FormCreateObject, ListInfiniteShort, OneObjectShort } from './objects'
-import { SimpleShortItemForList, SimpleShortList } from './list'
-import { FormUnit } from './units'
+import { CheckAuth, CheckRole, SuspenseLoad } from "./check";
+import { FormLogin } from "./formLogin";
+import { FormRegister } from "./formRegister";
+import { SimpleShortItemForList, SimpleShortList } from "./list";
+import { FormCreateNameWork, ListForAddNameWork, MainNameWork, ShortListNames } from "./nameWork";
+import { FormCreateObject, ListInfiniteShort, OneObjectShort } from "./objects";
+import { FormUnit } from "./units";
 
+export {
+    CheckAuth,
+    CheckRole,
+    FormCreateNameWork,
+    FormCreateObject,
+    FormLogin,
+    FormRegister,
+    FormUnit, ListForAddNameWork, ListInfiniteShort,
+    MainNameWork,
+    OneObjectShort, ShortListNames, SimpleShortItemForList,
+    SimpleShortList,
+    SuspenseLoad
+};
 
-export { FormLogin, FormRegister }
-export { CheckAuth, CheckRole, SuspenseLoad }
-export { FormCreateObject, OneObjectShort, ListInfiniteShort }
-export { SimpleShortItemForList, SimpleShortList }
-export { FormUnit }

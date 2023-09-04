@@ -33,6 +33,8 @@ Content-type: application/json; charset=utf-8
 ### Получение типа работ
 GET {{host}}/type-work HTTP/1.1
 
+### Получение типа работ
+GET {{host}}/type-work/short HTTP/1.1
 
 ### Создание типа работ
 POST {{host}}/type-work HTTP/1.1

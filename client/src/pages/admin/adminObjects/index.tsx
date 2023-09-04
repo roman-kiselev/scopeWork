@@ -1,12 +1,13 @@
 import { lazy } from "react";
 import { Route, Routes } from "react-router";
 import { SuspenseLoad } from "../../../entities";
+import NameWorkRouter from "./nameWork";
 
 const CreateObject = lazy(() => import("./CreateObject"));
 const ScopeObject = lazy(() => import("./ScopeObject"));
 const ConfigAndListObjects = lazy(() => import("./ConfigAndListObjects"));
 const OneObjectconfig = lazy(() => import("./OneObjectConfig"));
-const CreateListNameWork = lazy(() => import("./CreateListNameWork"));
+const CreateListNameWork = lazy(() => import("./nameWork/HomeNameWork"));
 const AdminObjectsRoutes = () => {
     return (
         <Routes>
@@ -43,10 +44,10 @@ const AdminObjectsRoutes = () => {
                 }
             />
             <Route
-                path="list"
+                path="list/*"
                 element={
                     <SuspenseLoad>
-                        <CreateListNameWork />
+                        <NameWorkRouter />
                     </SuspenseLoad>
                 }
             />
