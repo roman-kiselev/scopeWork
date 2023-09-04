@@ -1,7 +1,7 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import {InjectModel} from '@nestjs/sequelize';
-import {CreateTypeWorkDto} from './dto/create-type-work.dto';
-import {TypeWork} from './type-work.model';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/sequelize';
+import { CreateTypeWorkDto } from './dto/create-type-work.dto';
+import { TypeWork } from './type-work.model';
 
 @Injectable()
 export class TypeWorkService {
@@ -116,6 +116,18 @@ export class TypeWorkService {
                 throw new HttpException("Такого типа не существует", HttpStatus.NOT_FOUND)
             }
             return typeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getAllTypeWorksShort() {
+        try {   
+            cosnt types = await this.
+
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;
