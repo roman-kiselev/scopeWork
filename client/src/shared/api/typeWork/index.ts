@@ -9,5 +9,11 @@ export const typeWorkApi = mainApi.injectEndpoints({
                 method: "GET",
             }),
         }),
+        getAllShort: builder.query<ITypeWork[], void>({
+            query: () => ({
+                url: "/type-work/short",
+                method: "GET",
+            }),
+        }),
     }),
 });

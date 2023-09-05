@@ -1,7 +1,7 @@
 @hostJob = http://192.168.3.16:7000
 @hostHome = http://192.168.1.14:7000
 
-@host = {{hostJob}}
+@host = {{hostHome}}
 
 @email = "admin@admin.ru"
 @password = "admin"

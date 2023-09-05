@@ -1,5 +1,6 @@
 import { Button, Input, MenuProps, Row, Select, Table } from "antd";
 import { useState } from "react";
+import { typeWorkApi } from "../../shared/api";
 
 const dataSource = [
     {
@@ -29,6 +30,14 @@ const items: MenuProps["items"] = [
 
 const ShortListNames = () => {
     const [searchedText, setSearchedText] = useState("");
+    // Получаем данные о типах
+    const { data } = typeWorkApi.useGetAllShortQuery();
+    const dataOption = data?.map((type) => {
+        const { id, name } = type;
+        return { value: id, label: name };
+    });
+    dataOption?.push({ value: 0, label: "Все типы" });
+    // Создаём колонки
     const columns = [
         {
             title: "Наименование",
@@ -67,6 +76,9 @@ const ShortListNames = () => {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    const handleSelectChange = (value: any) => {
+        console.log("Выбранное значение:", value);
+    };
     return (
         <Row style={{ maxHeight: "70vh", flexDirection: "column" }}>
             <div style={{ marginBottom: 16, marginTop: 10 }}>
@@ -84,14 +96,11 @@ const ShortListNames = () => {
             </div>
             <Row style={{ boxSizing: "border-box" }}>
                 <Select
-                    defaultValue="lucy"
-                    style={{ width: 120 }}
+                    defaultValue="Все типы"
+                    style={{ width: 180 }}
                     // loading
-                    options={[
-                        { value: "lucy", label: "АСКУЭ" },
-                        { value: "two", label: "Водоснабжение" },
-                        { value: "three", label: "Канализация" },
-                    ]}
+                    options={dataOption}
+                    onChange={handleSelectChange}
                 />
             </Row>
             <Row>

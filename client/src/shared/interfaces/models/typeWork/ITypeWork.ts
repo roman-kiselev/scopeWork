@@ -1,5 +1,3 @@
-import { IObjectCreateResponse } from "../../api";
-
 export interface ITypeWork {
     id: number;
     name: string;

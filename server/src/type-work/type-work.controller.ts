@@ -1,11 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
-  Post,
-  Get,
   Param,
+  Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateTypeWorkDto } from './dto/create-type-work.dto';
@@ -31,6 +31,14 @@ export class TypeWorkController {
   @Get('/')
   getAll() {
     return this.typeWorkService.findAllTypeWork();
+  }
+
+  @ApiOperation({ summary: 'Получить список коротко' })
+  @ApiResponse({ status: HttpStatus.OK, type: [TypeWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/short')
+  getAllShort() {
+    return this.typeWorkService.getAllTypeWorksShort();
   }
 
   @ApiOperation({ summary: 'Получить весь список у объекта' })
