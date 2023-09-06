@@ -1,5 +1,6 @@
 import { Button, Input, MenuProps, Row, Select, Table } from "antd";
 import { useState } from "react";
+import { useQuery } from "react-query";
 import { nameWorkApi, typeWorkApi } from "../../shared/api";
 
 const dataSource = [
@@ -30,6 +31,15 @@ const items: MenuProps["items"] = [
 
 const ShortListNames = () => {
     const [searchedText, setSearchedText] = useState("");
+    // const { data: dataNameWork, isSuccess } =
+    //     nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
+    //         typeWorkId: 0,
+    //     });
+    const { data: dataNameWork, isSuccess } = useQuery(
+        "getAllNameWorkByTypeWorkId",
+        () => nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({ typeWorkId: 0 })
+    );
+    console.log(dataNameWork);
     // Получаем данные о типах
     const { data } = typeWorkApi.useGetAllShortQuery();
     const dataOption = data?.map((type) => {
