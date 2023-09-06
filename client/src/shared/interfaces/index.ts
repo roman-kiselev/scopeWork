@@ -9,6 +9,7 @@ import {
 import {
     IAuthSlice,
     ICreateNameWorkAttr,
+    INameWorkAndUnit,
     INameWorkCreateResponse,
     IRole,
     ITypeWork,
@@ -27,6 +28,7 @@ export type {
     IDataError,
     IInputFormItemProps,
     IInputPasswordFormItemProps,
+    INameWorkAndUnit,
     INameWorkCreateResponse,
     IObjectCreateAttr,
     IObjectCreateResponse,

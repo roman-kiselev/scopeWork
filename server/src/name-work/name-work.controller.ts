@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
@@ -30,6 +31,14 @@ export class NameWorkController {
   @Post('/')
   create(@Body() dto: CreateNameWorkDto) {
     return this.nameWorkService.create(dto);
+  }
+
+  @ApiOperation({ summary: 'Получить по типу' })
+  @ApiResponse({ status: HttpStatus.OK, type: [NameWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/byTypeWork')
+  getAllByTypeWork(@Query('typeWorkId') typeWorkId: string) {
+    return this.nameWorkService.getAllByTypeWorkId(typeWorkId);
   }
 
   @ApiOperation({ summary: 'Получить по id' })

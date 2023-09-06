@@ -1,6 +1,6 @@
 import { Button, Input, MenuProps, Row, Select, Table } from "antd";
 import { useState } from "react";
-import { typeWorkApi } from "../../shared/api";
+import { nameWorkApi, typeWorkApi } from "../../shared/api";
 
 const dataSource = [
     {
@@ -37,6 +37,7 @@ const ShortListNames = () => {
         return { value: id, label: name };
     });
     dataOption?.push({ value: 0, label: "Все типы" });
+    // Получаем наименования по id Типа
     // Создаём колонки
     const columns = [
         {
@@ -75,10 +76,15 @@ const ShortListNames = () => {
         onChange: onSelectChange,
     };
     const hasSelected = selectedRowKeys.length > 0;
-
-    const handleSelectChange = (value: any) => {
-        console.log("Выбранное значение:", value);
+    const [names, setNames] = useState([]);
+    const handleSelectChange = (value: number) => {
+        const { data, isSuccess } =
+            nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
+                typeWorkId: value,
+            });
+        console.log(data);
     };
+
     return (
         <Row style={{ maxHeight: "70vh", flexDirection: "column" }}>
             <div style={{ marginBottom: 16, marginTop: 10 }}>
@@ -96,7 +102,7 @@ const ShortListNames = () => {
             </div>
             <Row style={{ boxSizing: "border-box" }}>
                 <Select
-                    defaultValue="Все типы"
+                    defaultValue={0}
                     style={{ width: 180 }}
                     // loading
                     options={dataOption}

@@ -1,5 +1,9 @@
 import { IAuthSlice } from "./auth";
-import { ICreateNameWorkAttr, INameWorkCreateResponse } from "./nameWork";
+import {
+    ICreateNameWorkAttr,
+    INameWorkAndUnit,
+    INameWorkCreateResponse,
+} from "./nameWork";
 import { IRole } from "./roles";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
@@ -9,6 +13,7 @@ import { IUser, IUserToken, IUsersSlice } from "./users";
 export type {
     IAuthSlice,
     ICreateNameWorkAttr,
+    INameWorkAndUnit,
     INameWorkCreateResponse,
     IRole,
     ITypeWork,

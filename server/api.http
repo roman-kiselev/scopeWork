@@ -1,7 +1,7 @@
 @hostJob = http://192.168.3.16:7000
 @hostHome = http://192.168.1.14:7000
 
-@host = {{hostHome}}
+@host = {{hostJob}}
 
 @email = "admin@admin.ru"
 @password = "admin"
@@ -112,9 +112,10 @@ Content-type: application/json; charset=utf-8
 
 ### ------ Наименования работ ---------------------------------------------------------------
 ### Получение наименований
-
 GET {{host}}/name-work HTTP/1.1
 
+### Получение наименований по типу
+GET {{host}}/name-work/byTypeWork/?typeWorkId=3 HTTP/1.1
 
 ### Создание наименования
 POST {{host}}/name-work HTTP/1.1
@@ -128,7 +129,7 @@ Content-type: application/json; charset=utf-8
 
 ### Получить один по id
 
-GET {{host}}/name-work/2 HTTP/1.1
+GET {{host}}/name-work/1 HTTP/1.1
 ###
 
 ### ------ Пользователи ---------------------------------------------------------

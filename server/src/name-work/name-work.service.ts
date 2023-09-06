@@ -274,4 +274,51 @@ export class NameWorkService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  // Получить наименования по типу
+  async getAllByTypeWorkId(typeWorkId: string) {
+    try {
+      if (typeWorkId === '0') {
+        const names = await this.nameWorkRepository.findAll({
+          where: {
+            deletedAt: null,
+          },
+        });
+        return names;
+      }
+      const names = await this.typeWorkRepository.findByPk(typeWorkId, {
+        include: [
+          {
+            model: NameWork,
+            attributes: {
+              exclude: ['NameWorkTypeWork'],
+            },
+            through: { attributes: [] },
+          },
+        ],
+      });
+      const newNames = Promise.all(
+        names.nameWorks.map(async (name) => {
+          // Получим по id единицу измерения
+          const unit = await this.unitService.getOneUnitById(name.unitId);
+          return {
+            id: name.id,
+            name: name.name,
+            deletedAt: name.deletedAt,
+            createdAt: name.createdAt,
+            updatedAt: name.updatedAt,
+            typeWorks: name.typeWorks,
+            unit: unit,
+          };
+        }),
+      );
+
+      return newNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }
