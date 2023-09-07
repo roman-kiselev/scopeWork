@@ -1,13 +1,22 @@
-import { Form, Input, InputNumber, Popconfirm, Table, Typography } from "antd";
+import {
+    Form,
+    Input,
+    InputNumber,
+    Popconfirm,
+    Space,
+    Table,
+    Typography,
+} from "antd";
 import { useState } from "react";
 
+// Интерфейс одной строки
 interface Item {
     key: string;
     id: number;
     name: string;
     quantity: number;
 }
-
+// Тестовый массив
 const originalDataTwo: Item[] = [
     {
         id: 1,
@@ -29,6 +38,7 @@ const originalDataTwo: Item[] = [
     },
 ];
 
+// Пропс для редактирования
 interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     editing: boolean;
     dataIndex: string;
@@ -38,7 +48,7 @@ interface EditableCellProps extends React.HTMLAttributes<HTMLElement> {
     index: number;
     children: React.ReactNode;
 }
-
+// Начало компонента
 const EditableCell: React.FC<EditableCellProps> = ({
     editing,
     dataIndex,
@@ -72,7 +82,9 @@ const EditableCell: React.FC<EditableCellProps> = ({
         </td>
     );
 };
+// Конец компонента
 
+// Начало основного компонента
 const ListForAddNameWork = () => {
     const [form] = Form.useForm();
     const [data, setData] = useState(originalDataTwo);
@@ -80,21 +92,24 @@ const ListForAddNameWork = () => {
 
     const isEditing = (record: Item) => record.key === editingKey;
 
+    // Функция редактирования
     const edit = (record: Partial<Item> & { key: React.Key }) => {
         form.setFieldsValue({ name: "", age: "", address: "", ...record });
         setEditingKey(record.key);
     };
 
+    // Функция выхода
     const cancel = () => {
         setEditingKey("");
     };
-
+    // Сохранение данных при изменении
     const save = async (key: React.Key) => {
         try {
             const row = (await form.validateFields()) as Item;
 
             const newData = [...data];
             const index = newData.findIndex((item) => key === item.key);
+            console.log(index);
             if (index > -1) {
                 const item = newData[index];
                 newData.splice(index, 1, {
@@ -112,7 +127,7 @@ const ListForAddNameWork = () => {
             console.log("Validate Failed:", errInfo);
         }
     };
-
+    // Формируются колонки
     const columns = [
         {
             title: "Номер",
@@ -151,18 +166,27 @@ const ListForAddNameWork = () => {
                         </Popconfirm>
                     </span>
                 ) : (
-                    <Typography.Link
-                        disabled={editingKey !== ""}
-                        onClick={() => edit(record)}
-                        style={{ fontSize: 12 }}
-                    >
-                        Редактировать
-                    </Typography.Link>
+                    <Space>
+                        <Typography.Link
+                            disabled={editingKey !== ""}
+                            onClick={() => edit(record)}
+                            style={{ fontSize: 12 }}
+                        >
+                            Редактировать
+                        </Typography.Link>
+                        <Typography.Link
+                            disabled={editingKey !== ""}
+                            onClick={() => {}}
+                            style={{ fontSize: 12, color: "red" }}
+                        >
+                            Удалить
+                        </Typography.Link>
+                    </Space>
                 );
             },
         },
     ];
-
+    // Объединение колонок
     const mergedColumns = columns.map((col) => {
         if (!col.editable) {
             return col;

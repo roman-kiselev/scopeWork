@@ -1,8 +1,13 @@
-import { Button, Input, MenuProps, Row, Select, Table } from "antd";
+import { Button, Col, Input, MenuProps, Row, Select, Table } from "antd";
 import { useState } from "react";
-import { useQuery } from "react-query";
 import { nameWorkApi, typeWorkApi } from "../../shared/api";
 
+interface IDataSourse {
+    key: number;
+    id: number;
+    name: string;
+    unit: string;
+}
 const dataSource = [
     {
         key: "1",
@@ -30,24 +35,27 @@ const items: MenuProps["items"] = [
 ];
 
 const ShortListNames = () => {
+    // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
-    // const { data: dataNameWork, isSuccess } =
-    //     nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
-    //         typeWorkId: 0,
-    //     });
-    const { data: dataNameWork, isSuccess } = useQuery(
-        "getAllNameWorkByTypeWorkId",
-        () => nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({ typeWorkId: 0 })
-    );
-    console.log(dataNameWork);
-    // Получаем данные о типах
+    // Выбранные строки checkbox
+    const [loading, setLoading] = useState(false);
+    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+        console.log("selectedRowKeys changed: ", newSelectedRowKeys);
+        setSelectedRowKeys(newSelectedRowKeys);
+    };
+    const rowSelection = {
+        selectedRowKeys,
+        onChange: onSelectChange,
+    };
+    const hasSelected = selectedRowKeys.length > 0;
+    // Получаем данные о типах для первой загрузки
     const { data } = typeWorkApi.useGetAllShortQuery();
     const dataOption = data?.map((type) => {
         const { id, name } = type;
         return { value: id, label: name };
     });
     dataOption?.push({ value: 0, label: "Все типы" });
-    // Получаем наименования по id Типа
     // Создаём колонки
     const columns = [
         {
@@ -67,78 +75,83 @@ const ShortListNames = () => {
             key: "unit",
         },
     ];
-
-    //
-    const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
-    const [loading, setLoading] = useState(false);
-
+    // Добавление выбранных строк
     const start = () => {
         console.log(selectedRowKeys);
     };
+    // Получение типов при изменении select
+    const [valueOption, setValueOption] = useState(0);
+    const { data: dataNameWork, isSuccess } =
+        nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
+            typeWorkId: valueOption,
+        });
 
-    const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-        setSelectedRowKeys(newSelectedRowKeys);
-    };
+    const newDataNameWork: IDataSourse[] | undefined = dataNameWork?.map(
+        (name) => {
+            const { id, name: nameWork, unit } = name;
 
-    const rowSelection = {
-        selectedRowKeys,
-        onChange: onSelectChange,
-    };
-    const hasSelected = selectedRowKeys.length > 0;
-    const [names, setNames] = useState([]);
+            return {
+                id: id,
+                key: id,
+                name: nameWork,
+                unit: unit ? unit.name : "шт",
+            } as IDataSourse;
+        }
+    );
+
     const handleSelectChange = (value: number) => {
-        const { data, isSuccess } =
-            nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
-                typeWorkId: value,
-            });
-        console.log(data);
+        setValueOption(value);
     };
 
     return (
-        <Row style={{ maxHeight: "70vh", flexDirection: "column" }}>
-            <div style={{ marginBottom: 16, marginTop: 10 }}>
-                <Button
-                    type="primary"
-                    onClick={start}
-                    disabled={!hasSelected}
-                    loading={loading}
-                >
-                    Добавить
-                </Button>
-                <span style={{ marginLeft: 8 }}>
-                    {hasSelected ? `Выбрано ${selectedRowKeys.length} шт` : ""}
-                </span>
-            </div>
-            <Row style={{ boxSizing: "border-box" }}>
-                <Select
-                    defaultValue={0}
-                    style={{ width: 180 }}
-                    // loading
-                    options={dataOption}
-                    onChange={handleSelectChange}
-                />
-            </Row>
-            <Row>
-                <Input.Search
-                    placeholder="Поиск ..."
-                    style={{ margin: "10px 0" }}
-                    onSearch={(value) => {
-                        setSearchedText(value);
-                    }}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        setSearchedText(e.target.value);
-                    }}
-                />
-            </Row>
-            <Row style={{ marginTop: 10 }}>
+        <Row style={{ maxHeight: "70vh" }}>
+            <Col style={{ flexDirection: "column" }}>
+                <div style={{ marginBottom: 16, marginTop: 10 }}>
+                    <Button
+                        type="primary"
+                        onClick={start}
+                        disabled={!hasSelected}
+                        loading={loading}
+                    >
+                        Добавить
+                    </Button>
+                    <span style={{ marginLeft: 8 }}>
+                        {hasSelected
+                            ? `Выбрано ${selectedRowKeys.length} шт`
+                            : ""}
+                    </span>
+                </div>
+                <Row style={{ boxSizing: "border-box" }}>
+                    <Select
+                        defaultValue={0}
+                        style={{ width: 180 }}
+                        // loading
+                        options={dataOption}
+                        onChange={handleSelectChange}
+                    />
+                </Row>
+                <Row>
+                    <Input.Search
+                        placeholder="Поиск ..."
+                        style={{ margin: "10px 0" }}
+                        onSearch={(value) => {
+                            setSearchedText(value);
+                        }}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                            setSearchedText(e.target.value);
+                        }}
+                    />
+                </Row>
+            </Col>
+
+            <Col style={{ marginTop: 10, width: "100%" }}>
                 <Table
-                    dataSource={dataSource}
+                    dataSource={newDataNameWork}
                     columns={columns}
                     rowSelection={rowSelection}
                     style={{ width: "100%" }}
                 />
-            </Row>
+            </Col>
         </Row>
     );
 };

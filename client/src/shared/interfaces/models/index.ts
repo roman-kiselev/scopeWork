@@ -4,6 +4,7 @@ import {
     INameWorkAndUnit,
     INameWorkCreateResponse,
 } from "./nameWork";
+import { INameWorkWithQuantity } from "./nameWorkList";
 import { IRole } from "./roles";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
@@ -15,6 +16,7 @@ export type {
     ICreateNameWorkAttr,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkWithQuantity,
     IRole,
     ITypeWork,
     IUnit,

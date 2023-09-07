@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './auth/auth.module';
+import { ListNameWorkModule } from './list-name-work/list-name-work.module';
 import { ListWorkModule } from './list-work/list-work.module';
 import { LogListWorkModule } from './log-list-work/log-list-work.module';
 import { NameWorkModule } from './name-work/name-work.module';
@@ -27,7 +28,6 @@ import { UserModule } from './user/user.module';
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
       //timezone: '+03:00',
-
       models: [],
       autoLoadModels: true,
       synchronize: true,
@@ -45,6 +45,7 @@ import { UserModule } from './user/user.module';
     TotalVolumeModule,
     ListWorkModule,
     LogListWorkModule,
+    ListNameWorkModule,
   ],
   controllers: [],
   providers: [],

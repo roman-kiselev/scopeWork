@@ -7,6 +7,7 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameWorkTypeWork } from 'src/name-work/name-work-typework';
 import { NameWork } from 'src/name-work/name-work.model';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
@@ -57,4 +58,7 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
 
   @HasMany(() => ScopeWork)
   scopeWork: ScopeWork[];
+
+  @HasMany(() => ListNameWork)
+  listNameWork: ListNameWork[];
 }
