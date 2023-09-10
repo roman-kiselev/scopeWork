@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { ModelAttributeColumnOptions } from 'sequelize';
 import {
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { NameWork } from 'src/name-work/name-work.model';
+import { NameList } from 'src/name_list/name-list.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 
 interface ListNameWorkAttr {
@@ -50,4 +53,7 @@ export class ListNameWork extends Model<ListNameWork, ListNameWorkAttr> {
 
   @ForeignKey(() => TypeWork)
   typeWorkId: number;
+
+  @BelongsToMany(() => NameWork, () => NameList)
+  nameWorks: NameWork[];
 }

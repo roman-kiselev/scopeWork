@@ -6,6 +6,7 @@ import { ListNameWorkModule } from './list-name-work/list-name-work.module';
 import { ListWorkModule } from './list-work/list-work.module';
 import { LogListWorkModule } from './log-list-work/log-list-work.module';
 import { NameWorkModule } from './name-work/name-work.module';
+import { NameListModule } from './name_list/name_list.module';
 import { ObjectsModule } from './objects/objects.module';
 import { RolesModule } from './roles/roles.module';
 import { ScopeWorkModule } from './scope-work/scope-work.module';
@@ -46,6 +47,7 @@ import { UserModule } from './user/user.module';
     ListWorkModule,
     LogListWorkModule,
     ListNameWorkModule,
+    NameListModule,
   ],
   controllers: [],
   providers: [],

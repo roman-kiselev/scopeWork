@@ -8,6 +8,8 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameList } from 'src/name_list/name-list.model';
 import { TotalVolume } from 'src/total-volume/total-volume.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { Unit } from 'src/unit/unit.model';
@@ -50,4 +52,7 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
   @BelongsToMany(() => TypeWork, () => NameWorkTypeWork)
   typeWorks: TypeWork[];
+
+  @BelongsToMany(() => ListNameWork, () => NameList)
+  listNameWorks: ListNameWork[];
 }

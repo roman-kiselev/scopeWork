@@ -1,25 +1,26 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateListDto } from './dto/create-list.dto';
-import { ListNameWork } from './list-name-work.model';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameWork } from 'src/name-work/name-work.model';
+import { CreateNameListDto } from './dto/create-name-list.dto';
+import { NameList } from './name-list.model';
 
 @Injectable()
-export class ListNameWorkService {
+export class NameListService {
   constructor(
+    @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
+    @InjectModel(NameList) private nameListRepository: typeof NameList,
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
   ) {}
 
-  async createList(dto: CreateListDto) {
+  // Сооздание
+  async create(dto: CreateNameListDto) {
     try {
-      const { name = '', description = '', typeWorkId = 5 } = dto;
+      const { listNameWorkId, nameWorkId, quantity } = dto;
 
-      const nameList = await this.listNameWorkRepository.create({
-        description,
-        name,
-        typeWorkId,
-      });
-      return nameList;
+      const newName = await this.nameListRepository.create(dto);
+      return newName;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -31,12 +32,12 @@ export class ListNameWorkService {
     }
   }
 
-  async getAllList() {
+  async getAll() {
     try {
-      const allList = await this.listNameWorkRepository.findAll({
+      const names = await this.nameListRepository.findAll({
         include: { all: true },
       });
-      return allList;
+      return names;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
