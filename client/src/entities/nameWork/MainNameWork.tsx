@@ -1,15 +1,4 @@
-import {
-    Button,
-    Col,
-    DatePicker,
-    Form,
-    Input,
-    Popconfirm,
-    Row,
-    Typography,
-    message,
-} from "antd";
-import dayjs from "dayjs";
+import { Button, Col, Form, Input, Row, Typography, message } from "antd";
 const { TextArea } = Input;
 const { Text, Title } = Typography;
 
@@ -19,6 +8,18 @@ const onChange = (
     console.log("Change:", e.target.value);
 };
 const dateFormat = "YYYY-MM-DD";
+const d = new Date();
+const getNumWithZero = (n: number) => {
+    let newN: string;
+    if (n < 10) {
+        newN = `0${n}`;
+        return newN;
+    }
+    return n;
+};
+const nowDate = `${d.getFullYear()}-${getNumWithZero(
+    d.getMonth()
+)}-${getNumWithZero(d.getDate())}`;
 
 const layout = {
     labelCol: { span: 8 },
@@ -42,19 +43,20 @@ const MainNameWork = () => {
                 onFinish={() => {}}
                 style={{ maxWidth: 600 }}
             >
-                <Row>
+                {/* Нет у новых списков */}
+                {/* <Row>
                     <Row>
                         <Col style={{ margin: 10 }}>
                             <h3>Список № 1</h3>
                         </Col>
                         <Col style={{ margin: 10 }}>
                             <DatePicker
-                                defaultValue={dayjs("2023-08-23", dateFormat)}
+                                defaultValue={dayjs(nowDate, dateFormat)}
                                 disabled
                             />
                         </Col>
                     </Row>
-                </Row>
+                </Row> */}
                 <Row style={{ marginTop: 10 }}>
                     <Form.Item name={["name"]} label="Наименование">
                         <Input />
@@ -69,10 +71,10 @@ const MainNameWork = () => {
                 <Row>
                     <Col style={{ margin: 10 }}>
                         <Button type="primary" htmlType="submit">
-                            Сохранить
+                            Создать
                         </Button>
                     </Col>
-                    <Col style={{ margin: 10 }}>
+                    {/* <Col style={{ margin: 10 }}>
                         <Popconfirm
                             title="Удалить ед.измерения!"
                             description="Вы уверены что хотите удалить?"
@@ -83,7 +85,7 @@ const MainNameWork = () => {
                         >
                             <Button danger>Удалить</Button>
                         </Popconfirm>
-                    </Col>
+                    </Col> */}
                 </Row>
             </Form>
         </Row>

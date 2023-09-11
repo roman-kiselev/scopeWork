@@ -1,13 +1,16 @@
 import { IDataError } from "../../api";
 
-// interface INameWorkListItem {
-//     name:
-// }
+export interface Item {
+    key: string;
+    id: number;
+    name: string;
+    quantity: number;
+}
 
 export interface INameWorkListSlice {
-    // oneItem: ;
-    // list: ;
-
+    oneItem: Item | null;
+    list: Item[] | [];
+    selectedTypeWork: number;
     isLoading: boolean;
     isError: boolean;
     dataError: IDataError | null;

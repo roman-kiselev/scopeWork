@@ -1,3 +1,3 @@
+import { INameWorkListSlice } from "./INameWorkListSlice";
 import { INameWorkWithQuantity } from "./INameWorkWithQuantity";
-
-export type { INameWorkWithQuantity };
+export type { INameWorkListSlice, INameWorkWithQuantity };

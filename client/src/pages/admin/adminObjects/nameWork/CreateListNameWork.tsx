@@ -1,6 +1,6 @@
 import { Divider, Layout, Tabs, TabsProps } from "antd";
 import { Content } from "antd/es/layout/layout";
-import { MainNameWork, ShortListNames } from "../../../../entities";
+import { MainNameWork, ShortListNamesWithoutTypes } from "../../../../entities";
 import ListForAddNameWork from "../../../../entities/nameWork/ListForAddNameWork";
 
 const items: TabsProps["items"] = [
@@ -39,7 +39,7 @@ const CreateListNameWork = () => {
                 <div style={{ flex: 1, flexBasis: "30%", overflow: "auto" }}>
                     {/* Content for right window */}
                     <h1>Список наименований работ</h1>
-                    <ShortListNames />
+                    <ShortListNamesWithoutTypes />
                 </div>
             </Content>
         </Layout>
