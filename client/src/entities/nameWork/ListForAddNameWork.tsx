@@ -1,7 +1,7 @@
 import { Button, Col, Form, Row, Select } from "antd";
 import { useState } from "react";
 import { nameWorkApi, typeWorkApi } from "../../shared/api";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { useAppDispatch } from "../../shared/hooks";
 import { getSelectedTypeWork, setSelectedTypeWork } from "../../shared/models";
 import { EditTableForNewList } from "./table";
 
@@ -24,11 +24,9 @@ interface Item {
 const ListForAddNameWork = () => {
     const dispatch = useAppDispatch();
     const [form] = Form.useForm();
-    const { list } = useAppSelector((store) => store.nameWorkList);
     // Данные выбора типов
     // Получаем данные о типах для первой загрузки
     // Получение типов при изменении select
-
     const [valueOption, setValueOption] = useState(0);
     const { data: dataTypeWorks } = typeWorkApi.useGetAllShortQuery();
     const { data: dataNameWork, isSuccess } =
@@ -43,7 +41,8 @@ const ListForAddNameWork = () => {
     dataOption?.push({ value: 0, label: "Все типы" });
 
     const handleSelectChange = (value: number) => {
-        console.log(dispatch(setSelectedTypeWork(value)));
+        //console.log(dispatch(setSelectedTypeWork(value)));
+        dispatch(setSelectedTypeWork(value));
         setValueOption(value);
     };
 
@@ -68,7 +67,7 @@ const ListForAddNameWork = () => {
                     />
                 </Col>
             </Row>
-            <EditTableForNewList form={form} originalData={list} />
+            <EditTableForNewList form={form} />
         </div>
     );
 };

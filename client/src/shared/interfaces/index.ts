@@ -21,6 +21,7 @@ import {
     IUserDescription,
     IUserToken,
     IUsersSlice,
+    Item,
 } from "./models";
 import { IInputFormItemProps, IInputPasswordFormItemProps } from "./ui";
 
@@ -47,4 +48,5 @@ export type {
     IUserResponseToken,
     IUserToken,
     IUsersSlice,
+    Item,
 };

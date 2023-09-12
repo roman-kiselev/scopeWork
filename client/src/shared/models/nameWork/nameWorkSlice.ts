@@ -1,11 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
 import { nameWorkApi } from "../../api";
-import { IDataError, INameWorkCreateResponse } from "../../interfaces";
+import {
+    IDataError,
+    INameWorkAndUnit,
+    INameWorkCreateResponse,
+} from "../../interfaces";
 import CreateNameWork from "./CreateNameWork";
 import FindAllNameWork from "./FindAllNameWork";
+import FindNameByTypeWork from "./FindNameByTypeWork";
 
 export interface INameWorkSlice {
     listNameWork: INameWorkCreateResponse[] | [];
+    listNameWorkForOneType: INameWorkAndUnit[] | [];
+    selectedData: INameWorkAndUnit[] | [];
     isLoading: boolean;
     isError: boolean;
     dataError: IDataError | null;
@@ -13,6 +20,8 @@ export interface INameWorkSlice {
 
 export const initialState: INameWorkSlice = {
     listNameWork: [],
+    listNameWorkForOneType: [],
+    selectedData: [],
     isLoading: false,
     isError: false,
     dataError: null,
@@ -21,7 +30,19 @@ export const initialState: INameWorkSlice = {
 export const nameWorkSlice = createSlice({
     name: "nameWorkSlice",
     initialState,
-    reducers: {},
+    reducers: {
+        setDataSelect: (state, action: PayloadAction<React.Key[]>) => {
+            // Задача получить данные
+            const selectedDataByType: INameWorkAndUnit[] = [];
+            action.payload.map((number) => {
+                const oneItem: INameWorkAndUnit[] = current(
+                    state.listNameWorkForOneType
+                ).filter((item) => item.id === number);
+                return selectedDataByType.push(oneItem[0]);
+            });
+            state.selectedData = selectedDataByType;
+        },
+    },
     extraReducers(builder) {
         builder.addMatcher(
             nameWorkApi.endpoints.getAllNameWork.matchPending,
@@ -48,7 +69,21 @@ export const nameWorkSlice = createSlice({
             nameWorkApi.endpoints.createNameWork.matchRejected,
             CreateNameWork.rejected
         );
+        // Получаем список по типу
+        builder.addMatcher(
+            nameWorkApi.endpoints.getAllNameWorkByTypeWorkId.matchPending,
+            FindNameByTypeWork.pending
+        );
+        builder.addMatcher(
+            nameWorkApi.endpoints.getAllNameWorkByTypeWorkId.matchFulfilled,
+            FindNameByTypeWork.fulfilled
+        );
+        builder.addMatcher(
+            nameWorkApi.endpoints.getAllNameWorkByTypeWorkId.matchRejected,
+            FindNameByTypeWork.rejected
+        );
     },
 });
 
+export const { setDataSelect } = nameWorkSlice.actions;
 export const nameWorkReducer = nameWorkSlice.reducer;

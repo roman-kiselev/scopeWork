@@ -3,6 +3,7 @@ import {
     getSelectedTypeWork,
     nameWorkListReducer,
     nameWorkListSlice,
+    pushData,
     setSelectedTypeWork,
 } from "./nameWorkListSlice";
 
@@ -11,5 +12,6 @@ export {
     getSelectedTypeWork,
     nameWorkListReducer,
     nameWorkListSlice,
+    pushData,
     setSelectedTypeWork,
 };

@@ -1,6 +1,6 @@
 import { Form, Popconfirm, Space, Table, Typography } from "antd";
 import { useState } from "react";
-import { useAppDispatch } from "../../../shared/hooks";
+import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import { editList } from "../../../shared/models";
 import EditableCell from "./EditableCell";
 
@@ -16,15 +16,14 @@ interface EditTableForList {
     form: any;
     // cell: React.FC;
     // dataTable: Item[];
-    originalData: Item[];
+    //originalData: Item[];
 }
 
-const EditTableForNewList: React.FC<EditTableForList> = ({
-    form,
-    originalData,
-}) => {
+const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
     const dispatch = useAppDispatch();
-
+    const { list: originalData } = useAppSelector(
+        (store) => store.nameWorkList
+    );
     const [editingKey, setEditingKey] = useState("");
     // Функция выхода
     const cancel = () => {

@@ -1,10 +1,11 @@
 import { authReducer } from "./auth";
-import { nameWorkReducer, nameWorkSlice } from "./nameWork";
+import { nameWorkReducer, nameWorkSlice, setDataSelect } from "./nameWork";
 import {
     editList,
     getSelectedTypeWork,
     nameWorkListReducer,
     nameWorkListSlice,
+    pushData,
     setSelectedTypeWork,
 } from "./nameWorkList";
 import { objectReducer, objectSlice } from "./objects";
@@ -23,6 +24,8 @@ export {
     nameWorkSlice,
     objectReducer,
     objectSlice,
+    pushData,
+    setDataSelect,
     setSelectedTypeWork,
     typeWorkReducer,
     typeWorkSlice,

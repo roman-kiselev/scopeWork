@@ -4,7 +4,11 @@ import {
     INameWorkAndUnit,
     INameWorkCreateResponse,
 } from "./nameWork";
-import { INameWorkListSlice, INameWorkWithQuantity } from "./nameWorkList";
+import {
+    INameWorkListSlice,
+    INameWorkWithQuantity,
+    Item,
+} from "./nameWorkList";
 import { IRole } from "./roles";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
@@ -26,4 +30,5 @@ export type {
     IUserDescription,
     IUserToken,
     IUsersSlice,
+    Item,
 };

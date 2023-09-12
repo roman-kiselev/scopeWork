@@ -1,3 +1,3 @@
-import {nameWorkReducer, nameWorkSlice} from "./nameWorkSlice"
+import { nameWorkReducer, nameWorkSlice, setDataSelect } from "./nameWorkSlice";
 
-export {nameWorkReducer, nameWorkSlice}
+export { nameWorkReducer, nameWorkSlice, setDataSelect };

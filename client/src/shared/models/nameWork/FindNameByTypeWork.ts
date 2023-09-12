@@ -1,11 +1,10 @@
 import { CaseReducer } from "@reduxjs/toolkit";
-import { INameWorkCreateResponse } from "../../interfaces";
+import { INameWorkAndUnit } from "../../interfaces";
 import { CreateHandler, IDataError } from "../../interfaces/api";
 import { INameWorkSlice } from "./nameWorkSlice";
 
-class FindAllNameWork
-    implements
-        CreateHandler<INameWorkSlice, INameWorkCreateResponse[], IDataError>
+class FindNameByTypeWork
+    implements CreateHandler<INameWorkSlice, INameWorkAndUnit[], IDataError>
 {
     pending: CaseReducer<INameWorkSlice> = (state) => {
         state.isLoading = true;
@@ -14,11 +13,11 @@ class FindAllNameWork
     };
     fulfilled: CaseReducer<
         INameWorkSlice,
-        { payload: INameWorkCreateResponse[]; type: string }
+        { payload: INameWorkAndUnit[]; type: string }
     > = (state, action) => {
         const data = action.payload;
+        state.listNameWorkForOneType = data;
 
-        state.listNameWork = data;
         state.isLoading = false;
     };
     rejected: CaseReducer<INameWorkSlice> = (state, action) => {
@@ -32,4 +31,4 @@ class FindAllNameWork
     };
 }
 
-export default new FindAllNameWork();
+export default new FindNameByTypeWork();
