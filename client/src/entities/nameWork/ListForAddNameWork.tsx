@@ -38,7 +38,7 @@ const ListForAddNameWork = () => {
         const { id, name } = type;
         return { value: id, label: name };
     });
-    dataOption?.push({ value: 0, label: "Все типы" });
+    dataOption?.push({ value: 0, label: "Выберите тип" });
 
     const handleSelectChange = (value: number) => {
         //console.log(dispatch(setSelectedTypeWork(value)));

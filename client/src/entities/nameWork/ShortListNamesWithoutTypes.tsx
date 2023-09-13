@@ -1,7 +1,8 @@
 import { Button, Col, Input, MenuProps, Row, Table } from "antd";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { nameWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { INameWorkAndUnit } from "../../shared/interfaces";
 import { pushData, setDataSelect } from "../../shared/models";
 
 interface IDataSourse {
@@ -38,6 +39,16 @@ const items: MenuProps["items"] = [
 
 const ShortListNamesWithoutTypes = () => {
     const dispatch = useAppDispatch();
+    const { list } = useAppSelector((store) => store.nameWorkList);
+    const { selectedData } = useAppSelector((store) => store.nameWork);
+    const [stateSelectedData, setStateSelectedData] = useState<
+        INameWorkAndUnit | []
+    >([]);
+    useEffect(() => {
+        const stateSelectedData = selectedData;
+        dispatch(pushData(stateSelectedData));
+    }, [selectedData]);
+    //console.log(selectedData);
     // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
     // Выбранные строки checkbox
@@ -73,14 +84,11 @@ const ShortListNamesWithoutTypes = () => {
             key: "unit",
         },
     ];
-    const { list } = useAppSelector((store) => store.nameWorkList);
-    const { selectedData } = useAppSelector((store) => store.nameWork);
 
     // Добавление выбранных строк
-    const start = async () => {
-        await dispatch(setDataSelect(selectedRowKeys));
-        console.log(selectedData);
-        await dispatch(pushData(selectedData));
+    const start = () => {
+        dispatch(setDataSelect(selectedRowKeys));
+        //dispatch(pushData(stateSelectedData));
         setSelectedRowKeys([]);
     };
     // Получение типов при изменении select

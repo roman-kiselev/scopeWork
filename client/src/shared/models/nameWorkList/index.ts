@@ -4,6 +4,7 @@ import {
     nameWorkListReducer,
     nameWorkListSlice,
     pushData,
+    setNameAndDescription,
     setSelectedTypeWork,
 } from "./nameWorkListSlice";
 
@@ -13,5 +14,6 @@ export {
     nameWorkListReducer,
     nameWorkListSlice,
     pushData,
+    setNameAndDescription,
     setSelectedTypeWork,
 };

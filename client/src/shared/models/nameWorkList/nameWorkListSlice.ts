@@ -1,22 +1,14 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { INameWorkAndUnit, INameWorkListSlice } from "../../interfaces";
+import { INameWorkAndUnit, INameWorkListSlice, Item } from "../../interfaces";
 
 const initialState: INameWorkListSlice = {
-    oneItem: null,
-    list: [
-        // {
-        //     id: 1,
-        //     key: String(1),
-        //     name: "Не кран",
-        //     quantity: 16,
-        // },
-        // {
-        //     id: 2,
-        //     key: String(2),
-        //     name: "Не кран 100",
-        //     quantity: 6,
-        // },
-    ],
+    oneItem: {
+        name: "",
+        description: "",
+        typeWorkId: null,
+        list: [],
+    },
+    list: [],
     selectedTypeWork: 0,
     dataError: null,
     isError: false,
@@ -32,41 +24,66 @@ export const nameWorkListSlice = createSlice({
         },
         setSelectedTypeWork: (state, action) => {
             state.selectedTypeWork = action.payload;
+            state.oneItem.typeWorkId = action.payload;
         },
-        editList: (state, action) => {
-            state.list = action.payload;
+        editList: (state, action: PayloadAction<Item[]>) => {
+            const newData = action.payload.map((nameWork, index) => {
+                return {
+                    id: nameWork.id,
+                    index: index + 1,
+                    key: nameWork.key,
+                    name: nameWork.name,
+                    quantity: nameWork.quantity,
+                } as Item;
+            });
+            state.list = newData;
         },
         pushData: (state, action: PayloadAction<INameWorkAndUnit[]>) => {
-            // Если массив пуст
-            if (state.list.length === 0) {
-                const { id, name } = action.payload[0];
-                state.list = [
-                    {
+            let newData: Item[] = [];
+
+            for (let i = 0; i < action.payload.length; i++) {
+                const { id, name } = action.payload[i];
+                const findData = state.list.find(
+                    (nameWork) => nameWork.id === id
+                );
+                if (!findData) {
+                    newData.push({
                         id: id,
                         key: String(id),
                         name: name,
                         quantity: 1,
-                    },
-                ];
+                    } as Item);
+                }
             }
-            // const newData = action.payload.map((item) => {
-            //     const findItem = state.list.find((name) => name.id === item.id);
-            //     if (!findItem && state.list.length > 0) {
-            //         const { id, name } = item;
-            //         return {
-            //             id: id,
-            //             key: String(id),
-            //             name: name,
-            //             quantity: 1,
-            //         } as Item;
-            //     }
-            //     return findItem;
-            // });
-            // state.list = [...state.list, ...newData];
+            const data = [...state.list, ...newData].map((item, index) => {
+                return {
+                    id: item.id,
+                    index: index + 1,
+                    key: String(item.id),
+                    name: item.name,
+                    quantity: item.quantity,
+                } as Item;
+            });
+            state.list = data;
+            state.oneItem.list = data;
+        },
+        setNameAndDescription: (
+            state,
+            action: PayloadAction<{ name?: string; description?: string }>
+        ) => {
+            console.log(action.payload);
+            const { name, description } = action.payload;
+            state.oneItem.name = name ? name : "";
+            state.oneItem.description = description ? description : "";
         },
     },
     // extraReducers(builder) {},
 });
-export const { getSelectedTypeWork, setSelectedTypeWork, editList, pushData } =
-    nameWorkListSlice.actions;
+export const {
+    getSelectedTypeWork,
+    setSelectedTypeWork,
+    editList,
+    pushData,
+    setNameAndDescription,
+} = nameWorkListSlice.actions;
 export const nameWorkListReducer = nameWorkListSlice.reducer;

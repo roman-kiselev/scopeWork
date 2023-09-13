@@ -6,6 +6,7 @@ import EditableCell from "./EditableCell";
 
 // Интерфейс одной строки
 export interface Item {
+    index: number;
     key: string;
     id: number;
     name: string;
@@ -97,7 +98,7 @@ const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
     const columns = [
         {
             title: "Номер",
-            dataIndex: "id",
+            dataIndex: "index",
             width: "15%",
             editable: false,
         },

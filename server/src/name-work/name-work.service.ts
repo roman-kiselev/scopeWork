@@ -279,12 +279,12 @@ export class NameWorkService {
   async getAllByTypeWorkId(typeWorkId: string) {
     try {
       if (typeWorkId === '0') {
-        const names = await this.nameWorkRepository.findAll({
-          where: {
-            deletedAt: null,
-          },
-        });
-        return names;
+        // const names = await this.nameWorkRepository.findAll({
+        //   where: {
+        //     deletedAt: null,
+        //   },
+        // });
+        return [];
       }
       const names = await this.typeWorkRepository.findByPk(typeWorkId, {
         include: [

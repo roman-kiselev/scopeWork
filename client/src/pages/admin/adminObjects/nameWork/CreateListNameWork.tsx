@@ -14,11 +14,11 @@ const items: TabsProps["items"] = [
         label: "Список",
         children: <ListForAddNameWork />,
     },
-    {
-        key: "3",
-        label: "Дополнительно",
-        children: "Здесь могут быть разлицные операции",
-    },
+    // {
+    //     key: "3",
+    //     label: "Дополнительно",
+    //     children: "Здесь могут быть разлицные операции",
+    // },
 ];
 
 const CreateListNameWork = () => {

@@ -1,4 +1,6 @@
-import { Button, Col, Form, Input, Row, Typography, message } from "antd";
+import { Form, Input, Row, Typography, message } from "antd";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { setNameAndDescription } from "../../shared/models";
 const { TextArea } = Input;
 const { Text, Title } = Typography;
 
@@ -36,6 +38,22 @@ const cancel = (e: React.MouseEvent<HTMLElement>) => {
     message.error("Click on No");
 };
 const MainNameWork = () => {
+    const dispatch = useAppDispatch();
+    const { name, description } = useAppSelector(
+        (store) => store.nameWorkList.oneItem
+    );
+
+    const data = { name, description };
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        dispatch(setNameAndDescription({ name: value }));
+    };
+    const handleChangeDescription = (
+        e: React.ChangeEvent<HTMLTextAreaElement>
+    ) => {
+        const value = e.target.value;
+        dispatch(setNameAndDescription({ description: value }));
+    };
     return (
         <Row style={{ display: "flex", flexDirection: "column" }}>
             <Form
@@ -58,22 +76,27 @@ const MainNameWork = () => {
                     </Row>
                 </Row> */}
                 <Row style={{ marginTop: 10 }}>
-                    <Form.Item name={["name"]} label="Наименование">
-                        <Input />
+                    <Form.Item name={"name"} label="Наименование">
+                        <Input
+                            value={name}
+                            onChange={(e) => handleChangeName(e)}
+                        />
                     </Form.Item>
                 </Row>
-                <Form.Item
-                    name={["description", "introduction"]}
-                    label="Описание (100 символов)"
-                >
-                    <Input.TextArea showCount maxLength={100} />
+                <Form.Item name={"description"} label="Описание (100 символов)">
+                    <Input.TextArea
+                        value={description}
+                        onChange={(e) => handleChangeDescription(e)}
+                        showCount
+                        maxLength={100}
+                    />
                 </Form.Item>
                 <Row>
-                    <Col style={{ margin: 10 }}>
+                    {/* <Col style={{ margin: 10 }}>
                         <Button type="primary" htmlType="submit">
                             Создать
                         </Button>
-                    </Col>
+                    </Col> */}
                     {/* <Col style={{ margin: 10 }}>
                         <Popconfirm
                             title="Удалить ед.измерения!"
