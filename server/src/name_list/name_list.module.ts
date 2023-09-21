@@ -10,6 +10,6 @@ import { NameListService } from './name_list.service';
   controllers: [NameListController],
   providers: [NameListService],
   imports: [SequelizeModule.forFeature([NameWork, NameList, ListNameWork])],
-  exports: [],
+  exports: [NameListService],
 })
 export class NameListModule {}

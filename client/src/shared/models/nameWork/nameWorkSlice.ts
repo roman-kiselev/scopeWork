@@ -34,6 +34,7 @@ export const nameWorkSlice = createSlice({
         setDataSelect: (state, action: PayloadAction<React.Key[]>) => {
             // Задача получить данные
             const selectedDataByType: INameWorkAndUnit[] = [];
+
             action.payload.map((number) => {
                 const oneItem: INameWorkAndUnit[] = current(
                     state.listNameWorkForOneType
@@ -41,6 +42,10 @@ export const nameWorkSlice = createSlice({
                 return selectedDataByType.push(oneItem[0]);
             });
             state.selectedData = selectedDataByType;
+            console.log(
+                current(state.listNameWorkForOneType),
+                selectedDataByType
+            );
         },
     },
     extraReducers(builder) {

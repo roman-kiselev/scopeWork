@@ -17,7 +17,6 @@ class FindNameByTypeWork
     > = (state, action) => {
         const data = action.payload;
         state.listNameWorkForOneType = data;
-
         state.isLoading = false;
     };
     rejected: CaseReducer<INameWorkSlice> = (state, action) => {

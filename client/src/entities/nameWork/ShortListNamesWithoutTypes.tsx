@@ -1,4 +1,4 @@
-import { Button, Col, Input, MenuProps, Row, Table } from "antd";
+import { Button, Col, Input, Row, Table } from "antd";
 import { useEffect, useState } from "react";
 import { nameWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
@@ -11,51 +11,40 @@ interface IDataSourse {
     name: string;
     unit: string;
 }
-const dataSource = [
-    {
-        key: "1",
-        name: "Кран шаровый ду.50",
-        unit: "шт.",
-        // address: "10 Downing Street",
-    },
-    {
-        key: "2",
-        name: "John",
-        unit: "м",
-        // address: "10 Downing Street",
-    },
-];
-
-const items: MenuProps["items"] = [
-    {
-        label: "АСКУЭ",
-        key: "1",
-    },
-    {
-        label: "Водоснабжение",
-        key: "2",
-    },
-];
 
 const ShortListNamesWithoutTypes = () => {
     const dispatch = useAppDispatch();
-    const { list } = useAppSelector((store) => store.nameWorkList);
+    // Получение типов при изменении select
+    const { selectedTypeWork } = useAppSelector((store) => store.nameWorkList);
+    const { idNumber, typeWorkId } = useAppSelector(
+        (store) => store.nameWorkList.oneItem
+    );
+    // const [valueOption, setValueOption] = useState(0);
+
+    const { data: dataNameWork, isSuccess } =
+        nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
+            typeWorkId:
+                idNumber && typeWorkId !== null ? typeWorkId : selectedTypeWork,
+        });
+
+    const { list } = useAppSelector((store) => store.nameWorkList.oneItem);
     const { selectedData } = useAppSelector((store) => store.nameWork);
+
     const [stateSelectedData, setStateSelectedData] = useState<
         INameWorkAndUnit | []
     >([]);
+
     useEffect(() => {
         const stateSelectedData = selectedData;
         dispatch(pushData(stateSelectedData));
-    }, [selectedData]);
-    //console.log(selectedData);
+    }, [stateSelectedData, selectedData]);
+
     // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
     // Выбранные строки checkbox
     const [loading, setLoading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-        //console.log("selectedRowKeys changed: ", newSelectedRowKeys);
         setSelectedRowKeys(newSelectedRowKeys);
     };
 
@@ -88,16 +77,8 @@ const ShortListNamesWithoutTypes = () => {
     // Добавление выбранных строк
     const start = () => {
         dispatch(setDataSelect(selectedRowKeys));
-        //dispatch(pushData(stateSelectedData));
         setSelectedRowKeys([]);
     };
-    // Получение типов при изменении select
-    const { selectedTypeWork } = useAppSelector((store) => store.nameWorkList);
-    const [valueOption, setValueOption] = useState(0);
-    const { data: dataNameWork, isSuccess } =
-        nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
-            typeWorkId: selectedTypeWork,
-        });
 
     const newDataNameWork: IDataSourse[] | undefined = dataNameWork?.map(
         (name) => {

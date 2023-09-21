@@ -6,6 +6,7 @@ import {
     nameWorkListReducer,
     nameWorkListSlice,
     pushData,
+    resetForOneItem,
     setNameAndDescription,
     setSelectedTypeWork,
 } from "./nameWorkList";
@@ -26,6 +27,7 @@ export {
     objectReducer,
     objectSlice,
     pushData,
+    resetForOneItem,
     setDataSelect,
     setNameAndDescription,
     setSelectedTypeWork,

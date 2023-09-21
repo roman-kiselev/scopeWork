@@ -1,24 +1,12 @@
-import React, { useState } from "react";
 import {
-    Button,
-    Card,
-    Col,
-    Dropdown,
-    Layout,
-    Menu,
-    MenuProps,
-    Row,
-    Space,
-} from "antd";
-import {
-    MenuUnfoldOutlined,
-    MenuFoldOutlined,
     DownOutlined,
+    MenuFoldOutlined,
+    MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import { Link, Outlet } from "react-router-dom";
-import { getItem } from "../../shared/config";
+import { Button, Dropdown, Layout, MenuProps } from "antd";
+import React, { useState } from "react";
+import { Outlet } from "react-router-dom";
 import { LeftMenu } from "../../features";
-import { setMaxIdleHTTPParsers } from "http";
 const { Header, Sider, Content, Footer } = Layout;
 
 const tabList = [
@@ -43,21 +31,6 @@ const tabList = [
         tab: "Наладка",
     },
 ];
-
-const contentList: Record<string, React.ReactNode> = {
-    askue: (
-        <div>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-            <p>Hello</p>
-        </div>
-    ),
-    tab2: <p>content2</p>,
-};
 
 const LayoutPage = () => {
     const [collapsed, setCollapsed] = useState(false);

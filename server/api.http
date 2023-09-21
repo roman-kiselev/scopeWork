@@ -159,6 +159,12 @@ Content-type: application/json; charset=utf-8
 GET {{host}}/list-name-work HTTP/1.1
 
 ###
+
+### Получение одного 
+GET {{host}}/list-name-work/1 HTTP/1.1
+
+
+
 ### Создание списка
 POST {{host}}/list-name-work HTTP/1.1
 Content-type: application/json; charset=utf-8
@@ -183,6 +189,6 @@ Content-type: application/json; charset=utf-8
 
 {
     "quantity": 10,
-    "nameWorkId": 4,
-    "listNameWorkId": 2
+    "nameWorkId": 5,
+    "listNameWorkId": 1
 }

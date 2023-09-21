@@ -2,7 +2,9 @@ import { CheckAuth, CheckRole, SuspenseLoad } from "./check";
 import { FormLogin } from "./formLogin";
 import { FormRegister } from "./formRegister";
 import { SimpleShortItemForList, SimpleShortList } from "./list";
+import { ListNameWorkTable } from "./listNameWorks";
 import {
+    CreateNameWorkExcel,
     FormCreateNameWork,
     ListForAddNameWork,
     MainNameWork,
@@ -15,6 +17,7 @@ import { FormUnit } from "./units";
 export {
     CheckAuth,
     CheckRole,
+    CreateNameWorkExcel,
     FormCreateNameWork,
     FormCreateObject,
     FormLogin,
@@ -22,6 +25,7 @@ export {
     FormUnit,
     ListForAddNameWork,
     ListInfiniteShort,
+    ListNameWorkTable,
     MainNameWork,
     OneObjectShort,
     ShortListNames,

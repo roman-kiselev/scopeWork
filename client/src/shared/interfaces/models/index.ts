@@ -1,12 +1,16 @@
 import { IAuthSlice } from "./auth";
+import { INameListForNameWork } from "./nameList";
 import {
     ICreateNameWorkAttr,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkWithNameList,
 } from "./nameWork";
 import {
+    INameListWork,
     INameWorkListSlice,
     INameWorkWithQuantity,
+    IOneItemForListNameWork,
     Item,
 } from "./nameWorkList";
 import { IRole } from "./roles";
@@ -18,10 +22,14 @@ import { IUser, IUserToken, IUsersSlice } from "./users";
 export type {
     IAuthSlice,
     ICreateNameWorkAttr,
+    INameListForNameWork,
+    INameListWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
     INameWorkListSlice,
+    INameWorkWithNameList,
     INameWorkWithQuantity,
+    IOneItemForListNameWork,
     IRole,
     ITypeWork,
     IUnit,

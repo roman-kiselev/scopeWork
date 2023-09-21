@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+interface Item {
+  index: number;
+  key: string;
+  id: number;
+  name: string;
+  quantity: number;
+}
 export class CreateListDto {
   @ApiProperty({ example: 'Лист 1', description: 'Наименование' })
   readonly name?: string;
@@ -13,4 +20,5 @@ export class CreateListDto {
     description: 'id Типа Работ',
   })
   readonly typeWorkId?: number;
+  readonly listNames?: Item[];
 }

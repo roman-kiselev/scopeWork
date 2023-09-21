@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
@@ -23,11 +24,20 @@ export class ListNameWorkController {
     return this.listNameWorkService.getAllList();
   }
 
+  @ApiOperation({ summary: 'Получить один' })
+  @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/:id')
+  getOneById(@Param('id') id: number) {
+    return this.listNameWorkService.getOneById(id);
+  }
+
   @ApiOperation({ summary: 'Создание' })
   @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
   @ApiResponse({ type: HttpException })
   @Post('/')
   createNameList(@Body() dto: CreateListDto) {
+    console.log(dto);
     return this.listNameWorkService.createList(dto);
   }
 }

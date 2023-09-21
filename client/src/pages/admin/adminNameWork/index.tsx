@@ -1,4 +1,4 @@
-import React, { lazy } from "react";
+import { lazy } from "react";
 import { Route, Routes } from "react-router";
 import { SuspenseLoad } from "../../../entities";
 
@@ -26,6 +26,7 @@ const AdminNameWorkRoutes = () => {
                     </SuspenseLoad>
                 }
             />
+
             <Route
                 path="unit"
                 element={

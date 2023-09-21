@@ -23,7 +23,7 @@ interface EditTableForList {
 const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
     const dispatch = useAppDispatch();
     const { list: originalData } = useAppSelector(
-        (store) => store.nameWorkList
+        (store) => store.nameWorkList.oneItem
     );
     const [editingKey, setEditingKey] = useState("");
     // Функция выхода

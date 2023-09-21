@@ -1,7 +1,7 @@
 import { CreateAndEditListNameWork } from "../../../../features";
 
-const CreateListNameWork = () => {
+const OneItemNameWork = () => {
     return <CreateAndEditListNameWork />;
 };
 
-export default CreateListNameWork;
+export default OneItemNameWork;

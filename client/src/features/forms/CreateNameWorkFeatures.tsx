@@ -10,13 +10,11 @@ const CreateNameWorkFeatures = () => {
     const { data: dataType } = typeWorkApi.useGetAllTypeWorkQuery();
     const [createNameWork, { isSuccess }] =
         nameWorkApi.useCreateNameWorkMutation();
-    
-    const {data: dataNameWorks} = nameWorkApi.useGetAllNameWorkQuery();
-    console.log(dataNameWorks)
+
+    const { data: dataNameWorks } = nameWorkApi.useGetAllNameWorkQuery();
 
     const onFinish = async () => {
         const res = await createNameWork(data);
-        console.log(res);
     };
     const { listUnits } = useAppSelector((state) => state.unit);
     const { listTypeWork } = useAppSelector((state) => state.typeWork);
