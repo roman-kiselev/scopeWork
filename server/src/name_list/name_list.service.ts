@@ -81,6 +81,7 @@ export class NameListService {
           listNameWorkId,
           nameWorkId,
         },
+        force: true,
       });
 
       if (!updateName) {

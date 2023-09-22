@@ -20,7 +20,6 @@ export const listNameWorkApi = mainApi.injectEndpoints({
         }),
         editList: builder.mutation<INameListWork, IOneItemForListNameWork>({
             query: (data) => {
-                console.log(data);
                 return {
                     url: "/list-name-work/edit",
                     method: "POST",
