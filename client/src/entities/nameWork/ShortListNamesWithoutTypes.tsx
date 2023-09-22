@@ -36,6 +36,7 @@ const ShortListNamesWithoutTypes = () => {
 
     useEffect(() => {
         const stateSelectedData = selectedData;
+
         dispatch(pushData(stateSelectedData));
     }, [stateSelectedData, selectedData]);
 

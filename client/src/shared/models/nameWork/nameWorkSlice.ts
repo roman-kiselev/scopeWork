@@ -42,10 +42,9 @@ export const nameWorkSlice = createSlice({
                 return selectedDataByType.push(oneItem[0]);
             });
             state.selectedData = selectedDataByType;
-            console.log(
-                current(state.listNameWorkForOneType),
-                selectedDataByType
-            );
+        },
+        resetSelectedData: (state) => {
+            state.selectedData = [];
         },
     },
     extraReducers(builder) {
@@ -90,5 +89,5 @@ export const nameWorkSlice = createSlice({
     },
 });
 
-export const { setDataSelect } = nameWorkSlice.actions;
+export const { setDataSelect, resetSelectedData } = nameWorkSlice.actions;
 export const nameWorkReducer = nameWorkSlice.reducer;

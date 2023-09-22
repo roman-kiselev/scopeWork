@@ -13,7 +13,11 @@ import { useEffect } from "react";
 import { useParams } from "react-router";
 import { listNameWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { resetForOneItem, setNameAndDescription } from "../../shared/models";
+import {
+    resetForOneItem,
+    resetSelectedData,
+    setNameAndDescription,
+} from "../../shared/models";
 
 const onChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -54,15 +58,15 @@ const MainNameWork = () => {
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(resetForOneItem());
+        dispatch(resetSelectedData());
     }, [dispatch]);
-
     const { id } = useParams();
-    if (id) {
-        const { data: dataById, isLoading } =
-            listNameWorkApi.useGetOneByIdQuery({
-                id: Number(id),
-            });
-    }
+
+    const { data: dataById, isLoading: isLoadingQuery } =
+        listNameWorkApi.useGetOneByIdQuery({
+            id: Number(id) ? Number(id) : 0,
+        });
+
     // Получаем состояние oneItem
     const { isLoading } = useAppSelector((store) => store.nameWorkList);
     const { idNumber, dateCreate, name, description } = useAppSelector(

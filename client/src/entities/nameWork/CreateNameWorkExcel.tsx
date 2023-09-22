@@ -1,5 +1,5 @@
-import { InboxOutlined } from "@ant-design/icons";
-import { Form, Row, Upload } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { Button, Form, Row, Upload } from "antd";
 
 const normFile = (e: any) => {
     console.log("Upload event:", e);
@@ -10,25 +10,32 @@ const normFile = (e: any) => {
 };
 
 const CreateNameWorkExcel = () => {
+    const handleFileUpload = () => {
+        console.log("Началась загрузка");
+    };
+
     return (
         <Row>
-            <Form.Item label="Загрузить файл">
+            <Form onFinish={handleFileUpload}>
                 <Form.Item
-                    name="dragger"
+                    name="upload"
                     valuePropName="fileList"
                     getValueFromEvent={normFile}
-                    noStyle
                 >
-                    <Upload.Dragger name="files" action="/upload.do">
-                        <p className="ant-upload-drag-icon">
-                            <InboxOutlined />
-                        </p>
-                        <p className="ant-upload-text">
-                            Выберите или перенесите файл Excel
-                        </p>
-                    </Upload.Dragger>
+                    <Upload
+                        beforeUpload={() => false}
+                        name="logo"
+                        listType="picture"
+                    >
+                        <Button icon={<UploadOutlined />}>
+                            Выберите excel файл
+                        </Button>
+                    </Upload>
                 </Form.Item>
-            </Form.Item>
+                <Button type="primary" htmlType="submit">
+                    Отправить
+                </Button>
+            </Form>
         </Row>
     );
 };

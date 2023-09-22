@@ -3,7 +3,7 @@ import { INameListWork, INameWorkListSlice, Item } from "../../interfaces";
 import { CreateHandler, IDataError } from "../../interfaces/api";
 
 class GetOneById
-    implements CreateHandler<INameWorkListSlice, INameListWork[], IDataError>
+    implements CreateHandler<INameWorkListSlice, INameListWork, IDataError>
 {
     pending: CaseReducer<INameWorkListSlice> = (state) => {
         state.isLoading = true;
@@ -12,10 +12,10 @@ class GetOneById
     };
     fulfilled: CaseReducer<
         INameWorkListSlice,
-        { payload: INameListWork[]; type: string }
+        { payload: INameListWork; type: string }
     > = (state, action) => {
         const { id, name, description, createdAt, typeWorkId, nameWorks } =
-            action.payload[0];
+            action.payload;
 
         const newList = nameWorks?.map((item, index) => {
             return {
@@ -23,7 +23,7 @@ class GetOneById
                 index: index + 1,
                 key: item.id.toString(),
                 name: item.name,
-                quantity: Number(item.NameList.quntity),
+                quntity: Number(item.NameList.quntity),
             } as Item;
         });
 

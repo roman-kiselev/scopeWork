@@ -28,6 +28,12 @@ export class NameList
     primaryKey: true,
     unique: true,
   } as ModelAttributeColumnOptions)
+  id: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   quntity: number;
 
   @ForeignKey(() => ListNameWork)

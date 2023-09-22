@@ -5,7 +5,7 @@ interface Item {
   key: string;
   id: number;
   name: string;
-  quantity: number;
+  quntity: number;
 }
 export class CreateListDto {
   @ApiProperty({ example: 'Лист 1', description: 'Наименование' })
@@ -20,5 +20,5 @@ export class CreateListDto {
     description: 'id Типа Работ',
   })
   readonly typeWorkId?: number;
-  readonly listNames?: Item[];
+  readonly list?: Item[];
 }

@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateListDto } from './dto/create-list.dto';
+import { ListNameWorkEditDto } from './dto/list-name-work-edit.dto';
 import { ListNameWork } from './list-name-work.model';
 import { ListNameWorkService } from './list-name-work.service';
 
@@ -37,7 +38,14 @@ export class ListNameWorkController {
   @ApiResponse({ type: HttpException })
   @Post('/')
   createNameList(@Body() dto: CreateListDto) {
-    console.log(dto);
     return this.listNameWorkService.createList(dto);
+  }
+
+  @ApiOperation({ summary: 'Редактирование' })
+  @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
+  @ApiResponse({ type: HttpException })
+  @Post('/edit')
+  editNameList(@Body() dto: ListNameWorkEditDto) {
+    return this.listNameWorkService.editList(dto);
   }
 }

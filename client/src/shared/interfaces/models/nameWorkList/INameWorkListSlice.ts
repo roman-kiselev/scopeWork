@@ -6,7 +6,7 @@ export interface Item {
     key: string;
     id: number;
     name: string;
-    quantity: number;
+    quntity: number;
 }
 
 export interface IOneItemForListNameWork {

@@ -10,7 +10,7 @@ export interface Item {
     key: string;
     id: number;
     name: string;
-    quantity: number;
+    quntity: number;
 }
 
 interface EditTableForList {
@@ -111,7 +111,7 @@ const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
 
         {
             title: "Количество",
-            dataIndex: "quantity",
+            dataIndex: "quntity",
             width: "20%",
             editable: true,
         },

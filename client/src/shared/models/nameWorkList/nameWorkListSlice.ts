@@ -47,7 +47,7 @@ export const nameWorkListSlice = createSlice({
                     index: index + 1,
                     key: nameWork.key,
                     name: nameWork.name,
-                    quantity: nameWork.quantity,
+                    quntity: nameWork.quntity,
                 } as Item;
             });
             // state.list = newData;
@@ -69,7 +69,7 @@ export const nameWorkListSlice = createSlice({
                             id: id,
                             key: String(id),
                             name: name,
-                            quantity: 1,
+                            quntity: 0,
                         } as Item);
                     }
                 }
@@ -80,7 +80,7 @@ export const nameWorkListSlice = createSlice({
                             index: index + 1,
                             key: String(item.id),
                             name: item.name,
-                            quantity: item.quantity,
+                            quntity: item.quntity,
                         } as Item;
                     }
                 );
@@ -115,7 +115,7 @@ export const nameWorkListSlice = createSlice({
             //         index: index + 1,
             //         key: item.id.toString(),
             //         name: item.name,
-            //         quantity: Number(
+            //         quntity: Number(
             //             item.NameList.quntity ? item.NameList.quntity : 0
             //         ),
             //     } as Item;

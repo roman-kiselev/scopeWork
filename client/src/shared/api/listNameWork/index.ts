@@ -18,12 +18,23 @@ export const listNameWorkApi = mainApi.injectEndpoints({
                 };
             },
         }),
-        getOneById: builder.query<INameListWork[], { id: number }>({
-            query: (id) => ({
-                url: "/list-name-work",
-                method: "GET",
-                params: id,
-            }),
+        editList: builder.mutation<INameListWork, IOneItemForListNameWork>({
+            query: (data) => {
+                console.log(data);
+                return {
+                    url: "/list-name-work/edit",
+                    method: "POST",
+                    body: data,
+                };
+            },
+        }),
+        getOneById: builder.query<INameListWork, { id: number }>({
+            query: (id) => {
+                return {
+                    url: `/list-name-work/${id.id}`,
+                    method: "GET",
+                };
+            },
         }),
     }),
 });

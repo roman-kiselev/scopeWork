@@ -11,7 +11,7 @@ import { ScopeWork } from 'src/scope-work/scope-work.model';
 
 interface TotalVolumeAttr {
   number: number;
-  quantity: number;
+  quntity: number;
   nameWorkId: number;
   scopeWorkId: number;
 }
@@ -37,7 +37,7 @@ export class TotalVolume extends Model<TotalVolume, TotalVolumeAttr> {
   @Column({
     type: DataType.INTEGER,
   })
-  quantity: number;
+  quntity: number;
 
   @ForeignKey(() => NameWork)
   nameWorkId: number;

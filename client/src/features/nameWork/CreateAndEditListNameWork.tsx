@@ -6,25 +6,25 @@ import {
     ShortListNamesWithoutTypes,
 } from "../../entities";
 
-const items: TabsProps["items"] = [
-    {
-        key: "1",
-        label: "Основное",
-        children: <MainNameWork />,
-    },
-    {
-        key: "2",
-        label: "Список",
-        children: <ListForAddNameWork />,
-    },
-    // {
-    //     key: "3",
-    //     label: "Дополнительно",
-    //     children: "Здесь могут быть разлицные операции",
-    // },
-];
-
 const CreateAndEditListNameWork = () => {
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: "Основное",
+            children: <MainNameWork />,
+        },
+        {
+            key: "2",
+            label: "Список",
+            children: <ListForAddNameWork />,
+        },
+        // {
+        //     key: "3",
+        //     label: "Дополнительно",
+        //     children: "Здесь могут быть разлицные операции",
+        // },
+    ];
+
     return (
         <Layout>
             <Content style={{ display: "flex" }}>

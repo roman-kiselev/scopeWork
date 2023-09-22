@@ -188,7 +188,7 @@ POST {{host}}/name-list HTTP/1.1
 Content-type: application/json; charset=utf-8
 
 {
-    "quantity": 10,
+    "quntity": 10,
     "nameWorkId": 5,
     "listNameWorkId": 1
 }

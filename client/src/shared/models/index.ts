@@ -1,5 +1,10 @@
 import { authReducer } from "./auth";
-import { nameWorkReducer, nameWorkSlice, setDataSelect } from "./nameWork";
+import {
+    nameWorkReducer,
+    nameWorkSlice,
+    resetSelectedData,
+    setDataSelect,
+} from "./nameWork";
 import {
     editList,
     getSelectedTypeWork,
@@ -28,6 +33,7 @@ export {
     objectSlice,
     pushData,
     resetForOneItem,
+    resetSelectedData,
     setDataSelect,
     setNameAndDescription,
     setSelectedTypeWork,

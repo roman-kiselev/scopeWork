@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, DataType, Table, Model } from 'sequelize-typescript';
+import { Column, DataType, Model, Table } from 'sequelize-typescript';
 
 interface ListWorkAttr {
   id: number;
   number: number;
   nameWorkId: number;
-  quantity: number;
+  quntity: number;
 }
 
 @Table({ tableName: 'list_work', paranoid: true })
@@ -31,7 +31,7 @@ export class ListWork extends Model<ListWork, ListWorkAttr> {
     type: DataType.INTEGER,
     autoIncrement: true,
   })
-  quantity: number;
+  quntity: number;
 
   @Column({
     type: DataType.DATE,

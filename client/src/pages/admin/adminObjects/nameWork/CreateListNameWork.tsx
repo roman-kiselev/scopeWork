@@ -1,7 +1,8 @@
 import { CreateAndEditListNameWork } from "../../../../features";
 
 const CreateListNameWork = () => {
-    return <CreateAndEditListNameWork />;
+    
+    return <CreateAndEditListNameWork/>;
 };
 
 export default CreateListNameWork;
