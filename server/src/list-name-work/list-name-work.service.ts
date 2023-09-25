@@ -97,11 +97,11 @@ export class ListNameWorkService {
     }
   }
 
-  async getOneById(id: number) {
+  async getOneById(id: string) {
     try {
-      if (id === 0) {
-        return {};
-      }
+      // if (id === '0') {
+      //   return {};
+      // }
       const list = await this.listNameWorkRepository.findByPk(id, {
         include: { all: true },
       });
@@ -207,6 +207,7 @@ export class ListNameWorkService {
       const newNameList = await this.listNameWorkRepository.findByPk(idNumber, {
         include: { all: true },
       });
+      //throw new HttpException('Test err', HttpStatus.BAD_REQUEST);
       return newNameList;
     } catch (e) {
       if (e instanceof HttpException) {

@@ -1,6 +1,9 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { listNameWorkApi } from "../../api";
 import { INameWorkAndUnit, INameWorkListSlice, Item } from "../../interfaces";
+
+import CreateList from "./CreateList";
+import EditList from "./EditList";
 import GetList from "./GetList";
 import GetOneById from "./GetOneById";
 
@@ -13,15 +16,8 @@ const initialState: INameWorkListSlice = {
         typeWorkId: null,
         list: [],
     },
-    // {
-    //     idNumber: 1,
-    //     dateCreate: "2013-12-12",
-    //     name: "Имя",
-    //     description: "Описание",
-    //     typeWorkId: 2,
-    //     list: [],
-    // },
     list: [],
+    lastAddedItem: null,
     listItem: [],
     selectedTypeWork: 0,
     dataError: null,
@@ -153,6 +149,7 @@ export const nameWorkListSlice = createSlice({
             listNameWorkApi.endpoints.getAllNames.matchRejected,
             GetList.rejected
         );
+
         builder.addMatcher(
             listNameWorkApi.endpoints.getOneById.matchPending,
             GetOneById.pending
@@ -164,6 +161,32 @@ export const nameWorkListSlice = createSlice({
         builder.addMatcher(
             listNameWorkApi.endpoints.getOneById.matchRejected,
             GetOneById.rejected
+        );
+
+        builder.addMatcher(
+            listNameWorkApi.endpoints.editList.matchPending,
+            EditList.pending
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.editList.matchFulfilled,
+            EditList.fulfilled
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.editList.matchRejected,
+            EditList.rejected
+        );
+        // Создание и сброс ошибки
+        builder.addMatcher(
+            listNameWorkApi.endpoints.createList.matchPending,
+            CreateList.pending
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.createList.matchFulfilled,
+            CreateList.fulfilled
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.createList.matchRejected,
+            CreateList.rejected
         );
     },
 });

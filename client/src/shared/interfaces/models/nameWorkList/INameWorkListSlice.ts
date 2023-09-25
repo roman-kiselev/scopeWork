@@ -22,6 +22,7 @@ export interface INameWorkListSlice {
     oneItem: IOneItemForListNameWork;
     list: Item[] | [];
     listItem: INameListWork[] | [];
+    lastAddedItem: number | null;
     selectedTypeWork: number;
     isLoading: boolean;
     isError: boolean;

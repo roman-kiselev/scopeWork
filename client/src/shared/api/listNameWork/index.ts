@@ -19,13 +19,11 @@ export const listNameWorkApi = mainApi.injectEndpoints({
             },
         }),
         editList: builder.mutation<INameListWork, IOneItemForListNameWork>({
-            query: (data) => {
-                return {
-                    url: "/list-name-work/edit",
-                    method: "POST",
-                    body: data,
-                };
-            },
+            query: (data) => ({
+                url: "/list-name-work/edit",
+                method: "POST",
+                body: data,
+            }),
         }),
         getOneById: builder.query<INameListWork, { id: number }>({
             query: (id) => {

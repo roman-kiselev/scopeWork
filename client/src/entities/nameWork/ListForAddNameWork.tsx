@@ -1,9 +1,12 @@
-import { Button, Col, Form, Row, Select } from "antd";
-import { useState } from "react";
+import { Button, Col, Form, Row, Select, message } from "antd";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { listNameWorkApi, nameWorkApi, typeWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { IOneItemForListNameWork } from "../../shared/interfaces";
+import {
+    INameListWork,
+    IOneItemForListNameWork,
+} from "../../shared/interfaces";
 import { resetForOneItem, setSelectedTypeWork } from "../../shared/models";
 import { EditTableForNewList } from "./table";
 interface IDataSourse {
@@ -25,6 +28,67 @@ interface Item {
 const ListForAddNameWork = () => {
     const dispatch = useAppDispatch();
 
+    // Уведомление о сохранении
+    const [messageApi, contextHolder] = message.useMessage();
+    const key = "updatable";
+    const keyTwo = "save";
+    const openMessageEdit = (err: boolean) => {
+        messageApi.open({
+            key,
+            type: "loading",
+            content: "Подождите...",
+        });
+        if (!err) {
+            setTimeout(() => {
+                messageApi.open({
+                    key,
+                    type: "success",
+                    content: "Сохранено",
+                    duration: 2,
+                });
+            }, 2000);
+        } else {
+            setTimeout(() => {
+                messageApi.open({
+                    key,
+                    type: "error",
+                    content: "Не удалось сохранить",
+                    duration: 2,
+                });
+            }, 2000);
+        }
+    };
+    const openMessageSave = (err: boolean, id: number) => {
+        messageApi.open({
+            key: keyTwo,
+            type: "loading",
+            content: "Подождите...",
+        });
+        if (!err) {
+            setTimeout(() => {
+                messageApi.open({
+                    key: keyTwo,
+                    type: "success",
+                    content: (
+                        <Link to={`/admin/object/list/listItem/${id}`}>
+                            Перейти к списку
+                        </Link>
+                    ),
+                    duration: 6,
+                });
+            }, 2000);
+        } else {
+            setTimeout(() => {
+                messageApi.open({
+                    key: keyTwo,
+                    type: "error",
+                    content: "Не удалось сохранить",
+                    duration: 2,
+                });
+            }, 2000);
+        }
+    };
+
     const { idNumber, typeWorkId, name, description, dateCreate, list } =
         useAppSelector((store) => store.nameWorkList.oneItem);
 
@@ -43,9 +107,18 @@ const ListForAddNameWork = () => {
         typeWorkId,
         list,
     };
-    const [createList, { data }] = listNameWorkApi.useCreateListMutation();
-    const [editList, { data: dataEdit }] =
-        listNameWorkApi.useEditListMutation();
+    const [createList, { data, isError: isErrorSave }] =
+        listNameWorkApi.useCreateListMutation();
+    const [
+        editList,
+        {
+            data: dataEdit,
+            isSuccess: isSuccessEdit,
+            isError: isErrorEdit,
+            isLoading: isLoadingEdit,
+        },
+    ] = listNameWorkApi.useEditListMutation();
+
     // Данные выбора типов
     // Получаем данные о типах для первой загрузки
     // Получение типов при изменении select
@@ -67,63 +140,74 @@ const ListForAddNameWork = () => {
         dispatch(setSelectedTypeWork(value));
         setValueOption(value);
     };
-    const [stateId, setStateId] = useState<number>(2);
-
+    const [stateId, setStateId] = useState<number>(1);
+    const {
+        isError: isErrorMain,
+        isLoading: isLoadingMain,
+        lastAddedItem,
+    } = useAppSelector((store) => store.nameWorkList);
     // Функция первого сохранения
+    useEffect(() => {
+        // Тестовая отправка
+        if (idNumber !== null && idNumber !== undefined) {
+            editList(dataForEdit);
+        }
+    }, []);
     const handleFirstSave = async () => {
         const res = await createList(dataForSave);
-        //setStateId(res.data.id);
+        const { data } = res as { data: INameListWork };
         dispatch(resetForOneItem());
-        if (idNumber) {
-            setStateId(idNumber);
-        }
+        openMessageSave(isErrorSave, data.id ?? 0);
     };
 
     // Функция сохранения при редактировании
-    const handleEdit = async () => {
-        const res = await editList(dataForEdit);
-        console.log(res);
-    };
-    // Удаление
 
+    const handleEdit = async () => {
+        editList(dataForEdit);
+        openMessageEdit(isErrorMain);
+    };
+
+    // Удаление
+    // TODO Реализовать удаление
     return (
-        <div style={{ overflow: "auto", height: "90vh" }}>
-            <Row style={{ margin: "10px 0" }}>
-                <Col style={{ marginRight: 10 }}>
-                    {idNumber ? (
-                        <Button type="primary" onClick={handleEdit}>
-                            Сохранить изменения
-                        </Button>
-                    ) : (
-                        <Button
-                            type="primary"
-                            // Отключаем кнопку если тип не выбран
-                            disabled={valueOption === 0 ? true : false}
-                            onClick={handleFirstSave}
-                        >
-                            Сохранить
-                        </Button>
-                    )}
-                </Col>
-                <Col>
-                    <Link to={`/admin/object/list/listItem/${idNumber}`}>
-                        Перейти к объекту
-                    </Link>
-                </Col>
-                <Col style={{ boxSizing: "border-box", marginRight: 10 }}>
-                    <Select
-                        defaultValue={idNumber ? typeWorkId : 0}
-                        style={{ width: 180 }}
-                        // loading
-                        // Отключаем выбор если уже выбран тип
-                        disabled={idNumber || list.length >= 1 ? true : false}
-                        options={dataOption}
-                        onChange={handleSelectChange}
-                    />
-                </Col>
-            </Row>
-            <EditTableForNewList form={form} />
-        </div>
+        <>
+            {contextHolder}
+            <div style={{ overflow: "auto", height: "90vh" }}>
+                <Row style={{ margin: "10px 0" }}>
+                    <Col style={{ marginRight: 10 }}>
+                        {idNumber ? (
+                            <Button type="primary" onClick={handleEdit}>
+                                Сохранить изменения
+                            </Button>
+                        ) : (
+                            <Button
+                                type="primary"
+                                // Отключаем кнопку если тип не выбран
+                                disabled={valueOption === 0 ? true : false}
+                                onClick={handleFirstSave}
+                            >
+                                Сохранить
+                            </Button>
+                        )}
+                    </Col>
+
+                    <Col style={{ boxSizing: "border-box", marginRight: 10 }}>
+                        <Select
+                            defaultValue={idNumber ? typeWorkId : 0}
+                            style={{ width: 180 }}
+                            // loading
+                            // Отключаем выбор если уже выбран тип
+                            disabled={
+                                idNumber || list?.length >= 1 ? true : false
+                            }
+                            options={dataOption}
+                            onChange={handleSelectChange}
+                        />
+                    </Col>
+                </Row>
+                <EditTableForNewList form={form} />
+            </div>
+        </>
     );
 };
 

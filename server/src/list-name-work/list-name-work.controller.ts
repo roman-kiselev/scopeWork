@@ -29,7 +29,7 @@ export class ListNameWorkController {
   @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
   @ApiResponse({ type: HttpException })
   @Get('/:id')
-  getOneById(@Param('id') id: number) {
+  getOneById(@Param('id') id: string) {
     return this.listNameWorkService.getOneById(id);
   }
 
