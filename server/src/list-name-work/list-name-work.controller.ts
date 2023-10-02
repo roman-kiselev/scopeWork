@@ -32,6 +32,13 @@ export class ListNameWorkController {
   getOneById(@Param('id') id: string) {
     return this.listNameWorkService.getOneById(id);
   }
+  @ApiOperation({ summary: 'Получение списка по тип работ' })
+  @ApiResponse({ status: HttpStatus.OK, type: [ListNameWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/byTypeWork/:id')
+  getListByTypeId(@Param('id') id: string) {
+    return this.listNameWorkService.getListNameWorksByTypeWorkId(id);
+  }
 
   @ApiOperation({ summary: 'Создание' })
   @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })

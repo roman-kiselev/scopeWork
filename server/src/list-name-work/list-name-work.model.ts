@@ -10,6 +10,7 @@ import {
 } from 'sequelize-typescript';
 import { NameWork } from 'src/name-work/name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 
 interface ListNameWorkAttr {
@@ -56,4 +57,7 @@ export class ListNameWork extends Model<ListNameWork, ListNameWorkAttr> {
 
   @BelongsToMany(() => NameWork, () => NameList)
   nameWorks: NameWork[];
+
+  @ForeignKey(() => ScopeWork)
+  scopeWorkId: number;
 }

@@ -1,11 +1,15 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameList } from 'src/name_list/name-list.model';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
-import { TotalVolume } from 'src/total-volume/total-volume.model';
+import { Objects } from 'src/objects/objects.model';
 import { TypeWork } from 'src/type-work/type-work.model';
+import { User } from 'src/user/user.model';
 import { ScopeWorkController } from './scope-work.controller';
 import { ScopeWork } from './scope-work.model';
 import { ScopeWorkService } from './scope-work.service';
+import { UserScopeWork } from './user-scope-work.model';
 
 @Module({
   controllers: [ScopeWorkController],
@@ -15,7 +19,11 @@ import { ScopeWorkService } from './scope-work.service';
       ScopeWork,
       TypeWork,
       ObjectTypeWork,
-      TotalVolume,
+      NameList,
+      User,
+      UserScopeWork,
+      ListNameWork,
+      Objects,
     ]),
   ],
   exports: [ScopeWorkService],

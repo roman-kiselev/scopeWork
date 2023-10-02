@@ -1,16 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
-  Table,
-  Model,
+  AfterDestroy,
+  BelongsToMany,
   Column,
   DataType,
   HasOne,
-  BelongsToMany,
-  AfterDestroy,
+  Model,
+  Table,
 } from 'sequelize-typescript';
 import { Roles } from 'src/roles/roles.model';
 import { UserRole } from 'src/roles/user-role.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
+import { UserScopeWork } from 'src/scope-work/user-scope-work.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 
 export interface UserCreationAttr {
@@ -52,6 +54,9 @@ export class User extends Model<User, UserCreationAttr> {
 
   @HasOne(() => UserDescription)
   userDescription: UserDescription;
+
+  @BelongsToMany(() => ScopeWork, () => UserScopeWork)
+  scopeWork: ScopeWork[];
 
   @AfterDestroy
   static async deleteDescription(user: User) {

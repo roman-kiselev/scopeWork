@@ -5,6 +5,7 @@ import NameWorkRouter from "./nameWork";
 
 const CreateObject = lazy(() => import("./CreateObject"));
 const ScopeObject = lazy(() => import("./ScopeObject"));
+const ScopeWorkRouter = lazy(() => import("./scopeWork"));
 const ConfigAndListObjects = lazy(() => import("./ConfigAndListObjects"));
 const OneObjectconfig = lazy(() => import("./OneObjectConfig"));
 const CreateListNameWork = lazy(() => import("./nameWork/HomeNameWork"));
@@ -36,10 +37,10 @@ const AdminObjectsRoutes = () => {
                 }
             />
             <Route
-                path="scope"
+                path="scope/*"
                 element={
                     <SuspenseLoad>
-                        <ScopeObject />
+                        <ScopeWorkRouter />
                     </SuspenseLoad>
                 }
             />

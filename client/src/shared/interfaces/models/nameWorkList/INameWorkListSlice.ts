@@ -23,6 +23,7 @@ export interface INameWorkListSlice {
     list: Item[] | [];
     listItem: INameListWork[] | [];
     lastAddedItem: number | null;
+    listByTypeId: INameListWork[] | [];
     selectedTypeWork: number;
     isLoading: boolean;
     isError: boolean;

@@ -1,40 +1,43 @@
 import { HomeOutlined } from "@ant-design/icons";
 import { Breadcrumb, Card, Col, Row } from "antd";
 import { Link } from "react-router-dom";
-const HomeNameWork = () => {
+const HomeScopeWork = () => {
     return (
-        <Row style={{ display: "flex", flexDirection: "column" }}>
-            <Row>
-                <Row
-                    style={{
-                        marginBottom: 10,
-                    }}
-                >
-                    <Breadcrumb
-                        items={[
-                            {
-                                title: (
-                                    <>
-                                        <HomeOutlined />
-                                        <Link to="/">Домой</Link>
-                                    </>
-                                ),
-                            },
-
-                            {
-                                title: "Главная (Списки)",
-                            },
-                        ]}
-                    />
-                </Row>
+        <Row
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                marginBottom: 10,
+            }}
+        >
+            <Row
+                style={{
+                    marginBottom: 10,
+                }}
+            >
+                <Breadcrumb
+                    items={[
+                        {
+                            title: (
+                                <>
+                                    <HomeOutlined />
+                                    <Link to="/">Домой</Link>
+                                </>
+                            ),
+                        },
+                        {
+                            title: "Главная (Объёмы)",
+                        },
+                    ]}
+                />
             </Row>
 
             <Row>
                 <Col>
                     <Card
                         size="small"
-                        title="Создать список"
-                        extra={<Link to="addNewList">Перейти</Link>}
+                        title="Создать объём"
+                        extra={<Link to="addNewScopeWork">Перейти</Link>}
                         style={{ width: 300 }}
                     >
                         <p>Быстрое добавление</p>
@@ -44,7 +47,7 @@ const HomeNameWork = () => {
                     <Card
                         size="small"
                         title="Общий список"
-                        extra={<Link to="listItem">Перейти</Link>}
+                        extra={<Link to="listScopeWork">Перейти</Link>}
                         style={{ width: 300 }}
                     >
                         <p>Все списки</p>
@@ -75,4 +78,4 @@ const HomeNameWork = () => {
     );
 };
 
-export default HomeNameWork;
+export default HomeScopeWork;

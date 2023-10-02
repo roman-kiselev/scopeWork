@@ -8,5 +8,6 @@ export interface INameListWork {
     createdAt: string;
     updatedAt: string;
     typeWorkId: number;
+    scopeWorkId: number | null;
     nameWorks: INameWorkWithNameList[];
 }

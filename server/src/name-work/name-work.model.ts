@@ -4,13 +4,11 @@ import {
   Column,
   DataType,
   ForeignKey,
-  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
-import { TotalVolume } from 'src/total-volume/total-volume.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { Unit } from 'src/unit/unit.model';
 import { NameWorkTypeWork } from './name-work-typework';
@@ -47,8 +45,8 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
   @ForeignKey(() => Unit)
   unitId: number;
 
-  @HasMany(() => TotalVolume)
-  totalVolume: TotalVolume[];
+  // @HasMany(() => TotalVolume)
+  // totalVolume: TotalVolume[];
 
   @BelongsToMany(() => TypeWork, () => NameWorkTypeWork)
   typeWorks: TypeWork[];

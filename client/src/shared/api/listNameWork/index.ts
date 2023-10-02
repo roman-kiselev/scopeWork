@@ -1,6 +1,6 @@
 import { INameListWork, IOneItemForListNameWork } from "../../interfaces";
 import { mainApi } from "../main";
-
+///list-name-work/byTypeWork/2
 export const listNameWorkApi = mainApi.injectEndpoints({
     endpoints: (builder) => ({
         getAllNames: builder.query<INameListWork, void>({
@@ -29,6 +29,14 @@ export const listNameWorkApi = mainApi.injectEndpoints({
             query: (id) => {
                 return {
                     url: `/list-name-work/${id.id}`,
+                    method: "GET",
+                };
+            },
+        }),
+        getOneByTypeWorkId: builder.query<INameListWork[], { id: number }>({
+            query: (id) => {
+                return {
+                    url: `/list-name-work/byTypeWork/${id.id}`,
                     method: "GET",
                 };
             },

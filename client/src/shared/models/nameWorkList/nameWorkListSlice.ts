@@ -5,6 +5,7 @@ import { INameWorkAndUnit, INameWorkListSlice, Item } from "../../interfaces";
 import CreateList from "./CreateList";
 import EditList from "./EditList";
 import GetList from "./GetList";
+import GetListByTypeWorkId from "./GetListByTypeWorkId";
 import GetOneById from "./GetOneById";
 
 const initialState: INameWorkListSlice = {
@@ -18,6 +19,7 @@ const initialState: INameWorkListSlice = {
     },
     list: [],
     lastAddedItem: null,
+    listByTypeId: [],
     listItem: [],
     selectedTypeWork: 0,
     dataError: null,
@@ -97,35 +99,7 @@ export const nameWorkListSlice = createSlice({
 
             state.oneItem.description = description ? description : "";
         },
-        addItemFromList: (state, action: PayloadAction<{ id: number }>) => {
-            // state.isLoading = true;
-            // const { id } = action.payload;
-            // // Ищем id в списке и добавляем в  OneItem
-            // const findedItem = current(state.listItem).find(
-            //     (item) => item.id === id
-            // );
-            // console.log(findedItem);
-            // const newList = findedItem?.nameWorks.map((item, index) => {
-            //     return {
-            //         id: item.id,
-            //         index: index + 1,
-            //         key: item.id.toString(),
-            //         name: item.name,
-            //         quntity: Number(
-            //             item.NameList.quntity ? item.NameList.quntity : 0
-            //         ),
-            //     } as Item;
-            // });
-            // if (findedItem && newList) {
-            //     state.oneItem.idNumber = findedItem.id;
-            //     state.oneItem.name = findedItem.name;
-            //     state.oneItem.description = findedItem.description;
-            //     state.oneItem.typeWorkId = findedItem.typeWorkId;
-            //     state.oneItem.dateCreate = findedItem.createdAt;
-            //     state.oneItem.list = newList;
-            // }
-            // state.isLoading = false;
-        },
+
         resetForOneItem: (state) => {
             state.oneItem.idNumber = null;
             state.oneItem.dateCreate = null;
@@ -137,6 +111,7 @@ export const nameWorkListSlice = createSlice({
         },
     },
     extraReducers(builder) {
+        // Получаем все списки
         builder.addMatcher(
             listNameWorkApi.endpoints.getAllNames.matchPending,
             GetList.pending
@@ -149,7 +124,7 @@ export const nameWorkListSlice = createSlice({
             listNameWorkApi.endpoints.getAllNames.matchRejected,
             GetList.rejected
         );
-
+        // Получаем список по id
         builder.addMatcher(
             listNameWorkApi.endpoints.getOneById.matchPending,
             GetOneById.pending
@@ -162,7 +137,7 @@ export const nameWorkListSlice = createSlice({
             listNameWorkApi.endpoints.getOneById.matchRejected,
             GetOneById.rejected
         );
-
+        // Редактируем список
         builder.addMatcher(
             listNameWorkApi.endpoints.editList.matchPending,
             EditList.pending
@@ -187,6 +162,19 @@ export const nameWorkListSlice = createSlice({
         builder.addMatcher(
             listNameWorkApi.endpoints.createList.matchRejected,
             CreateList.rejected
+        );
+        // Получаем списки по типу работ
+        builder.addMatcher(
+            listNameWorkApi.endpoints.getOneByTypeWorkId.matchPending,
+            GetListByTypeWorkId.pending
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.getOneByTypeWorkId.matchFulfilled,
+            GetListByTypeWorkId.fulfilled
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.getOneByTypeWorkId.matchRejected,
+            GetListByTypeWorkId.rejected
         );
     },
 });

@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BelongsToMany,
   Column,
   DataType,
   ForeignKey,
@@ -7,16 +8,17 @@ import {
   Model,
   Table,
 } from 'sequelize-typescript';
-import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
-import { TotalVolume } from 'src/total-volume/total-volume.model';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { Objects } from 'src/objects/objects.model';
 import { TypeWork } from 'src/type-work/type-work.model';
+import { User } from 'src/user/user.model';
+import { UserScopeWork } from './user-scope-work.model';
 
 interface ScopeWorkAttr {
-  // value?: number;
-  objectTypeWorkId: number;
+  number: number;
 }
 
-@Table({ tableName: 'scope_work' })
+@Table({ tableName: 'scope_work', paranoid: true })
 export class ScopeWork extends Model<ScopeWork, ScopeWorkAttr> {
   @ApiProperty({ example: '1', description: 'Уникальный идентификатор' })
   @Column({
@@ -27,12 +29,12 @@ export class ScopeWork extends Model<ScopeWork, ScopeWorkAttr> {
   })
   id: number;
 
-  @ApiProperty({ example: '100', description: 'Порядковый номер' })
-  @Column({
-    type: DataType.INTEGER,
-    unique: true,
-  })
-  value: number;
+  // @ApiProperty({ example: '100', description: 'Порядковый номер' })
+  // @Column({
+  //   type: DataType.INTEGER,
+  //   unique: true,
+  // })
+  // number: number;
 
   @Column({ type: DataType.DATE })
   deletedAt!: Date;
@@ -41,15 +43,13 @@ export class ScopeWork extends Model<ScopeWork, ScopeWorkAttr> {
   @Column({ type: DataType.INTEGER })
   typeWorkId: number;
 
-  @ForeignKey(() => ObjectTypeWork)
+  @ForeignKey(() => Objects)
   @Column({ type: DataType.INTEGER })
-  objectTypeWorkId: number;
+  objectId: number;
 
-  @HasMany(() => TotalVolume)
-  totalVolume: TotalVolume[];
-  // @BeforeCreate
-  // static setFieldValue(instance: ScopeWork) {
-  //   console.log(instance);
-  //   instance.value = instance.id;
-  // }
+  @HasMany(() => ListNameWork)
+  listNameWork: ListNameWork[];
+
+  @BelongsToMany(() => User, () => UserScopeWork)
+  users: User[];
 }

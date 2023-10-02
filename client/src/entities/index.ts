@@ -12,12 +12,14 @@ import {
     ShortListNamesWithoutTypes,
 } from "./nameWork";
 import { FormCreateObject, ListInfiniteShort, OneObjectShort } from "./objects";
+import { CreateScopeWork } from "./scopeWork";
 import { FormUnit } from "./units";
 
 export {
     CheckAuth,
     CheckRole,
     CreateNameWorkExcel,
+    CreateScopeWork,
     FormCreateNameWork,
     FormCreateObject,
     FormLogin,

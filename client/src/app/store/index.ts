@@ -9,6 +9,7 @@ import {
     nameWorkListReducer,
     nameWorkReducer,
     objectReducer,
+    scopeWorkReducer,
     typeWorkReducer,
     unitReducer,
     usersReducer,
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
     nameWork: nameWorkReducer,
     users: usersReducer,
     nameWorkList: nameWorkListReducer,
+    scopeWork: scopeWorkReducer,
     [mainApi.reducerPath]: mainApi.reducer,
     [objectMainApi.reducerPath]: objectMainApi.reducer,
 });

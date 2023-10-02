@@ -1,8 +1,12 @@
-import { Controller } from '@nestjs/common';
-import { Body, Get, Post } from '@nestjs/common/decorators';
-import { HttpStatus } from '@nestjs/common/enums';
-import { HttpException } from '@nestjs/common/exceptions';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { ScopeWork } from './scope-work.model';
 import { ScopeWorkService } from './scope-work.service';
 
@@ -11,19 +15,19 @@ import { ScopeWorkService } from './scope-work.service';
 export class ScopeWorkController {
   constructor(private scopeWorkService: ScopeWorkService) {}
 
-  @ApiOperation({ summary: 'Получить все' })
-  @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
-  @ApiResponse({ type: HttpException })
-  @Get('/')
-  async fetAll() {
-    return await this.scopeWorkService.getAllScopeWork();
-  }
+  // @ApiOperation({ summary: 'Получить все' })
+  // @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
+  // @ApiResponse({ type: HttpException })
+  // @Get('/')
+  // async fetAll() {
+  //   return await this.scopeWorkService.getAllScopeWork();
+  // }
 
   @ApiOperation({ summary: 'Создание объёма' })
   @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
   @ApiResponse({ type: HttpException })
   @Post('/')
-  async createScope(@Body('idTypeWork') idTypeWork: number) {
-    return await this.scopeWorkService.create(idTypeWork);
+  async createScope(@Body() dto: CreateScopeWorkDto) {
+    return await this.scopeWorkService.createScopeWork(dto);
   }
 }

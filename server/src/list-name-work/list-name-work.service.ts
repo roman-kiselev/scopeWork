@@ -219,4 +219,27 @@ export class ListNameWorkService {
       );
     }
   }
+
+  async getListNameWorksByTypeWorkId(id: string) {
+    try {
+      const listNameWorks = await this.listNameWorkRepository.findAll({
+        where: { typeWorkId: id, scopeWorkId: null, deletedAt: null },
+        include: { all: true },
+      });
+      const finishList = JSON.parse(JSON.stringify(listNameWorks));
+      if (!listNameWorks || listNameWorks.length === 0) {
+        return [];
+      }
+
+      return finishList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

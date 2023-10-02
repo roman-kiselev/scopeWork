@@ -3,9 +3,11 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { ObjectTypeWork } from './objects-type_work.model';
 
@@ -42,4 +44,7 @@ export class Objects extends Model<Objects, ObjectsAttr> {
 
   @BelongsToMany(() => TypeWork, () => ObjectTypeWork)
   typeWorks: TypeWork[];
+
+  @HasMany(() => ScopeWork)
+  scopeWorks: ScopeWork[];
 }

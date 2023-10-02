@@ -14,6 +14,7 @@ import {
     Item,
 } from "./nameWorkList";
 import { IRole } from "./roles";
+import { IScopeWorkSlice } from "./scopeWork";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
 import { IUserDescription } from "./userDescription";
@@ -31,6 +32,7 @@ export type {
     INameWorkWithQuantity,
     IOneItemForListNameWork,
     IRole,
+    IScopeWorkSlice,
     ITypeWork,
     IUnit,
     IUnitsCreateAttr,

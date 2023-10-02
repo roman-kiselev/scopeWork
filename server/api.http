@@ -5,7 +5,7 @@
 
 @email = "admin@admin.ru"
 @password = "admin"
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLnJ1IiwiaWQiOjEsInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiLQkNC00LzQuNC90LjRgdGC0YDQsNGC0L7RgCIsImRlbGV0ZWRBdCI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyMy0wOC0yMVQwNjowMjoxNS4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wOC0yMVQwNjowMjoxNS4wMDBaIn1dLCJiYW5uZWQiOmZhbHNlLCJpYXQiOjE2OTI1OTc3ODUsImV4cCI6MTY5MjYzMzc4NX0.KIe1UHSmN-7902arAQMnNmbib8rZA_DBiMbVkD66MOk
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLnJ1IiwiaWQiOjEsInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiLQkNC00LzQuNC90LjRgdGC0YDQsNGC0L7RgCIsImRlbGV0ZWRBdCI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyMy0wOS0yN1QwNjozMjozOC4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0wOS0yN1QwNjozMjozOC4wMDBaIn1dLCJiYW5uZWQiOmZhbHNlLCJpYXQiOjE2OTU3OTgyNjksImV4cCI6MTY5NTgzNDI2OX0.np3TNrYHlQk-Q8vPI1TYuFbjbnFmdUyJlK6mEhf0m_s
 
 ### ------ Еденицы измерения ---------------------------------------------------------------------
 ### Получение едениц измерения
@@ -79,6 +79,40 @@ Content-type: application/json; charset=utf-8
 ### 
 
 ### ------ Auth ---------------------------------------------------------------
+
+### Регистрация
+POST {{host}}/auth/registration HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "email": "test_1@email.ru",
+    "password": "1234",
+    "firstname": "Иван",
+    "lastname": "Иванов"
+}
+
+###
+POST {{host}}/auth/registration HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "email": "test_2@email.ru",
+    "password": "1234",
+    "firstname": "Фёдор",
+    "lastname": "Синицын"
+}
+###
+POST {{host}}/auth/registration HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "email": "test_3@email.ru",
+    "password": "1234",
+    "firstname": "Степан",
+    "lastname": "Кружкин"
+}
+###
+
 ### Авторизация
 POST {{host}}/auth/login HTTP/1.1
 Content-type: application/json; charset=utf-8
@@ -91,6 +125,13 @@ Content-type: application/json; charset=utf-8
 GET {{host}}/auth/check HTTP/1.1
 Authorization: Bearer {{token}}
 
+
+ 
+
+### ------ User ---------------------------------------------------------------
+### Получение объектов
+GET {{host}}/user HTTP/1.1
+//Authorization: Bearer {{token}}
 
 
 ### ------ Объекты ---------------------------------------------------------
@@ -115,7 +156,7 @@ Content-type: application/json; charset=utf-8
 GET {{host}}/name-work HTTP/1.1
 
 ### Получение наименований по типу
-GET {{host}}/name-work/byTypeWork/?typeWorkId=3 HTTP/1.1
+GET {{host}}/name-work/byTypeWork/?typeWorkId=2 HTTP/1.1
 
 ### Создание наименования
 POST {{host}}/name-work HTTP/1.1
@@ -149,7 +190,10 @@ POST {{host}}/scope-work HTTP/1.1
 Content-type: application/json; charset=utf-8
 
 {
-    "idTypeWork": 1
+    "typeWorkId": 1,
+    "listNameWork": [1],
+    "objectId": 1,
+    "users": [1]
 }
 
 
@@ -159,6 +203,12 @@ Content-type: application/json; charset=utf-8
 GET {{host}}/list-name-work HTTP/1.1
 
 ###
+
+### Получение всех по типу работ 
+GET {{host}}/list-name-work/byTypeWork/2 HTTP/1.1
+
+###
+
 
 ### Получение одного 
 GET {{host}}/list-name-work/1 HTTP/1.1
