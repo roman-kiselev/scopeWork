@@ -1,16 +1,20 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import sequelize from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { Objects } from 'src/objects/objects.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
-import { ScopeWork } from './scope-work.model';
+import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
 export class ScopeWorkService {
   constructor(
     @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
+    @InjectModel(UserScopeWork)
+    private userScopeWorkRepository: typeof UserScopeWork,
     @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
@@ -66,7 +70,7 @@ export class ScopeWorkService {
     try {
       const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
       for (const item of arr) {
-        await scopeWork.$set('users', item);
+        await scopeWork.$add('users', item);
       }
       return scopeWork;
     } catch (e) {
@@ -84,7 +88,11 @@ export class ScopeWorkService {
     try {
       const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
       for (const item of arr) {
-        await scopeWork.$set('listNameWork', item);
+        // const newTypeWorkId = await this.listNameWorkRepository.findByPk(item);
+
+        // newTypeWorkId.scopeWorkId = scopeWork.id;
+        // await newTypeWorkId.save();
+        await scopeWork.$add('listNameWork', item);
       }
       return scopeWork;
     } catch (e) {
@@ -136,7 +144,7 @@ export class ScopeWorkService {
       newScopeWork.typeWorkId = typeWorkId;
       newScopeWork.objectId = objectId;
       await this.createArrUsers(users, newScopeWork.id);
-      await this.createArrListNameWork(users, newScopeWork.id);
+      await this.createArrListNameWork(listNameWork, newScopeWork.id);
       await newScopeWork.save();
 
       const dataScopeWork = await this.scopeWorkRepository.findByPk(
@@ -155,87 +163,111 @@ export class ScopeWorkService {
     }
   }
 
-  // async createScopeWork(idObjectTypeWork: number) {
-  //   try {
-  //     console.log(idObjectTypeWork);
-  //     // Проверить существует ли тип работ
-  //     const isObjectTypeWork = await this.objectTypeWorkRepository.findByPk(
-  //       idObjectTypeWork,
-  //     );
-  //     if (!isObjectTypeWork) {
-  //       throw new HttpException('Связи не существует', HttpStatus.BAD_REQUEST);
-  //     }
-  //     const scopeWork = await this.scopeWorkRepository.create({
-  //       objectTypeWorkId: idObjectTypeWork,
-  //     });
+  async getOneScopeWork(id: string) {
+    try {
+      const scopeWork = await this.scopeWorkRepository.findByPk(id, {
+        include: { all: true },
+      });
+      const finishScopeWork = JSON.parse(JSON.stringify(scopeWork));
+      if (!scopeWork) {
+        throw new HttpException(
+          'Такого объёма не существует',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const { typeWorkId, objectId, listNameWork } = finishScopeWork;
+      const findTypeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+      const findObject = await this.objectsRepository.findByPk(objectId);
+      let findList = [];
+      for (const item of listNameWork) {
+        const { id } = item;
+        const findedList = await this.listNameWorkRepository.findByPk(id, {
+          include: { all: true },
+        });
+        findList.push(JSON.parse(JSON.stringify(findedList)));
+      }
+      const changedScopeWork = {
+        ...finishScopeWork,
+        object: findObject,
+        typeWork: findTypeWork,
+        listNameWork: findList,
+      };
 
-  //     if (!scopeWork) {
-  //       throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
-  //     }
-  //     await scopeWork.update({
-  //       value: scopeWork.id,
-  //     });
-  //     // await scopeWork.$add('objectTypeWorkId', idObjectTypeWork);
+      return changedScopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
-  //     return scopeWork;
-  //   } catch (e) {
-  //     if (e instanceof HttpException) {
-  //       throw e;
-  //     }
-  //     throw new HttpException(
-  //       'Ошибка сервера',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+  async getAllScopeWork() {
+    try {
+      const scopeWorks = await this.scopeWorkRepository.findAll({
+        include: { all: true },
+      });
 
-  // // Создаём объём, добавляем просто номер
-  // // В дальнейшем можно прикрепить подобъём, тип работ, объект
-  // async create(idTypeWork: number) {
-  //   try {
-  //     // Проверяем тип работ
-  //     const typeWork = await this.typeWorkRepository.findByPk(idTypeWork);
-  //     if (!typeWork) {
-  //       throw new HttpException(
-  //         'Такого типа не существует',
-  //         HttpStatus.BAD_REQUEST,
-  //       );
-  //     }
-  //     const scopeWork = await this.scopeWorkRepository.create();
-  //     await scopeWork.update({
-  //       value: scopeWork.id,
-  //       typeWorkId: idTypeWork,
-  //     });
-  //     const getScopeWork = await this.scopeWorkRepository.findByPk(
-  //       scopeWork.id,
-  //     );
+      return scopeWorks;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 
-  //     return getScopeWork;
-  //   } catch (e) {
-  //     if (e instanceof HttpException) {
-  //       throw e;
-  //     }
-  //     throw new HttpException(
-  //       'Ошибка сервера',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+  async getAllScopeWorkByUserId(id: string) {
+    try {
+      if (id === '1') {
+        const getAllScopeWork = await this.userScopeWorkRepository.findAll({
+          attributes: [
+            [
+              sequelize.fn('DISTINCT', sequelize.col('scopeWorkId')),
+              'scopeWorkId',
+            ],
+          ],
+        });
 
-  // async getAllScopeWork() {
-  //   try {
-  //     const scopeWorks = await this.scopeWorkRepository.findAll({
-  //       include: { all: true },
-  //     });
-  //     return scopeWorks;
-  //   } catch (e) {
-  //     if (e instanceof HttpException) {
-  //       throw e;
-  //     }
-  //     throw new HttpException(
-  //       'Ошибка сервера',
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //     );
-  //   }
-  // }
+        const listScopeWork = [];
+        for (const { scopeWorkId } of getAllScopeWork) {
+          const findedScopeWork = await this.getOneScopeWork(
+            scopeWorkId.toString(),
+          );
+          listScopeWork.push(findedScopeWork);
+        }
+
+        return listScopeWork;
+      }
+      const getAllScopeWork = await this.userScopeWorkRepository.findAll({
+        where: {
+          userId: id,
+        },
+      });
+
+      const listScopeWork = [];
+      for (const { scopeWorkId } of getAllScopeWork) {
+        const findedScopeWork = await this.getOneScopeWork(
+          scopeWorkId.toString(),
+        );
+        listScopeWork.push(findedScopeWork);
+      }
+
+      return listScopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

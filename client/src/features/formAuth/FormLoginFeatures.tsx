@@ -1,10 +1,9 @@
-import {Form, Spin} from "antd";
-import React, {useEffect} from "react";
-import {useLocation, useNavigate} from "react-router";
-import {FormLogin} from "../../entities";
-import {LayoutAuth} from "../../entities/layoutAuth";
-import {authApi} from "../../shared/api";
-import {useAppSelector} from "../../shared/hooks";
+import { Form, Spin } from "antd";
+import { useLocation, useNavigate } from "react-router";
+import { FormLogin } from "../../entities";
+import { LayoutAuth } from "../../entities/layoutAuth";
+import { authApi } from "../../shared/api";
+import { useAppSelector } from "../../shared/hooks";
 
 const FormLoginFeatures = () => {
     const location = useLocation();
@@ -17,30 +16,35 @@ const FormLoginFeatures = () => {
         isLoading: isLoadingCheck,
         data: dataCheck,
     } = authApi.useCheckQuery();
-    const {dataError, isError, isLoading, isAuth, token} = useAppSelector(
+    const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
+    // useEffect(() => {
+    //     if (isAuth) {
+    //         navigate(location.state?.from || "/", { replace: true });
+    //     }
+    // }, []);
+
     // Извлечение токена при загрузке страницы
-    const storedToken = localStorage.getItem("token");
-    if (storedToken && isSuccessCheck) {
-        navigate(location.state?.from || "/", {replace: true});
-    }
-    useEffect(() => {
-        if (isSuccessCheck && token !== null) {
-            navigate(location.state?.from || "/", {replace: true});
-        }
-    }, [isSuccessCheck, navigate]);
+    // const storedToken = localStorage.getItem("token");
+    // if (storedToken && isSuccessCheck) {
+    //     navigate(location.state?.from || "/", { replace: true });
+    // }
+    // useEffect(() => {
+    //     if (isSuccessCheck && token !== null) {
+    //         navigate(location.state?.from || "/", { replace: true });
+    //     }
+    // }, [isSuccessCheck, navigate]);
     //const dataRes = useQuery("checkQuery", () => authApi.useCheckQuery().data);
-    const dataRes = authApi.useCheckQuery().data
-    const [login, {isSuccess}] = authApi.useLoginMutation();
+    //const dataRes = authApi.useCheckQuery().data;
+    const [login, { isSuccess, isLoading: isLoadingLogin }] =
+        authApi.useLoginMutation();
     const onFinish = async () => {
-        const res = await login(data);
-        if (dataRes) {
-            navigate(location.state?.from || "/", {replace: true});
-        }
+        await login(data);
+        navigate(location.state?.from || "/", { replace: true });
     };
-    if (isLoading || isLoadingCheck) {
-        return <Spin/>;
+    if (isLoading || isLoadingCheck || isLoadingLogin) {
+        return <Spin />;
     }
     return (
         <LayoutAuth>

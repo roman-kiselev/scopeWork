@@ -17,6 +17,7 @@ interface ListNameWorkAttr {
   name?: string;
   description?: string;
   typeWorkId?: number;
+  scopeWorkId?: number;
 }
 
 @Table({ tableName: 'list_name_work', paranoid: true })

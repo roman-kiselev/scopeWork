@@ -1,3 +1,12 @@
-import { IScopeWorkSlice } from "./IScopeWorkSlice";
+import { ICreateScopeWork } from "./ICreateScopeWork";
+import { IScopeWork } from "./IScopeWork";
+import { IScopeWorkData, IScopeWorkSlice } from "./IScopeWorkSlice";
+import { IScopeWorkWithData } from "./IScopeWorkWithData";
 
-export type { IScopeWorkSlice };
+export type {
+    ICreateScopeWork,
+    IScopeWork,
+    IScopeWorkData,
+    IScopeWorkSlice,
+    IScopeWorkWithData,
+};

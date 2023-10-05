@@ -11,8 +11,9 @@ import {
     ShortListNames,
     ShortListNamesWithoutTypes,
 } from "./nameWork";
+import { MainCard } from "./objectCardMain";
 import { FormCreateObject, ListInfiniteShort, OneObjectShort } from "./objects";
-import { CreateScopeWork } from "./scopeWork";
+import { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
 import { FormUnit } from "./units";
 
 export {
@@ -20,6 +21,7 @@ export {
     CheckRole,
     CreateNameWorkExcel,
     CreateScopeWork,
+    EditScopeWork,
     FormCreateNameWork,
     FormCreateObject,
     FormLogin,
@@ -28,6 +30,8 @@ export {
     ListForAddNameWork,
     ListInfiniteShort,
     ListNameWorkTable,
+    ListScopeWork,
+    MainCard,
     MainNameWork,
     OneObjectShort,
     ShortListNames,

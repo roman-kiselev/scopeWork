@@ -1,9 +1,9 @@
-import { Table } from "antd";
+import { Button, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
-import { resetScopeWorkData } from "../../../shared/models";
+import { delForCreate, resetScopeWorkData } from "../../../shared/models";
 
 interface DataType {
     index: number;
@@ -11,37 +11,8 @@ interface DataType {
     name: string;
     number: number;
     description: string;
+    action: number;
 }
-
-const columns: ColumnsType<DataType> = [
-    {
-        title: "№",
-        dataIndex: "index",
-        key: "index",
-    },
-    {
-        title: "Номер",
-        dataIndex: "number",
-        key: "number",
-        render: (num) => (
-            <Link
-                to={`http://localhost:3000/admin/object/list/listItem/${num}`}
-            >
-                {num}
-            </Link>
-        ),
-    },
-    {
-        title: "Наименование",
-        dataIndex: "name",
-        key: "name",
-    },
-    {
-        title: "Описание",
-        dataIndex: "description",
-        key: "description",
-    },
-];
 
 // const data: DataType[] = [
 //     {
@@ -72,6 +43,49 @@ const columns: ColumnsType<DataType> = [
 
 const TableSelectedListNameWork = () => {
     const dispatch = useAppDispatch();
+    const handleDel = (id: number) => {
+        dispatch(delForCreate(id));
+    };
+    const columns: ColumnsType<DataType> = [
+        {
+            title: "№",
+            dataIndex: "index",
+            key: "index",
+        },
+        {
+            title: "Номер",
+            dataIndex: "number",
+            key: "number",
+            render: (num) => (
+                <Link
+                    to={`http://localhost:3000/admin/object/list/listItem/${num}`}
+                >
+                    {num}
+                </Link>
+            ),
+        },
+        {
+            title: "Наименование",
+            dataIndex: "name",
+            key: "name",
+        },
+        {
+            title: "Описание",
+            dataIndex: "description",
+            key: "description",
+        },
+        {
+            title: "Действие",
+            dataIndex: "action",
+            key: "action",
+            render: (num) => (
+                <Button danger onClick={() => handleDel(num)}>
+                    Удалить
+                </Button>
+            ),
+        },
+    ];
+
     useEffect(() => {
         dispatch(resetScopeWorkData());
     }, []);
@@ -88,6 +102,7 @@ const TableSelectedListNameWork = () => {
             number: id,
             name: name ?? "",
             description: description ?? "",
+            action: id,
         } as DataType;
     });
 

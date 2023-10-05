@@ -1,4 +1,4 @@
-import { Button, Col, Input, Row, Table } from "antd";
+import { Button, Col, Input, Row, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { listNameWorkApi, unitsApi } from "../../../shared/api";
@@ -22,7 +22,9 @@ interface IDataForColumn {
 const ShortListNameWorks = () => {
     const dispatch = useAppDispatch();
     const query = unitsApi.useGetAllUnitsQuery();
-    const { selectedTypeWorkId } = useAppSelector((store) => store.scopeWork);
+    const { selectedTypeWorkId, isLoading } = useAppSelector(
+        (store) => store.scopeWork
+    );
     const { data } = listNameWorkApi.useGetOneByTypeWorkIdQuery({
         id: Number(selectedTypeWorkId),
     });
@@ -32,6 +34,7 @@ const ShortListNameWorks = () => {
     useEffect(() => {
         setSelectedRowKeys([]);
     }, [selectedTypeWorkId]);
+
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);
     };
@@ -43,7 +46,9 @@ const ShortListNameWorks = () => {
     // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
     // Поиск по номеру
-
+    if (isLoading) {
+        return <Spin />;
+    }
     const columns: ColumnsType<IDataForColumn> = [
         {
             title: "№",
@@ -84,6 +89,7 @@ const ShortListNameWorks = () => {
     const addNewList = () => {
         dispatch(addList({ arrListId: selectedRowKeys }));
     };
+
     return (
         <Row>
             <Col style={{ flexDirection: "column" }}>

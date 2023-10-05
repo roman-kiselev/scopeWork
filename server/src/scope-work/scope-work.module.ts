@@ -4,6 +4,7 @@ import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
 import { ObjectTypeWork } from 'src/objects/objects-type_work.model';
 import { Objects } from 'src/objects/objects.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import { ScopeWorkController } from './scope-work.controller';
@@ -24,6 +25,7 @@ import { UserScopeWork } from './user-scope-work.model';
       UserScopeWork,
       ListNameWork,
       Objects,
+      TableAddingData,
     ]),
   ],
   exports: [ScopeWorkService],

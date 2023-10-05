@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice, current } from "@reduxjs/toolkit";
-import { listNameWorkApi } from "../../api";
+import { listNameWorkApi, scopeWorkApi } from "../../api";
 import {
     INameListWork,
     IObjectCreateResponse,
@@ -8,6 +8,7 @@ import {
     IUser,
 } from "../../interfaces";
 import GetOneByTypeWorkId from "./GetOneByTypeWorkId";
+import GetOneScopeWorkById from "./GetOneScopeWorkById";
 
 const initialState: IScopeWorkSlice = {
     selectedTypeWorkId: "",
@@ -17,6 +18,17 @@ const initialState: IScopeWorkSlice = {
         namesWorkGeneral: [],
         object: null,
         typeWork: null,
+        users: [],
+    },
+    selectedScopeWorkById: {
+        id: null,
+        deletedAt: null,
+        typeWork: null,
+        object: null,
+        createdAt: "",
+        updatedAt: "",
+        listNameWork: [],
+        namesWorkGeneral: [],
         users: [],
     },
     isError: false,
@@ -104,7 +116,59 @@ export const scopeWorkSlice = createSlice({
             state.scopeWorkData.object = null;
             state.scopeWorkData.typeWork = null;
             state.scopeWorkData.users = [];
+            state.selectedTypeWorkId = "";
             state.nameWorksSelected = [];
+        },
+        delForCreate: (state, action) => {
+            const id = action.payload;
+            state.scopeWorkData.listNameWork =
+                state.scopeWorkData.listNameWork.filter(
+                    (item) => item.id !== id
+                );
+        },
+        delForEdit: (state, action) => {
+            state.selectedScopeWorkById.listNameWork =
+                state.selectedScopeWorkById.listNameWork.filter(
+                    (item) => item.id !== action.payload
+                );
+        },
+
+        addNameListForEdit: (
+            state,
+            action: PayloadAction<{ arrListId: React.Key[] }>
+        ) => {
+            const { arrListId } = action.payload;
+            const listForPush = [];
+            for (const itemKey of arrListId) {
+                const findedList = current(state.nameWorksSelected).find(
+                    (item) => item.id === itemKey
+                );
+                if (findedList) {
+                    listForPush.push(findedList);
+                }
+            }
+            state.selectedScopeWorkById.listNameWork = [
+                ...state.selectedScopeWorkById.listNameWork,
+                ...listForPush,
+            ];
+        },
+        editUsers: (
+            state,
+            action: PayloadAction<{ listUser: IUser[]; listSelected: string[] }>
+        ) => {
+            const { listSelected, listUser } = action.payload;
+
+            const arr: IUser[] = [];
+            for (let i = 0; i < listSelected.length; i++) {
+                const findedUser = listUser.find(
+                    (item) => item.id === Number(listSelected[i])
+                );
+                if (findedUser) {
+                    arr.push(findedUser);
+                }
+            }
+            state.scopeWorkData.users = [];
+            state.selectedScopeWorkById.users = arr;
         },
     },
     extraReducers(builder) {
@@ -121,6 +185,20 @@ export const scopeWorkSlice = createSlice({
             listNameWorkApi.endpoints.getOneByTypeWorkId.matchRejected,
             GetOneByTypeWorkId.rejected
         );
+
+        // Получаем объём по id
+        builder.addMatcher(
+            scopeWorkApi.endpoints.getOneByIdScopeWork.matchPending,
+            GetOneScopeWorkById.pending
+        );
+        builder.addMatcher(
+            scopeWorkApi.endpoints.getOneByIdScopeWork.matchFulfilled,
+            GetOneScopeWorkById.fulfilled
+        );
+        builder.addMatcher(
+            scopeWorkApi.endpoints.getOneByIdScopeWork.matchRejected,
+            GetOneScopeWorkById.rejected
+        );
     },
 });
 
@@ -131,5 +209,9 @@ export const {
     addUsers,
     addList,
     resetScopeWorkData,
+    delForCreate,
+    delForEdit,
+    addNameListForEdit,
+    editUsers,
 } = scopeWorkSlice.actions;
 export const scopeWorkReducer = scopeWorkSlice.reducer;

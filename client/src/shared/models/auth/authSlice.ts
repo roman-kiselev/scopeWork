@@ -1,9 +1,12 @@
-import jwt_decode from "jwt-decode";
 import { createSlice } from "@reduxjs/toolkit";
+import jwt_decode from "jwt-decode";
 import { authApi } from "../../api";
 import { IAuthSlice, IDataError, IUserToken } from "../../interfaces";
 
 const initialState: IAuthSlice = {
+    banned: false,
+    email: "",
+    id: null,
     roles: [],
     isAuth: false,
     isLoading: false,
@@ -29,20 +32,20 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = true;
                 state.isError = false;
+                state.dataError = null;
             }
         );
         builder.addMatcher(
             authApi.endpoints.register.matchFulfilled,
             (state, action) => {
-                state.isLoading = false;
                 state.isAuth = true;
                 state.token = action.payload.token;
+                state.isLoading = false;
             }
         );
         builder.addMatcher(
             authApi.endpoints.register.matchRejected,
             (state, action) => {
-                state.isLoading = false;
                 state.isAuth = false;
                 state.isError = true;
                 const { data, status } = action.payload as IDataError;
@@ -50,6 +53,7 @@ export const authSlice = createSlice({
                     status: Number(status),
                     data,
                 };
+                state.isLoading = false;
             }
         );
         // End Register //
@@ -59,18 +63,23 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = true;
                 state.isError = false;
+                state.dataError = null;
             }
         );
         builder.addMatcher(
             authApi.endpoints.login.matchFulfilled,
             (state, action) => {
-                state.isLoading = false;
                 state.isAuth = true;
                 const { token } = action.payload;
                 const user: IUserToken = jwt_decode(token);
+                state.id = user.id;
+                state.email = user.email;
+                state.banned = user.banned;
+
                 const { roles } = user;
                 state.roles = roles;
                 state.token = token;
+                state.isLoading = false;
             }
         );
         builder.addMatcher(
@@ -95,24 +104,27 @@ export const authSlice = createSlice({
             (state, action) => {
                 state.isLoading = true;
                 state.isError = false;
+                state.dataError = null;
             }
         );
         builder.addMatcher(
             authApi.endpoints.check.matchFulfilled,
             (state, action) => {
-                state.isLoading = false;
                 state.isAuth = true;
                 const { token } = action.payload;
                 const user: IUserToken = jwt_decode(token);
+                state.id = user.id;
+                state.email = user.email;
+                state.banned = user.banned;
                 const { roles } = user;
                 state.roles = roles;
                 state.token = token;
+                state.isLoading = false;
             }
         );
         builder.addMatcher(
             authApi.endpoints.check.matchRejected,
             (state, action) => {
-                state.isLoading = false;
                 state.isAuth = false;
                 state.isError = true;
                 state.token = null;
@@ -122,6 +134,7 @@ export const authSlice = createSlice({
                     status: Number(status),
                     data,
                 };
+                state.isLoading = false;
             }
         );
         // End Check //

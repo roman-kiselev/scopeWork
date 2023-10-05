@@ -1,6 +1,11 @@
 import { Button, Row } from "antd";
 import { useState } from "react";
-import { objectsApi, typeWorkApi, userApi } from "../../../shared/api";
+import {
+    objectsApi,
+    scopeWorkApi,
+    typeWorkApi,
+    userApi,
+} from "../../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import {
     IObjectCreateResponse,
@@ -11,6 +16,7 @@ import {
     addObject,
     addTypeWork,
     addUsers,
+    resetScopeWorkData,
     selectedTypeWorkIdInScopeWork,
 } from "../../../shared/models";
 import { SelectObject, SelectTypeWork, SelectUser } from "../../../shared/ui";
@@ -54,6 +60,8 @@ const getOptionsObjectUsersTypeWork = (
 
 const CreateScopeWork = () => {
     const dispatch = useAppDispatch();
+    const [createScopeWork, { data: dataScopeWork }] =
+        scopeWorkApi.useCreateMutation();
     const { data: dataObject } = objectsApi.useGetAllObjectsQuery();
     const { data: dataUsers } = userApi.useGetAllUsersQuery();
     const { data: dataTypeWork } = typeWorkApi.useGetAllTypeWorkQuery();
@@ -79,6 +87,25 @@ const CreateScopeWork = () => {
     const handleSetUsers = (arr: string[]) => {
         if (dataUsers) {
             dispatch(addUsers({ listUser: dataUsers, listSelected: arr }));
+        }
+    };
+    // Получаем данные для создания
+    const { scopeWorkData } = useAppSelector((store) => store.scopeWork);
+    const { listNameWork, namesWorkGeneral, object, typeWork, users } =
+        scopeWorkData;
+    const listIdlistNameWork = listNameWork?.map((item) => item.id);
+    const objectId = object?.id;
+    const typeWorkId = typeWork?.id;
+    const usersId = users?.map((item) => item.id);
+    const handleClickCreate = () => {
+        if (objectId && typeWorkId) {
+            createScopeWork({
+                listNameWork: listIdlistNameWork,
+                objectId: objectId,
+                typeWorkId: typeWorkId,
+                users: usersId,
+            });
+            dispatch(resetScopeWorkData());
         }
     };
 
@@ -113,7 +140,18 @@ const CreateScopeWork = () => {
                         handleChange={handleSetUsers}
                         options={listUsersOption}
                     />
-                    <Button type="primary">Создать объём</Button>
+                    <Button
+                        onClick={handleClickCreate}
+                        disabled={
+                            listNameWork.length === 0 ||
+                            users.length === 0 ||
+                            typeWork === null ||
+                            object === null
+                        }
+                        type="primary"
+                    >
+                        Создать объём
+                    </Button>
                 </Row>
             </Row>
             <Row>

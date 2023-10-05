@@ -4,11 +4,13 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
 } from 'sequelize-typescript';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameWork } from 'src/name-work/name-work.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 
 interface NameListAttr {
   quntity: number;
@@ -41,4 +43,7 @@ export class NameList
 
   @ForeignKey(() => NameWork)
   nameWorkId: number;
+
+  @HasMany(() => TableAddingData)
+  tableAddingData: TableAddingData[];
 }

@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -15,13 +17,29 @@ import { ScopeWorkService } from './scope-work.service';
 export class ScopeWorkController {
   constructor(private scopeWorkService: ScopeWorkService) {}
 
-  // @ApiOperation({ summary: 'Получить все' })
-  // @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
-  // @ApiResponse({ type: HttpException })
-  // @Get('/')
-  // async fetAll() {
-  //   return await this.scopeWorkService.getAllScopeWork();
-  // }
+  @ApiOperation({ summary: 'Получить все' })
+  @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/')
+  async fetAll() {
+    return await this.scopeWorkService.getAllScopeWork();
+  }
+
+  @ApiOperation({ summary: 'Получить один' })
+  @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/:id')
+  async getOneById(@Param('id') id: string) {
+    return await this.scopeWorkService.getOneScopeWork(id);
+  }
+
+  @ApiOperation({ summary: 'Получить все для пользователя' })
+  @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/getAllByUserId/:id')
+  async getAllByuserId(@Param('id') id: string) {
+    return await this.scopeWorkService.getAllScopeWorkByUserId(id);
+  }
 
   @ApiOperation({ summary: 'Создание объёма' })
   @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })

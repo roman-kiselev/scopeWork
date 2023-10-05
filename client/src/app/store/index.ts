@@ -6,6 +6,7 @@ import {
 import { authApi, mainApi, objectMainApi } from "../../shared/api";
 import {
     authReducer,
+    dataOneUserReducer,
     nameWorkListReducer,
     nameWorkReducer,
     objectReducer,
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
     users: usersReducer,
     nameWorkList: nameWorkListReducer,
     scopeWork: scopeWorkReducer,
+    dataOneUser: dataOneUserReducer,
     [mainApi.reducerPath]: mainApi.reducer,
     [objectMainApi.reducerPath]: objectMainApi.reducer,
 });

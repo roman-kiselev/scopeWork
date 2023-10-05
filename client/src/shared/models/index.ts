@@ -1,4 +1,5 @@
 import { authReducer } from "./auth";
+import { dataOneUserReducer, dataOneUserSlice } from "./dataOneUser";
 import {
     nameWorkReducer,
     nameWorkSlice,
@@ -18,9 +19,13 @@ import {
 import { objectReducer, objectSlice } from "./objects";
 import {
     addList,
+    addNameListForEdit,
     addObject,
     addTypeWork,
     addUsers,
+    delForCreate,
+    delForEdit,
+    editUsers,
     resetScopeWorkData,
     scopeWorkReducer,
     scopeWorkSlice,
@@ -33,11 +38,17 @@ import { GetAllUsers, usersReducer, usersSlice } from "./users";
 export {
     GetAllUsers,
     addList,
+    addNameListForEdit,
     addObject,
     addTypeWork,
     addUsers,
     authReducer,
+    dataOneUserReducer,
+    dataOneUserSlice,
+    delForCreate,
+    delForEdit,
     editList,
+    editUsers,
     getSelectedTypeWork,
     nameWorkListReducer,
     nameWorkListSlice,

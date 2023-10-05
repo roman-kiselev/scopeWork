@@ -5,6 +5,7 @@ import {
   BelongsToMany,
   Column,
   DataType,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -13,6 +14,7 @@ import { Roles } from 'src/roles/roles.model';
 import { UserRole } from 'src/roles/user-role.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { UserScopeWork } from 'src/scope-work/user-scope-work.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 
 export interface UserCreationAttr {
@@ -57,6 +59,9 @@ export class User extends Model<User, UserCreationAttr> {
 
   @BelongsToMany(() => ScopeWork, () => UserScopeWork)
   scopeWork: ScopeWork[];
+
+  @HasMany(() => TableAddingData)
+  tableAddingData: TableAddingData[];
 
   @AfterDestroy
   static async deleteDescription(user: User) {

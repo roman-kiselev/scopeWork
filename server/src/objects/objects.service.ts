@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { response } from 'express';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { TypeWorkService } from 'src/type-work/type-work.service';
 import { CreateAssignDto } from './dto/create-assign.dto';

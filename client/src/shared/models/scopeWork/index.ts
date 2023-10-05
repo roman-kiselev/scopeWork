@@ -1,8 +1,12 @@
 import {
     addList,
+    addNameListForEdit,
     addObject,
     addTypeWork,
     addUsers,
+    delForCreate,
+    delForEdit,
+    editUsers,
     resetScopeWorkData,
     scopeWorkReducer,
     scopeWorkSlice,
@@ -11,9 +15,13 @@ import {
 
 export {
     addList,
+    addNameListForEdit,
     addObject,
     addTypeWork,
     addUsers,
+    delForCreate,
+    delForEdit,
+    editUsers,
     resetScopeWorkData,
     scopeWorkReducer,
     scopeWorkSlice,

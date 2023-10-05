@@ -21,7 +21,7 @@ const options: SelectProps["options"] = [
 
 interface SelectUserProps {
     handleChange: (arr: string[]) => void;
-    defaultValue: string[];
+    defaultValue: string[] | null | undefined;
     options: SelectProps["options"];
     disabled?: boolean;
 }
@@ -36,7 +36,7 @@ const SelectUser: React.FC<SelectUserProps> = ({
         <Row style={{ margin: "10px 0" }}>
             <Select
                 mode="multiple"
-                allowClear
+                //allowClear
                 style={{ width: "100%" }}
                 placeholder="Выберите пользователя"
                 defaultValue={defaultValue}
