@@ -4,6 +4,7 @@ import sequelize from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { Objects } from 'src/objects/objects.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
@@ -20,6 +21,8 @@ export class ScopeWorkService {
     private listNameWorkRepository: typeof ListNameWork,
     @InjectModel(User) private userRepository: typeof User,
     @InjectModel(Objects) private objectsRepository: typeof Objects,
+    @InjectModel(TableAddingData)
+    private tableAddingDataRepository: typeof TableAddingData,
   ) {}
 
   private async checkArrUsers(arr: number[]) {
@@ -106,7 +109,7 @@ export class ScopeWorkService {
     }
   }
 
-  // Ссоздаём объём
+  // Создаём объём
   async createScopeWork(dto: CreateScopeWorkDto) {
     try {
       // Получаем id Объекта
@@ -260,6 +263,57 @@ export class ScopeWorkService {
       }
 
       return listScopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getAllListWorkForEditByScopeWorkId(id: string) {
+    try {
+      // Получаем объём
+      const scopeWork = await this.scopeWorkRepository.findByPk(id, {
+        include: { all: true },
+      });
+      const scopeWorkFinish = JSON.parse(JSON.stringify(scopeWork));
+      let listNames = [];
+      const { listNameWork } = scopeWorkFinish;
+      // Получаем весь список наименований
+      // Учесть что списков с работами может быть несколько
+      for (const { id } of listNameWork) {
+        const oneList = await this.listNameWorkRepository.findByPk(id, {
+          include: { all: true },
+        });
+        const { nameWorks } = oneList;
+        const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
+        for (const name of finishNameWorks) {
+          const tableAdding = await this.tableAddingDataRepository.findAll({
+            where: {
+              nameWorkId: name.id,
+              nameListId: name.NameList.listNameWorkId,
+            },
+          });
+
+          listNames.push({
+            id: name.id,
+            name: name.name,
+            deletedAt: name.deletedAt,
+            createdAt: name.createdAt,
+            updatedAt: name.updatedAt,
+            unitId: name.unitId,
+            quntity: name.NameList.quntity,
+            listNameWorkId: name.NameList.listNameWorkId,
+            scopeWorkId: scopeWorkFinish.id,
+            tableAddingData: tableAdding,
+          });
+        }
+      }
+      return listNames;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -25,6 +25,14 @@ export class NameWorkController {
     return this.nameWorkService.findAllNames();
   }
 
+  @ApiOperation({ summary: 'Получить все целиком' })
+  @ApiResponse({ status: HttpStatus.OK, type: [NameWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/getAll')
+  getAllC() {
+    return this.nameWorkService.getAllData();
+  }
+
   @ApiOperation({ summary: 'Получить по типу' })
   @ApiResponse({ status: HttpStatus.OK, type: [NameWork] })
   @ApiResponse({ type: HttpException })

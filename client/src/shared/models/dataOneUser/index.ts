@@ -1,3 +1,13 @@
-import { dataOneUserReducer, dataOneUserSlice } from "./dataOneUserSlice";
+import {
+    dataOneUserReducer,
+    dataOneUserSlice,
+    editOneQuntity,
+    getDataByTabName,
+} from "./dataOneUserSlice";
 
-export { dataOneUserReducer, dataOneUserSlice };
+export {
+    dataOneUserReducer,
+    dataOneUserSlice,
+    editOneQuntity,
+    getDataByTabName,
+};

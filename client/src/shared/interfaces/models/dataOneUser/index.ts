@@ -1,2 +1,8 @@
-import { IDataOneUserSlice } from "./IDataOneUserSlice";
-export type { IDataOneUserSlice };
+import { IDataOneUserSlice, IListByScopeWorkIdTest } from "./IDataOneUserSlice";
+import { IEditOneQuntityPayload } from "./IEditOneQuntityPayload";
+
+export type {
+    IDataOneUserSlice,
+    IEditOneQuntityPayload,
+    IListByScopeWorkIdTest,
+};

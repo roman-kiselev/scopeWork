@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
@@ -32,6 +33,15 @@ export class ListNameWorkController {
   getOneById(@Param('id') id: string) {
     return this.listNameWorkService.getOneById(id);
   }
+
+  @ApiOperation({ summary: 'Копируем один' })
+  @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/copy/:id')
+  copyListById(@Param('id') id: string) {
+    return this.listNameWorkService.copyList(id);
+  }
+
   @ApiOperation({ summary: 'Получение списка по тип работ' })
   @ApiResponse({ status: HttpStatus.OK, type: [ListNameWork] })
   @ApiResponse({ type: HttpException })
@@ -54,5 +64,13 @@ export class ListNameWorkController {
   @Post('/edit')
   editNameList(@Body() dto: ListNameWorkEditDto) {
     return this.listNameWorkService.editList(dto);
+  }
+
+  @ApiOperation({ summary: 'Удаление' })
+  @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
+  @ApiResponse({ type: HttpException })
+  @Delete('/del/:id')
+  delList(@Param('id') id: string) {
+    return this.listNameWorkService.delList(id);
   }
 }

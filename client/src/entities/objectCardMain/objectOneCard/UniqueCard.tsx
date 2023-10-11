@@ -1,6 +1,8 @@
 import { Card } from "antd";
 import React, { useState } from "react";
+import { useAppDispatch } from "../../../shared/hooks";
 import { IObjectCreateResponse } from "../../../shared/interfaces";
+import { getDataByTabName } from "../../../shared/models";
 
 interface ITabList {
     key: string;
@@ -15,10 +17,11 @@ interface UniqueCardProps {
 
 const UniqueCard: React.FC<UniqueCardProps> = ({ object, tabList }) => {
     const [collapsed, setCollapsed] = useState(false);
-
-    const [activeTabKey1, setActiveTabKey1] = useState<string>("home");
+    const dispatch = useAppDispatch();
+    const [activeTabKey1, setActiveTabKey1] = useState<string>("Главная");
     const onTab1Change = (key: string) => {
         setActiveTabKey1(key);
+        dispatch(getDataByTabName({ name: key, objectId: object.id }));
     };
 
     return (

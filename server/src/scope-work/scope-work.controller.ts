@@ -41,6 +41,14 @@ export class ScopeWorkController {
     return await this.scopeWorkService.getAllScopeWorkByUserId(id);
   }
 
+  @ApiOperation({ summary: 'Получить все наменования для одного объёма' })
+  @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/getListByScopeWorkId/:id')
+  async getListByScopeWorkId(@Param('id') id: string) {
+    return await this.scopeWorkService.getAllListWorkForEditByScopeWorkId(id);
+  }
+
   @ApiOperation({ summary: 'Создание объёма' })
   @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
   @ApiResponse({ type: HttpException })

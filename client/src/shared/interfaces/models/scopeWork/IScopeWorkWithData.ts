@@ -8,6 +8,8 @@ export interface IScopeWorkWithData {
     id: number | null;
     deletedAt: Date | null;
     typeWork: ITypeWork | null;
+    objectId?: number | null;
+    typeWorkId?: number | null;
     object: IObjectCreateResponse | null;
     createdAt: Date | "";
     updatedAt: Date | "";

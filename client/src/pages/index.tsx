@@ -1,15 +1,10 @@
-import React, { lazy } from "react";
-import { Routes, Route } from "react-router";
+import { lazy } from "react";
+import { Route, Routes } from "react-router";
 import { SuspenseLoad } from "../entities";
-import {
-    CheckA,
-    SuspenseLoadCheckA,
-    SuspenseLoadCheckAR,
-    SuspenseLoadCheckR,
-} from "../features";
+import { SuspenseLoadCheckAR, SuspenseLoadCheckR } from "../features";
 import { RoleString } from "../shared/config";
 import NoAccess from "./noAccess";
-import ObjectPage from "./objects/ObjectPage";
+import ScopeWorkAddData from "./scopeWork/ScopeWorkAddData";
 
 const LoginPage = lazy(() => import("./auth/LoginPage"));
 const RegisterPage = lazy(() => import("./auth/RegisterPage"));
@@ -32,6 +27,21 @@ const Routing = () => {
                 }
             >
                 <Route index element={<HomePage />} />
+                <Route path="/:id" element={<ScopeWorkAddData />} />
+                {/* <Route
+                    path="objects/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[
+                                RoleString.USER,
+                                RoleString.ADMIN,
+                                RoleString.DEV,
+                            ]}
+                        >
+                            <ObjectsRoutes />
+                        </SuspenseLoadCheckR>
+                    }
+                /> */}
 
                 <Route
                     path="objects/*"
@@ -43,7 +53,7 @@ const Routing = () => {
                                 RoleString.DEV,
                             ]}
                         >
-                            <ObjectsRoutes />
+                            <h3>В разработке</h3>
                         </SuspenseLoadCheckR>
                     }
                 />

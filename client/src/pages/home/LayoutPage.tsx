@@ -7,6 +7,8 @@ import { Button, Dropdown, Layout, MenuProps } from "antd";
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { LeftMenu } from "../../features";
+import { useAppDispatch, useAppSelector } from "../../shared/hooks";
+import { logout } from "../../shared/models";
 const { Header, Sider, Content, Footer } = Layout;
 
 const tabList = [
@@ -33,8 +35,9 @@ const tabList = [
 ];
 
 const LayoutPage = () => {
+    const dispatch = useAppDispatch();
     const [collapsed, setCollapsed] = useState(false);
-
+    const { email } = useAppSelector((store) => store.auth);
     const [activeTabKey1, setActiveTabKey1] = useState<string>("tab1");
     const onTab1Change = (key: string) => {
         setActiveTabKey1(key);
@@ -45,19 +48,19 @@ const LayoutPage = () => {
     const width = window.innerWidth;
 
     const items: MenuProps["items"] = [
-        {
-            label: <a href="https://www.antgroup.com">1st menu item</a>,
-            key: "0",
-        },
-        {
-            label: <a href="https://www.aliyun.com">2nd menu item</a>,
-            key: "1",
-        },
+        // {
+        //     label: <a href="https://www.antgroup.com">1st menu item</a>,
+        //     key: "0",
+        // },
+        // {
+        //     label: <a href="https://www.aliyun.com">2nd menu item</a>,
+        //     key: "1",
+        // },
         {
             type: "divider",
         },
         {
-            label: "3rd menu item",
+            label: <Button onClick={() => dispatch(logout())}>Выход</Button>,
             key: "3",
         },
     ];
@@ -108,7 +111,7 @@ const LayoutPage = () => {
                                 className="ant-dropdown-link"
                                 onClick={(e) => e.preventDefault()}
                             >
-                                Username <DownOutlined />
+                                {email} <DownOutlined />
                             </Button>
                         </Dropdown>
                     </div>

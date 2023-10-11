@@ -1,4 +1,5 @@
 import { Button, Card, Form, Row } from "antd";
+import { authApi } from "../../../shared/api";
 import {
     IInputFormItemProps,
     IInputPasswordFormItemProps,
@@ -102,7 +103,12 @@ const propsConfirm: IInputPasswordFormItemProps = {
 
 const CreateUser = () => {
     const [form] = Form.useForm();
-
+    const data = Form.useWatch([], form);
+    const [registered, { isSuccess }] = authApi.useRegisterMutation();
+    const onFinish = async () => {
+        const res = await registered(data);
+        console.log(res);
+    };
     return (
         <>
             <Card
@@ -110,7 +116,7 @@ const CreateUser = () => {
                 bordered={true}
                 style={{ maxWidth: 400 }}
             >
-                <Form form={form} name="register" onFinish={() => {}}>
+                <Form form={form} name="register" onFinish={onFinish}>
                     <InputFormItem
                         input={propsEmail.input}
                         name={propsEmail.name}

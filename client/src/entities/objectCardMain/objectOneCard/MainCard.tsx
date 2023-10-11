@@ -3,37 +3,38 @@ import { useState } from "react";
 import { scopeWorkApi } from "../../../shared/api";
 import { useAppSelector } from "../../../shared/hooks";
 import UniqueCard from "./UniqueCard";
+import SelectedTypeWork from "./tabsCard/SelectedTypeWork";
 
 const tabList = [
     {
-        key: "home",
+        key: "Главная",
         tab: "Главная",
         children: <h3>Главная</h3>,
     },
     {
-        key: "askue",
+        key: "АСКУЭ",
         tab: "АСКУЭ",
-        children: <h3>АСКУЭ</h3>,
+        children: <SelectedTypeWork tabName="АСКУЭ" />,
     },
     {
-        key: "water",
+        key: "Водоснабжение",
         tab: "Водоснабжение",
-        children: <h3>Водоснабжение</h3>,
+        children: <SelectedTypeWork tabName="Водоснабжение" />,
     },
     {
-        key: "sewerage",
+        key: "Канализация",
         tab: "Канализация",
-        children: <h3>Канализация</h3>,
+        children: <SelectedTypeWork tabName="Канализация" />,
     },
     {
-        key: "heating",
+        key: "Отопление",
         tab: "Отопление",
-        children: <h3>Отопление</h3>,
+        children: <SelectedTypeWork tabName="Отопление" />,
     },
     {
-        key: "other",
+        key: "Другое",
         tab: "Другое",
-        children: <h3>Отопление</h3>,
+        children: <SelectedTypeWork tabName="Другое" />,
     },
 ];
 
@@ -82,7 +83,6 @@ const MainCard = () => {
         const { data } = scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
             id: id,
         });
-        console.log(data);
     }
     const { objects } = useAppSelector((store) => store.dataOneUser);
 

@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { listNameWorkApi } from "../../api";
 import { INameWorkAndUnit, INameWorkListSlice, Item } from "../../interfaces";
 
+import CopyList from "./CopyList";
 import CreateList from "./CreateList";
 import EditList from "./EditList";
 import GetList from "./GetList";
@@ -175,6 +176,20 @@ export const nameWorkListSlice = createSlice({
         builder.addMatcher(
             listNameWorkApi.endpoints.getOneByTypeWorkId.matchRejected,
             GetListByTypeWorkId.rejected
+        );
+
+        // Копируем список
+        builder.addMatcher(
+            listNameWorkApi.endpoints.copyList.matchPending,
+            CopyList.pending
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.copyList.matchFulfilled,
+            CopyList.fulfilled
+        );
+        builder.addMatcher(
+            listNameWorkApi.endpoints.copyList.matchRejected,
+            CopyList.rejected
         );
     },
 });

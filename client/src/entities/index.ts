@@ -14,6 +14,7 @@ import {
 import { MainCard } from "./objectCardMain";
 import { FormCreateObject, ListInfiniteShort, OneObjectShort } from "./objects";
 import { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
+import { OneScopeWorkForEdit } from "./scopeWorkForHome";
 import { FormUnit } from "./units";
 
 export {
@@ -34,6 +35,7 @@ export {
     MainCard,
     MainNameWork,
     OneObjectShort,
+    OneScopeWorkForEdit,
     ShortListNames,
     ShortListNamesWithoutTypes,
     SimpleShortItemForList,

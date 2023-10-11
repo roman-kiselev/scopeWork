@@ -1,5 +1,9 @@
 import { IAuthSlice } from "./auth";
-import { IDataOneUserSlice } from "./dataOneUser";
+import {
+    IDataOneUserSlice,
+    IEditOneQuntityPayload,
+    IListByScopeWorkIdTest,
+} from "./dataOneUser";
 import { INameListForNameWork } from "./nameList";
 import {
     ICreateNameWorkAttr,
@@ -17,11 +21,13 @@ import {
 import { IRole } from "./roles";
 import {
     ICreateScopeWork,
+    IListByScopeWorkId,
     IScopeWork,
     IScopeWorkData,
     IScopeWorkSlice,
     IScopeWorkWithData,
 } from "./scopeWork";
+import { ITableAddingData, ITableAddingDataDto } from "./tableAddingData";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
 import { IUserDescription } from "./userDescription";
@@ -32,6 +38,9 @@ export type {
     ICreateNameWorkAttr,
     ICreateScopeWork,
     IDataOneUserSlice,
+    IEditOneQuntityPayload,
+    IListByScopeWorkId,
+    IListByScopeWorkIdTest,
     INameListForNameWork,
     INameListWork,
     INameWorkAndUnit,
@@ -45,6 +54,8 @@ export type {
     IScopeWorkData,
     IScopeWorkSlice,
     IScopeWorkWithData,
+    ITableAddingData,
+    ITableAddingDataDto,
     ITypeWork,
     IUnit,
     IUnitsCreateAttr,

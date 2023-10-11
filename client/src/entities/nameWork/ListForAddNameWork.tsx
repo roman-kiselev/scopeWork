@@ -123,6 +123,7 @@ const ListForAddNameWork = () => {
     // Получаем данные о типах для первой загрузки
     // Получение типов при изменении select
     const [valueOption, setValueOption] = useState(0);
+
     const { data: dataTypeWorks } = typeWorkApi.useGetAllShortQuery();
     const { data: dataNameWork, isSuccess } =
         nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
@@ -165,6 +166,7 @@ const ListForAddNameWork = () => {
     const handleEdit = async () => {
         editList(dataForEdit);
         openMessageEdit(isErrorMain);
+        setValueOption(0);
     };
 
     // Удаление

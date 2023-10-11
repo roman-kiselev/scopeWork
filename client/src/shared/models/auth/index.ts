@@ -1,3 +1,3 @@
-import { authReducer } from "./authSlice";
+import { authReducer, logout } from "./authSlice";
 
-export { authReducer };
+export { authReducer, logout };

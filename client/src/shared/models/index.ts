@@ -1,5 +1,10 @@
-import { authReducer } from "./auth";
-import { dataOneUserReducer, dataOneUserSlice } from "./dataOneUser";
+import { authReducer, logout } from "./auth";
+import {
+    dataOneUserReducer,
+    dataOneUserSlice,
+    editOneQuntity,
+    getDataByTabName,
+} from "./dataOneUser";
 import {
     nameWorkReducer,
     nameWorkSlice,
@@ -48,8 +53,11 @@ export {
     delForCreate,
     delForEdit,
     editList,
+    editOneQuntity,
     editUsers,
+    getDataByTabName,
     getSelectedTypeWork,
+    logout,
     nameWorkListReducer,
     nameWorkListSlice,
     nameWorkReducer,

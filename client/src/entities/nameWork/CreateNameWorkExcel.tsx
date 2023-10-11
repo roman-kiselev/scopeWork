@@ -1,5 +1,5 @@
-import { UploadOutlined } from "@ant-design/icons";
-import { Button, Form, Row, Upload } from "antd";
+import { Row, Spin } from "antd";
+import * as XLSX from "xlsx";
 
 const normFile = (e: any) => {
     console.log("Upload event:", e);
@@ -10,17 +10,28 @@ const normFile = (e: any) => {
 };
 
 const CreateNameWorkExcel = () => {
-    const handleFileUpload = () => {
-        console.log("Началась загрузка");
+    const handleFileUpload = (event: any) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (e: ProgressEvent<FileReader>) => {
+            const data = e.target?.result;
+            const workbook = XLSX.read(data, { type: "binary" });
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+            const excelData = XLSX.utils.sheet_to_json(sheet);
+            console.log(excelData); // Вывод данных из Excel в консоль
+        };
+        reader.readAsBinaryString(file);
     };
 
     return (
         <Row>
-            <Form onFinish={handleFileUpload}>
+            {/* <Form onFinish={handleFinish}>
                 <Form.Item
                     name="upload"
                     valuePropName="fileList"
-                    getValueFromEvent={normFile}
+                    getValueFromEvent={() => {}}
                 >
                     <Upload
                         beforeUpload={() => false}
@@ -35,7 +46,11 @@ const CreateNameWorkExcel = () => {
                 <Button type="primary" htmlType="submit">
                     Отправить
                 </Button>
-            </Form>
+            </Form> */}
+            <Row>
+                <input type="file" accept=".xlsx" onChange={handleFileUpload} />
+                <Spin />
+            </Row>
         </Row>
     );
 };

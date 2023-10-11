@@ -242,4 +242,78 @@ export class ListNameWorkService {
       );
     }
   }
+
+  async delList(id: string) {
+    try {
+      const findedList = await this.listNameWorkRepository.findByPk(id, {
+        include: {
+          all: true,
+        },
+      });
+      if (!findedList) {
+        throw new HttpException('Список не найден', HttpStatus.NOT_FOUND);
+      }
+
+      const delList = await this.listNameWorkRepository.destroy({
+        where: {
+          id,
+        },
+      });
+      if (!delList) {
+        throw new HttpException(
+          'Не удалось удалить список',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      return findedList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async copyList(id: string) {
+    try {
+      const oneList = await this.getOneById(id);
+      const { name, description, typeWorkId, nameWorks } = oneList;
+      const copyName = `${name}(копия)`;
+      const copyDescription = `${description}(копия)`;
+      const nameWorkData = JSON.parse(JSON.stringify(nameWorks));
+
+      //Подготовим лист
+      const listItem = nameWorkData.map((item) => {
+        const { id, name, NameList } = item;
+        return {
+          id: id,
+          index: id,
+          key: id.toString(),
+          name,
+          quntity: NameList.quntity,
+        } as Item;
+      });
+
+      const copyList = await this.createList({
+        description: copyDescription,
+        name: copyName,
+        list: listItem,
+        typeWorkId,
+      });
+
+      return copyList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

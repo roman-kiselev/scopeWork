@@ -41,5 +41,19 @@ export const listNameWorkApi = mainApi.injectEndpoints({
                 };
             },
         }),
+        delList: builder.mutation<INameListWork, { id: number }>({
+            query: (id) => ({
+                url: `/list-name-work/del/${id.id}`,
+                method: "DELETE",
+            }),
+        }),
+        copyList: builder.query<INameListWork, { id: number }>({
+            query: (id) => {
+                return {
+                    url: `/list-name-work/copy/${id.id}`,
+                    method: "GET",
+                };
+            },
+        }),
     }),
 });

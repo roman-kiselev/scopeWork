@@ -24,7 +24,12 @@ class GetAllScopeWork
         const objects: IObjectCreateResponse[] = [];
         for (const { object } of action.payload) {
             if (object) {
-                objects.push(object);
+                const findedObject = objects.find(
+                    (item) => item.id === object.id
+                );
+                if (!findedObject) {
+                    objects.push(object);
+                }
             }
         }
         state.objects = objects;

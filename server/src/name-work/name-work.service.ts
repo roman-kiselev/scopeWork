@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
 import { UnitService } from 'src/unit/unit.service';
@@ -164,6 +165,9 @@ export class NameWorkService {
             },
             through: { attributes: [] },
           },
+          {
+            model: TableAddingData,
+          },
         ],
       });
       if (!nameWork) {
@@ -227,6 +231,21 @@ export class NameWorkService {
       );
 
       return newNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getAllData() {
+    try {
+      const data = await this.nameWorkRepository.findAll({
+        include: { all: true },
+      });
+
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
