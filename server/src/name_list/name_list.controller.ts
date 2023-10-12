@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { CreateNameListDto } from './dto/create-name-list.dto';
@@ -21,6 +22,18 @@ export class NameListController {
   @Get('/')
   getAll() {
     return this.nameListService.getAll();
+  }
+
+  @ApiOperation({ summary: 'Получение данных по одному наименованию' })
+  @Get('/getDateForOne')
+  getDateForOne(
+    @Query('nameWorkId') nameWorkId: number,
+    @Query('listId') listId: number,
+  ) {
+    return this.nameListService.getDateByNameWorkIdAndListId(
+      nameWorkId,
+      listId,
+    );
   }
 
   @ApiOperation({ summary: 'Создание' })

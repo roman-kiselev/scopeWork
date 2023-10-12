@@ -3,6 +3,8 @@ import { INameWorkWithNameList } from "../nameWork";
 import { INameListWork } from "../nameWorkList";
 import { IListByScopeWorkId, IScopeWorkWithData } from "../scopeWork";
 import { ITypeWork } from "../typeWork";
+import { IListData } from "./IListData";
+import { IValueForListData } from "./IValueForListData";
 
 export interface ITabForScopeWork {
     number: string;
@@ -31,6 +33,7 @@ export interface IListByScopeWorkIdTest {
     scopeWorkId: number;
     id: number;
     currentQuntity: string;
+    nameListId: number;
 }
 
 export interface IDataOneUserSlice {
@@ -39,6 +42,8 @@ export interface IDataOneUserSlice {
     objects: IObjectCreateResponse[];
     listByScopeWorkId: IListByScopeWorkId[] | [];
     listByScopeWorkIdTest: IListByScopeWorkIdTest[] | [];
+    valueForListData: IValueForListData[];
+    listData: IListData[];
     //scopeWorkCards: ICardScopeWork[] | [];
     typeWork: ITypeWork[] | [];
     isLoading: boolean;

@@ -1,14 +1,10 @@
 import { CaseReducer } from "@reduxjs/toolkit";
-import {
-    IDataOneUserSlice,
-    IListByScopeWorkId,
-    IListByScopeWorkIdTest,
-} from "../../interfaces";
+import { IDataOneUserSlice } from "../../interfaces";
 import { CreateHandler, IDataError } from "../../interfaces/api";
+import { IListData } from "../../interfaces/models";
 
 class GetListByScopeWorkId
-    implements
-        CreateHandler<IDataOneUserSlice, IListByScopeWorkId[], IDataError>
+    implements CreateHandler<IDataOneUserSlice, IListData[], IDataError>
 {
     pending: CaseReducer<IDataOneUserSlice> = (state) => {
         state.isLoading = true;
@@ -18,46 +14,49 @@ class GetListByScopeWorkId
 
     fulfilled: CaseReducer<
         IDataOneUserSlice,
-        { payload: IListByScopeWorkId[]; type: string }
+        { payload: IListData[]; type: string }
     > = (state, action) => {
         state.isLoading = true;
-        state.listByScopeWorkId = action.payload;
-        const newArr: IListByScopeWorkIdTest[] = action.payload.map(
-            (item, index) => {
-                const {
-                    id,
-                    listNameWorkId,
-                    name,
-                    quntity,
-                    scopeWorkId,
-                    tableAddingData,
-                } = item;
-                const allQuntity: number[] = tableAddingData?.map(
-                    (item) => item.quntity
-                );
-                const initialValue = 0;
-                const finishPercent = allQuntity.reduce(
-                    (accum, currentValue) => accum + currentValue,
-                    initialValue
-                );
-                return {
-                    action: id,
-                    currentQuntity: "",
-                    id,
-                    index: (index + 1).toString(),
-                    key: index.toString(),
-                    listNameWorkId,
-                    name,
-                    percent: Number(
-                        ((finishPercent / quntity) * 100).toFixed(1)
-                    ),
-                    quntity: quntity.toString(),
-                    scopeWorkId,
-                } as IListByScopeWorkIdTest;
-            }
-        );
+        state.listData = action.payload;
+        // state.listByScopeWorkId = action.payload;
+        // const newArr: IListByScopeWorkIdTest[] = action.payload.map(
+        //     (item, index) => {
+        //         const {
+        //             id,
+        //             listNameWorkId,
+        //             name,
+        //             quntity,
+        //             scopeWorkId,
+        //             tableAddingData,
+        //             nameListId,
+        //         } = item;
+        //         const allQuntity: number[] = tableAddingData?.map(
+        //             (item) => item.quntity
+        //         );
+        //         const initialValue = 0;
+        //         const finishPercent = allQuntity.reduce(
+        //             (accum, currentValue) => accum + currentValue,
+        //             initialValue
+        //         );
+        //         return {
+        //             action: id,
+        //             currentQuntity: "",
+        //             id,
+        //             index: (index + 1).toString(),
+        //             key: index.toString(),
+        //             listNameWorkId,
+        //             name,
+        //             percent: Number(
+        //                 ((finishPercent / quntity) * 100).toFixed(1)
+        //             ),
+        //             quntity: quntity.toString(),
+        //             scopeWorkId,
+        //             nameListId,
+        //         } as IListByScopeWorkIdTest;
+        //     }
+        // );
 
-        state.listByScopeWorkIdTest = newArr;
+        // state.listByScopeWorkIdTest = newArr;
         state.isLoading = false;
     };
 

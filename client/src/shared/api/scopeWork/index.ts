@@ -1,6 +1,6 @@
 import {
     ICreateScopeWork,
-    IListByScopeWorkId,
+    IListData,
     IScopeWork,
     IScopeWorkWithData,
 } from "../../interfaces/models";
@@ -36,17 +36,11 @@ export const scopeWorkApi = mainApi.injectEndpoints({
                 method: "GET",
             }),
         }),
-        getListByScopeWorkId: builder.query<
-            IListByScopeWorkId[],
-            { id: number }
-        >({
+        getListByScopeWorkId: builder.query<IListData[], { id: number }>({
             query: (id) => ({
                 url: `/scope-work/getListByScopeWorkId/${id.id}`,
                 method: "GET",
             }),
-            forceRefetch({ currentArg, previousArg }) {
-                return currentArg !== previousArg;
-            },
         }),
     }),
 });

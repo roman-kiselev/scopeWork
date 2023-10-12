@@ -1,49 +1,93 @@
 import { Button, Input, Progress, Space, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { useParams } from "react-router";
 import { scopeWorkApi, tableAddingDataApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { IListByScopeWorkIdTest } from "../../shared/interfaces";
-import { editOneQuntity } from "../../shared/models";
+import { IListData, IValueForListData } from "../../shared/interfaces";
 
 const OneScopeWorkForEdit = () => {
     const dispatch = useAppDispatch();
-    const { id } = useParams();
-    const { data } = scopeWorkApi.useGetListByScopeWorkIdQuery({
-        id: Number(id),
-    });
-    const [setTableAddingData, { data: dataEdit }] =
-        tableAddingDataApi.useAddDataMutation();
-    const { listByScopeWorkId, listByScopeWorkIdTest } = useAppSelector(
-        (store) => store.dataOneUser
-    );
-    const { id: userId } = useAppSelector((store) => store.auth);
-
-    const [dataList, setDataList] = useState<IListByScopeWorkIdTest[] | []>([]);
-    // useEffect(() => {
-    //     setDataList(listByScopeWorkIdTest);
-    // }, [listByScopeWorkId, listByScopeWorkIdTest, , dispatch, dataEdit]);
-
-    const addQuantity = (
-        id: number,
-        listId: number,
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const value = e.target.value;
-        dispatch(editOneQuntity({ id, listId, value }));
+    const { id: idScopeWork } = useParams();
+    // const { data } = scopeWorkApi.useGetListByScopeWorkIdQuery(
+    //     {
+    //         id: Number(idScopeWork),
+    //     },
+    //     {
+    //         pollingInterval: 10000,
+    //     }
+    // );
+    const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
         dispatch(
             scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-                id: Number(id),
+                id: Number(idScopeWork),
             })
+        )
+    );
+
+    const [setTableAddingData, { data: dataEdit }] =
+        tableAddingDataApi.useAddDataMutation();
+    const { listData } = useAppSelector((store) => store.dataOneUser);
+    const { id: userId } = useAppSelector((store) => store.auth);
+    const dataValue = listData?.map((item) => {
+        return {
+            idNameWork: item.nameWorkId,
+            listNameWorkId: item.listNameWorkId,
+            value: "",
+        } as IValueForListData;
+    });
+    const [dataList, setDataList] = useState<IValueForListData[]>(dataValue);
+
+    useEffect(() => {
+        const dataValue = listData?.map((item) => {
+            return {
+                idNameWork: item.nameWorkId,
+                value: "",
+                listNameWorkId: item.listNameWorkId,
+            } as IValueForListData;
+        });
+        setDataList(dataValue);
+    }, [idScopeWork, data]);
+
+    const getValue = (id: number, listNameWorkId: number) => {
+        const findedValue = dataList.find(
+            (item) =>
+                item.idNameWork === id && item.listNameWorkId === listNameWorkId
         );
+
+        return findedValue?.value ?? "";
     };
+
+    const setValue = (
+        idNameWork: number,
+        listNameWorkId: number,
+        e?: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const value = e?.target.value ?? "";
+        const updatedList = [...dataList];
+        const index = updatedList.findIndex(
+            (item) =>
+                item.idNameWork === idNameWork &&
+                item.listNameWorkId === listNameWorkId
+        );
+
+        if (index !== -1) {
+            updatedList[index] = {
+                ...updatedList[index],
+                value,
+            };
+        }
+        setDataList(updatedList);
+    };
+
     const editData = (
         currentQuntity: number,
         nameWorkId: number,
         nameListId: number,
         scopeWorkId: number,
-        userId: number | null
+        userId: number | null,
+        listNameWorkId: number
     ) => {
         if (userId !== null) {
             setTableAddingData({
@@ -54,16 +98,24 @@ const OneScopeWorkForEdit = () => {
                 userId,
             });
         }
-        dispatch(editOneQuntity({ id: nameWorkId, listId: nameListId }));
+        //dispatch(editOneQuntity({ id: nameWorkId, listId: listNameWorkId }));
 
         dispatch(
             scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-                id: Number(id),
+                id: Number(idScopeWork),
             })
         );
+        setValue(nameWorkId, listNameWorkId);
     };
+    const dataForTable = listData.map((item, index) => {
+        return {
+            ...item,
+            key: (index + 1).toString(),
+            index: (index + 1).toString(),
+        };
+    });
 
-    const columns: ColumnsType<IListByScopeWorkIdTest> = [
+    const columns: ColumnsType<IListData> = [
         {
             title: "",
             dataIndex: "index",
@@ -76,17 +128,17 @@ const OneScopeWorkForEdit = () => {
             render: (_: any, { name, percent }) => (
                 <>
                     <p>{name}</p>
-                    {percent !== undefined && percent > 100 ? (
+                    {percent !== undefined && Number(percent) > 100 ? (
                         <Progress
-                            percent={percent}
+                            percent={Number(percent)}
                             strokeColor="yellow"
                             status={"success"}
                         />
                     ) : (
                         <Progress
-                            percent={percent}
+                            percent={Number(percent)}
                             status={
-                                percent === undefined || percent < 100
+                                percent === undefined || Number(percent) < 100
                                     ? "active"
                                     : "success"
                             }
@@ -101,27 +153,36 @@ const OneScopeWorkForEdit = () => {
             key: "quntity",
             render: (
                 _: any,
-                { currentQuntity, id, listNameWorkId, scopeWorkId }
+                { nameListId, listNameWorkId, scopeWorkId, nameWorkId }
             ) => (
                 <>
                     <Space>
                         <Input
                             style={{ minWidth: 50 }}
-                            value={currentQuntity}
-                            onChange={(e) => addQuantity(id, listNameWorkId, e)}
+                            value={getValue(nameWorkId, listNameWorkId)}
+                            onChange={(e) =>
+                                setValue(nameWorkId, listNameWorkId, e)
+                            }
                         />
                         <Button
                             type="primary"
                             onClick={() =>
                                 editData(
-                                    Number(currentQuntity),
-                                    id,
-                                    listNameWorkId,
-                                    scopeWorkId,
-                                    userId
+                                    Number(
+                                        getValue(nameWorkId, listNameWorkId)
+                                    ),
+                                    nameWorkId,
+                                    nameListId,
+                                    Number(scopeWorkId),
+                                    userId,
+                                    listNameWorkId
                                 )
                             }
-                            disabled={currentQuntity === "" ? true : false}
+                            disabled={
+                                getValue(nameWorkId, listNameWorkId) === ""
+                                    ? true
+                                    : false
+                            }
                         >
                             Сохранить
                         </Button>
@@ -131,13 +192,7 @@ const OneScopeWorkForEdit = () => {
         },
     ];
 
-    return (
-        <Table
-            size="small"
-            dataSource={listByScopeWorkIdTest}
-            columns={columns}
-        />
-    );
+    return <Table size="small" dataSource={dataForTable} columns={columns} />;
 };
 
 export default OneScopeWorkForEdit;

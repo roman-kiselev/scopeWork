@@ -277,4 +277,85 @@ export class NameListService {
       );
     }
   }
+
+  async getDateByNameWorkIdAndListId(nameWorkId: number, listId: number) {
+    try {
+      // Ф. получает id Наименования и id списка
+      const data = await this.nameListRepository.findAll({
+        where: {
+          nameWorkId,
+          listNameWorkId: listId,
+        },
+        include: { all: true },
+      });
+
+      const arr = data.map((item) => {
+        const {
+          tableAddingData,
+          id: nameListId,
+          quntity,
+          nameWorkId,
+          listNameWorkId,
+        } = item;
+
+        const users = [];
+        // Получим уникальные id пользователей что бы посчитать выполнение
+        const uniqueUsers = [];
+        const usersInTableAddingData = tableAddingData.map(
+          (item) => item.userId,
+        );
+        for (let i = 0; i < usersInTableAddingData.length; i++) {
+          const findedUser = uniqueUsers.find(
+            (item) => item === usersInTableAddingData[i],
+          );
+          if (!findedUser) {
+            uniqueUsers.push(usersInTableAddingData[i]);
+          }
+        }
+        const sumEdit = tableAddingData
+          .map((item) => Number(item.quntity))
+          .reduce((currentSum, currentNumber) => currentSum + currentNumber, 0);
+        // Подсчёт данных для пользователя
+        for (let i = 0; i < uniqueUsers.length; i++) {
+          const filterOneUser = tableAddingData.filter(
+            (item) => item.userId === uniqueUsers[i],
+          );
+          const countUser = filterOneUser
+            .map((item) => Number(item.quntity))
+            .reduce(
+              (currentSum, currentNumber) => currentSum + currentNumber,
+              0,
+            );
+
+          users.push({
+            userId: uniqueUsers[i],
+            count: countUser,
+            percent: ((countUser / quntity) * 100).toFixed(1),
+            percentTwo: ((countUser / sumEdit) * 100).toFixed(1),
+          });
+        }
+
+        return {
+          nameListId,
+          quntity,
+          nameWorkId,
+          listNameWorkId,
+          count: sumEdit,
+          percent: ((sumEdit / quntity) * 100).toFixed(1),
+          tableAddingData,
+          users,
+        };
+      });
+
+      return arr;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
 }

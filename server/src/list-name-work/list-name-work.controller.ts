@@ -50,6 +50,12 @@ export class ListNameWorkController {
     return this.listNameWorkService.getListNameWorksByTypeWorkId(id);
   }
 
+  @ApiOperation({ summary: 'Получение прогресса для одного списка' })
+  @Get('/getProgressForOneList/:id')
+  getProgressForOnуId(@Param('id') id: number) {
+    return this.listNameWorkService.getProgressForOneList(id);
+  }
+
   @ApiOperation({ summary: 'Создание' })
   @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
   @ApiResponse({ type: HttpException })

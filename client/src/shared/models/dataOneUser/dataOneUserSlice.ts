@@ -10,6 +10,8 @@ const initialState: IDataOneUserSlice = {
     oneScopeWorkForOneTab: null,
     listByScopeWorkId: [],
     listByScopeWorkIdTest: [],
+    valueForListData: [],
+    listData: [],
     objects: [],
     typeWork: [],
     isLoading: false,

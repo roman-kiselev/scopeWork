@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import sequelize from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameListService } from 'src/name_list/name_list.service';
 import { Objects } from 'src/objects/objects.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
@@ -23,6 +24,7 @@ export class ScopeWorkService {
     @InjectModel(Objects) private objectsRepository: typeof Objects,
     @InjectModel(TableAddingData)
     private tableAddingDataRepository: typeof TableAddingData,
+    private nameListService: NameListService,
   ) {}
 
   private async checkArrUsers(arr: number[]) {
@@ -285,34 +287,72 @@ export class ScopeWorkService {
       const { listNameWork } = scopeWorkFinish;
       // Получаем весь список наименований
       // Учесть что списков с работами может быть несколько
-      for (const { id } of listNameWork) {
-        const oneList = await this.listNameWorkRepository.findByPk(id, {
-          include: { all: true },
-        });
+      for (const { id: idListNameWork } of listNameWork) {
+        const oneList = await this.listNameWorkRepository.findByPk(
+          idListNameWork,
+          {
+            include: { all: true },
+          },
+        );
+
         const { nameWorks } = oneList;
         const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
-        for (const name of finishNameWorks) {
-          const tableAdding = await this.tableAddingDataRepository.findAll({
-            where: {
-              nameWorkId: name.id,
-              nameListId: name.NameList.listNameWorkId,
-            },
-          });
+        for (const { id: nameWorkId, name, NameList } of finishNameWorks) {
+          const findedData =
+            await this.nameListService.getDateByNameWorkIdAndListId(
+              nameWorkId,
+              idListNameWork,
+            );
 
-          listNames.push({
-            id: name.id,
-            name: name.name,
-            deletedAt: name.deletedAt,
-            createdAt: name.createdAt,
-            updatedAt: name.updatedAt,
-            unitId: name.unitId,
-            quntity: name.NameList.quntity,
-            listNameWorkId: name.NameList.listNameWorkId,
-            scopeWorkId: scopeWorkFinish.id,
-            tableAddingData: tableAdding,
+          const newFindedData = findedData.map((item) => {
+            return {
+              ...item,
+              scopeWorkId: id,
+              name,
+            };
           });
+          // listNames.push({
+          //   id,
+          //   name,
+          //   data: findedData,
+          // });
+          listNames = [...listNames, ...newFindedData];
         }
       }
+
+      // for (const { id } of listNameWork) {
+      //   const oneList = await this.listNameWorkRepository.findByPk(id, {
+      //     include: { all: true },
+      //   });
+
+      //   const { nameWorks } = oneList;
+      //   const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
+      //   // listNames = finishNameWorks;
+      //   for (const name of finishNameWorks) {
+      //     // Для поиска id (Связной таблицы) нам нужен
+
+      //     const tableAdding = await this.tableAddingDataRepository.findAll({
+      //       where: {
+      //         nameWorkId: name.id,
+      //         id: name.NameList.id,
+      //       },
+      //     });
+
+      //     listNames.push({
+      //       id: name.id,
+      //       name: name.name,
+      //       deletedAt: name.deletedAt,
+      //       createdAt: name.createdAt,
+      //       updatedAt: name.updatedAt,
+      //       unitId: name.unitId,
+      //       quntity: name.NameList.quntity,
+      //       listNameWorkId: name.NameList.listNameWorkId,
+      //       scopeWorkId: scopeWorkFinish.id,
+      //       tableAddingData: tableAdding,
+      //       nameListId: name.NameList.id,
+      //     });
+      //   }
+      // }
       return listNames;
     } catch (e) {
       if (e instanceof HttpException) {

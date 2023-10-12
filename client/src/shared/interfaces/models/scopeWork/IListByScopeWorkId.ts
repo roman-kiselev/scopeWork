@@ -11,4 +11,5 @@ export interface IListByScopeWorkId {
     listNameWorkId: number;
     scopeWorkId: number;
     tableAddingData: ITableAddingData[];
+    nameListId: number;
 }

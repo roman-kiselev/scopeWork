@@ -3,6 +3,8 @@ import {
     IDataOneUserSlice,
     IEditOneQuntityPayload,
     IListByScopeWorkIdTest,
+    IListData,
+    IValueForListData,
 } from "./dataOneUser";
 import { INameListForNameWork } from "./nameList";
 import {
@@ -41,6 +43,7 @@ export type {
     IEditOneQuntityPayload,
     IListByScopeWorkId,
     IListByScopeWorkIdTest,
+    IListData,
     INameListForNameWork,
     INameListWork,
     INameWorkAndUnit,
@@ -63,5 +66,6 @@ export type {
     IUserDescription,
     IUserToken,
     IUsersSlice,
+    IValueForListData,
     Item,
 };

@@ -4,6 +4,7 @@ import { NameListService } from 'src/name_list/name_list.service';
 
 import { Item } from 'src/name_list/dto/create-name-list-by-name.dto';
 import { CreateNameListDto } from 'src/name_list/dto/create-name-list.dto';
+import { NameList } from 'src/name_list/name-list.model';
 import { CreateListDto } from './dto/create-list.dto';
 import { ListNameWorkEditDto } from './dto/list-name-work-edit.dto';
 import { ListNameWork } from './list-name-work.model';
@@ -13,6 +14,7 @@ export class ListNameWorkService {
   constructor(
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
+    @InjectModel(NameList) private nameListRepository: typeof NameList,
     private nameListService: NameListService,
   ) {}
 
@@ -314,6 +316,31 @@ export class ListNameWorkService {
         'Ошибка сервера общая',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
+    }
+  }
+
+  async getProgressForOneList(id: number) {
+    try {
+      // const list = await this.nameListService.findAll({where: {
+      // }}, {
+      //   include: { all: true },
+      // });
+      // return list;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getProgressByArrId(arrId: number[] | number) {
+    try {
+    } catch (e) {
+      console.log(e);
     }
   }
 }

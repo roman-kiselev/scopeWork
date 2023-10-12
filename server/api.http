@@ -225,7 +225,7 @@ GET {{host}}/scope-work HTTP/1.1
 GET {{host}}/scope-work/getAllByUserId/1 HTTP/1.1
 
 ### Получение одного
-GET {{host}}/scope-work/getListByScopeWorkId/4 HTTP/1.1
+GET {{host}}/scope-work/getListByScopeWorkId/1 HTTP/1.1
 
 ### Получение всех для пользователя
 GET {{host}}/scope-work/10 HTTP/1.1
@@ -280,6 +280,12 @@ GET {{host}}/list-name-work/copy/9 HTTP/1.1
 
 ###
 
+### Получение прогресса для одного списка
+GET {{host}}/list-name-work/getProgressForOneList/15 HTTP/1.1 
+
+###
+
+
 
 // -------------- Связная таблица для наименования, количества и наименования списка
 ### Получение всех
@@ -299,6 +305,12 @@ Content-type: application/json; charset=utf-8
 }
 
 
+### Получение данных для одного
+
+GET {{host}}/name-list/getDateForOne/?nameWorkId=2&listId=1 HTTP/1.1
+
+###
+
 // --------------------------table-adding-data ----------
 
 ### Получение всех
@@ -310,11 +322,11 @@ POST {{host}}/table-adding-data HTTP/1.1
 Content-type: application/json; charset=utf-8
 
 {
-    "quntity": 13,
-  "nameWorkId": 8,
-  "nameListId": 6,
-  "scopeWorkId": 4,
-  "userId": 1
+    "quntity": 1,
+  "nameWorkId": 1,
+  "nameListId": 1,
+  "scopeWorkId": 1,
+  "userId": 2
 }
 
 ###
