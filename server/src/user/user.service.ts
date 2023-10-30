@@ -2,15 +2,28 @@ import { Injectable } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { InjectModel } from '@nestjs/sequelize';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameList } from 'src/name_list/name-list.model';
+import { Objects } from 'src/objects/objects.model';
 import { Roles } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
+import { UserDescription } from 'src/user-description/user-description.model';
 import { CreateUserDto } from './dto/create-user.dto';
+import { EditUserDto } from './dto/edit-user.dto';
 import { User } from './user.model';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User) private userRepository: typeof User,
+    @InjectModel(Objects) private objectRepository: typeof Objects,
+    @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
+    @InjectModel(NameList) private nameListRepository: typeof NameList,
+    @InjectModel(ListNameWork)
+    private listNameWorkRepository: typeof ListNameWork,
+    @InjectModel(UserDescription)
+    private userDescriptionRepository: typeof UserDescription,
     private rolesService: RolesService,
   ) {}
   // Создаём администратора
@@ -155,6 +168,11 @@ export class UserService {
         where: {
           id,
         },
+        include: [
+          {
+            model: UserDescription,
+          },
+        ],
       });
       if (!user) {
         throw new HttpException(
@@ -178,6 +196,229 @@ export class UserService {
         include: { all: true },
       });
       return users;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Получим все объёмы работ
+  async getAllScopeWorkForOneUser(id: number) {
+    try {
+      const users = await this.userRepository.findOne({
+        where: {
+          id,
+        },
+        include: [
+          {
+            model: ScopeWork,
+            through: {
+              attributes: [],
+            },
+          },
+        ],
+      });
+      const { scopeWork } = users;
+
+      return scopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Поулчим все объекты для пользователя
+  async getAllObjectsForOneUser(id: number) {
+    try {
+      const scopeWork = await this.getAllScopeWorkForOneUser(id);
+      // Все id объектов
+      const objectsId = scopeWork.map((item) => item.objectId);
+      // Получим объекты
+      const arrObjects: Objects[] = [];
+      for (const item of objectsId) {
+        const object = await this.objectRepository.findByPk(item);
+        arrObjects.push(object);
+      }
+
+      return arrObjects;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Получаем все списки для одного пользователя
+  async getAllListsForOneUser(id: number) {
+    try {
+      const scopeWorks = (await this.getAllScopeWorkForOneUser(id)).map(
+        (item) => item.id,
+      );
+      // Далее получаем все списки для пользователя
+      let listArr = [];
+      for (const item of scopeWorks) {
+        const list = await this.listNameWorkRepository.findAll({
+          where: {
+            scopeWorkId: item,
+          },
+        });
+        listArr = [...listArr, ...list];
+      }
+
+      return listArr;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Получим по idUser объект
+  // 1. Количество наименований общее в объёме
+  // 2. Количество выполненых userом
+  // 3. Процент выполненый userом
+  // 4. Процент выполнения объёма
+  async getStatisticsOneScopeWork(id: number, userId: string) {
+    try {
+      // Получаем для одного объёма статистику
+      const scopeWork = await this.scopeWorkRepository.findByPk(id, {
+        include: { all: true },
+      });
+      const { listNameWork, tableAddingData } = scopeWork;
+      let arrNames = [];
+      for (const item of listNameWork) {
+        const arr = await this.nameListRepository.findAll({
+          where: {
+            listNameWorkId: item.id,
+          },
+        });
+        arrNames = [...arrNames, ...arr];
+      }
+      // Получим общее количество
+      const mainCount = arrNames
+        .map((item) => item.quntity)
+        .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+      // Получим общее количество изменений
+      const countTableAddingData = tableAddingData
+        .map((item) => item.quntity)
+        .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+      // Сортируем по одному пользователю
+      const tableAddingOneUser = tableAddingData.filter(
+        (item) => item.userId === Number(userId),
+      );
+      // Количество внесённых данных одним пользователем
+      const countOneUser = tableAddingOneUser
+        .map((item) => item.quntity)
+        .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+      // Получим процент для одного пользователя от объёма
+      const percentOneUserForTotalVolume = (
+        (countOneUser / mainCount) *
+        100
+      ).toFixed(1);
+
+      const percentOneUserCompletedVolume = (
+        (countOneUser / countTableAddingData) *
+        100
+      ).toFixed(1);
+      return {
+        mainCount,
+        countTableAddingData,
+        percentAll: ((countTableAddingData / mainCount) * 100).toFixed(1),
+        countUser: countOneUser,
+        percentOneUserForTotalVolume,
+        percentOneUserCompletedVolume,
+      };
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getStatisticsOneUser(id: string) {
+    try {
+      const scopeWorks = await this.getAllScopeWorkForOneUser(Number(id));
+      // Создаём массив с данными
+      const arr = [];
+      for (const item of scopeWorks) {
+        const statistics = await this.getStatisticsOneScopeWork(item.id, id);
+        const finishItem = JSON.parse(JSON.stringify(item));
+        const finishStatistics = JSON.parse(JSON.stringify(statistics));
+        arr.push({
+          ...finishItem,
+          ...finishStatistics,
+        });
+      }
+
+      return arr;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getAllUserWithData() {
+    try {
+      const allUsers = await this.userRepository.findAll({
+        include: { all: true },
+      });
+      const finishArr = [];
+      for (const item of allUsers) {
+        const { id, userDescription, scopeWork, tableAddingData } = item;
+        // Получим объекты
+        const objects = await this.getAllObjectsForOneUser(id);
+        const scopeWorkPlusData = await this.getStatisticsOneUser(
+          id.toString(),
+        );
+        finishArr.push({
+          id: item.id,
+          email: item.email,
+          banned: item.banned,
+          firstName: userDescription.firstname,
+          lastName: userDescription.lastname,
+          scopeWorkPlusData,
+          objects,
+        });
+      }
+      return finishArr;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async editUser(userId: number, dto: EditUserDto) {
+    try {
+      const { firstname, lastname, email, password, banned } = dto;
+      // 1. Изменяем user
+      // 2. Изменяем user-description
+      const user = await this.userRepository.findByPk(userId, {
+        include: [
+          {
+            model: UserDescription,
+          },
+        ],
+      });
+      const { userDescription } = user;
+      const newUserDescription = await this.userDescriptionRepository.findByPk(
+        userDescription.id,
+      );
+      userDescription.firstname = firstname;
+      userDescription.lastname = lastname;
+      await userDescription.save();
+
+      return user;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

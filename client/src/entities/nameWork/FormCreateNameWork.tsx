@@ -64,6 +64,25 @@ const FormCreateNameWork: React.FC<IFormCreateNameWork> = ({
                     rules={[{ required: true }]}
                 >
                     <Select
+                        mode="multiple"
+                        allowClear
+                        style={{ width: "100%" }}
+                        placeholder="Please select"
+                    >
+                        {typeWorkList.length > 0 ? (
+                            typeWorkList.map((type) => (
+                                <Select.Option
+                                    key={type.id}
+                                    value={type.id ?? ""}
+                                >
+                                    {type.name}
+                                </Select.Option>
+                            ))
+                        ) : (
+                            <Select.Option>Данных нет</Select.Option>
+                        )}
+                    </Select>
+                    {/* <Select
                         placeholder="Select a option and change input text above"
                         onChange={() => {}}
                         allowClear
@@ -80,7 +99,7 @@ const FormCreateNameWork: React.FC<IFormCreateNameWork> = ({
                         ) : (
                             <Select.Option>Данных нет</Select.Option>
                         )}
-                    </Select>
+                    </Select> */}
                 </Form.Item>
             )}
             <Form.Item>

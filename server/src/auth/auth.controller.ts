@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Body, UseGuards, Req } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateUserAndDescription } from 'src/user/dto/create-user-and-description.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { EditUserDto } from 'src/user/dto/edit-user.dto';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -34,5 +35,11 @@ export class AuthController {
   @Get('/check')
   checkAuth(@Req() req: RequestWithUser) {
     return this.authService.checkAuth(req.user);
+  }
+
+  @Post('/edit')
+  editUser(@Body() dto: EditUserDto) {
+    console.log(dto);
+    return this.authService.editUser(dto);
   }
 }

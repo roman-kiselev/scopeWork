@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
@@ -34,6 +35,23 @@ export class NameListController {
       nameWorkId,
       listId,
     );
+  }
+
+  @ApiOperation({
+    summary: 'Получение данных по прогрессу одному наименованию',
+  })
+  @Get('/getDataProgressByList')
+  getDataProgressByList(
+    @Query('listId') listId: number,
+    @Query('scopeWorkId') scopeWorkId: number,
+  ) {
+    return this.nameListService.getDataProgressByList(listId, scopeWorkId);
+  }
+
+  @ApiOperation({ summary: 'Наименование для одного списка' })
+  @Get('/getNames/:id')
+  getAllNameWorkByListId(@Param('id') id: number) {
+    return this.nameListService.getAllNameWorkByListId(id);
   }
 
   @ApiOperation({ summary: 'Создание' })

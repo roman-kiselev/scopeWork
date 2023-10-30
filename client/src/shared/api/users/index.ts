@@ -1,4 +1,4 @@
-import { IUser } from "../../interfaces";
+import { IUser, IUserWithData, IUserWithDescription } from "../../interfaces";
 import { mainApi } from "../main";
 
 export const userApi = mainApi.injectEndpoints({
@@ -6,6 +6,18 @@ export const userApi = mainApi.injectEndpoints({
         getAllUsers: builder.query<IUser[], void>({
             query: () => ({
                 url: "/user",
+                method: "GET",
+            }),
+        }),
+        getAllUsersWithData: builder.query<IUserWithData[], void>({
+            query: () => ({
+                url: "/user/withData",
+                method: "GET",
+            }),
+        }),
+        getOneUser: builder.query<IUserWithDescription, { id: string }>({
+            query: ({ id }) => ({
+                url: `/user/${id}`,
                 method: "GET",
             }),
         }),

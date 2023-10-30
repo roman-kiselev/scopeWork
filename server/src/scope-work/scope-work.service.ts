@@ -9,6 +9,7 @@ import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
+import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
@@ -26,6 +27,66 @@ export class ScopeWorkService {
     private tableAddingDataRepository: typeof TableAddingData,
     private nameListService: NameListService,
   ) {}
+
+  private async getDataCount(arr: ScopeWork[]) {
+    try {
+      let dataProgress = [];
+      const scopeWorkClone = [...arr];
+      for (const scopeWork of scopeWorkClone) {
+        const { id: idScopeWork, listNameWork } = scopeWork;
+        const arr = [];
+        for (const { id: listNameWorkId } of listNameWork) {
+          const item = await this.nameListService.getDataProgressByList(
+            listNameWorkId,
+            idScopeWork,
+          );
+          const itemClone = [...item];
+          const quntityNumber = itemClone
+            .map((item) => item.quntity)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const quantityDifferenceNumber = itemClone
+            .map((item) => item.quantityDifference)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const addingCountNumber = itemClone
+            .map((item) => item.addingCount)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const dataCount = {
+            listNameWorkId,
+            idScopeWork,
+            quntity: quntityNumber,
+            isDifference: itemClone.find((item) => item.isDifference === true)
+              ? true
+              : false,
+            quantityDifference: quantityDifferenceNumber,
+            addingCount: addingCountNumber,
+            percent: ((addingCountNumber / quntityNumber) * 100).toFixed(1),
+          };
+          arr.push(dataCount);
+        }
+        const quntityMain = arr
+          .map((item) => item.quntity)
+          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        const addingCountMain = arr
+          .map((item) => item.addingCount)
+          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        const mainCountData = {
+          listNameWorkId: arr.map((item) => item.listNameWorkId),
+          idScopeWork: arr.map((item) => item.idScopeWork),
+          quntity: quntityMain,
+          isDifference: arr.find((item) => item.isDifference === true)
+            ? true
+            : false,
+          quantityDifference: arr
+            .map((item) => item.quantityDifference)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0),
+          addingCount: addingCountMain,
+          percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+        };
+        dataProgress.push({ ...scopeWork, ...mainCountData });
+      }
+      return dataProgress;
+    } catch (e) {}
+  }
 
   private async checkArrUsers(arr: number[]) {
     try {
@@ -215,8 +276,65 @@ export class ScopeWorkService {
       const scopeWorks = await this.scopeWorkRepository.findAll({
         include: { all: true },
       });
+      let dataProgress = [];
+      const scopeWorkClone = [...scopeWorks];
 
-      return scopeWorks;
+      // Расчитаем прогресс
+      for (const scopeWork of scopeWorkClone) {
+        const { id: idScopeWork, listNameWork } = scopeWork;
+        const arr = [];
+        for (const { id: listNameWorkId } of listNameWork) {
+          const item = await this.nameListService.getDataProgressByList(
+            listNameWorkId,
+            idScopeWork,
+          );
+          const itemClone = [...item];
+          const quntityNumber = itemClone
+            .map((item) => item.quntity)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const quantityDifferenceNumber = itemClone
+            .map((item) => item.quantityDifference)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const addingCountNumber = itemClone
+            .map((item) => item.addingCount)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+          const dataCount = {
+            listNameWorkId,
+            idScopeWork,
+            quntity: quntityNumber,
+            isDifference: itemClone.find((item) => item.isDifference === true)
+              ? true
+              : false,
+            quantityDifference: quantityDifferenceNumber,
+            addingCount: addingCountNumber,
+            percent: ((addingCountNumber / quntityNumber) * 100).toFixed(1),
+          };
+          arr.push(dataCount);
+        }
+        const quntityMain = arr
+          .map((item) => item.quntity)
+          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        const addingCountMain = arr
+          .map((item) => item.addingCount)
+          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        const mainCountData = {
+          listNameWorkId: arr.map((item) => item.listNameWorkId),
+          idScopeWork: arr.map((item) => item.idScopeWork),
+          quntity: quntityMain,
+          isDifference: arr.find((item) => item.isDifference === true)
+            ? true
+            : false,
+          quantityDifference: arr
+            .map((item) => item.quantityDifference)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0),
+          addingCount: addingCountMain,
+          percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+        };
+        const jsonScopeWork = JSON.parse(JSON.stringify(scopeWork));
+        dataProgress.push({ ...jsonScopeWork, ...mainCountData });
+      }
+
+      return dataProgress;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -248,7 +366,9 @@ export class ScopeWorkService {
           listScopeWork.push(findedScopeWork);
         }
 
-        return listScopeWork;
+        const data = await this.getDataCount(listScopeWork);
+
+        return data;
       }
       const getAllScopeWork = await this.userScopeWorkRepository.findAll({
         where: {
@@ -263,8 +383,9 @@ export class ScopeWorkService {
         );
         listScopeWork.push(findedScopeWork);
       }
+      const data = await this.getDataCount(listScopeWork);
 
-      return listScopeWork;
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -311,49 +432,36 @@ export class ScopeWorkService {
               name,
             };
           });
-          // listNames.push({
-          //   id,
-          //   name,
-          //   data: findedData,
-          // });
+
           listNames = [...listNames, ...newFindedData];
         }
       }
 
-      // for (const { id } of listNameWork) {
-      //   const oneList = await this.listNameWorkRepository.findByPk(id, {
-      //     include: { all: true },
-      //   });
-
-      //   const { nameWorks } = oneList;
-      //   const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
-      //   // listNames = finishNameWorks;
-      //   for (const name of finishNameWorks) {
-      //     // Для поиска id (Связной таблицы) нам нужен
-
-      //     const tableAdding = await this.tableAddingDataRepository.findAll({
-      //       where: {
-      //         nameWorkId: name.id,
-      //         id: name.NameList.id,
-      //       },
-      //     });
-
-      //     listNames.push({
-      //       id: name.id,
-      //       name: name.name,
-      //       deletedAt: name.deletedAt,
-      //       createdAt: name.createdAt,
-      //       updatedAt: name.updatedAt,
-      //       unitId: name.unitId,
-      //       quntity: name.NameList.quntity,
-      //       listNameWorkId: name.NameList.listNameWorkId,
-      //       scopeWorkId: scopeWorkFinish.id,
-      //       tableAddingData: tableAdding,
-      //       nameListId: name.NameList.id,
-      //     });
-      //   }
-      // }
       return listNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Редактировать объём
+  async editScopeWork(dto: EditScopeWorkDto) {
+    try {
+      const { listNameWork, objectId, typeWorkId, users, scopeWorkId } = dto;
+      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
+
+      await this.createArrUsers(users, scopeWork.id);
+      await this.createArrListNameWork(listNameWork, scopeWork.id);
+      const dataScopeWork = await this.scopeWorkRepository.findByPk(
+        scopeWork.id,
+        { include: { all: true } },
+      );
+      return dataScopeWork;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

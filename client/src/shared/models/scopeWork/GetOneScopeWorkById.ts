@@ -15,6 +15,8 @@ class GetOneScopeWorkById
         IScopeWorkSlice,
         { payload: IScopeWorkWithData; type: string }
     > = (state, action) => {
+        state.isLoading = true;
+        //state.selectedScopeWorkById = action.payload;
         state.selectedScopeWorkById.id = action.payload.id;
         state.selectedScopeWorkById.createdAt = action.payload.createdAt;
         state.selectedScopeWorkById.deletedAt = action.payload.deletedAt;
@@ -23,6 +25,16 @@ class GetOneScopeWorkById
         state.selectedScopeWorkById.typeWork = action.payload.typeWork;
         state.selectedScopeWorkById.updatedAt = action.payload.updatedAt;
         state.selectedScopeWorkById.users = action.payload.users;
+        state.selectedScopeWorkById.listNameWorkId =
+            action.payload.listNameWorkId;
+        state.selectedScopeWorkById.idScopeWork = action.payload.idScopeWork;
+        state.selectedScopeWorkById.quntity = action.payload.quntity;
+        state.selectedScopeWorkById.isDifference = action.payload.isDifference;
+        state.selectedScopeWorkById.quantityDifference =
+            action.payload.quantityDifference;
+        state.selectedScopeWorkById.addingCount = action.payload.addingCount;
+        state.selectedScopeWorkById.percent = action.payload.percent;
+
         state.isLoading = false;
     };
 

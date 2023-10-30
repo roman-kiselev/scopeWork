@@ -8,12 +8,13 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateListDto } from './dto/create-list.dto';
 import { ListNameWorkEditDto } from './dto/list-name-work-edit.dto';
 import { ListNameWork } from './list-name-work.model';
 import { ListNameWorkService } from './list-name-work.service';
 
+@ApiTags('Список листов')
 @Controller('list-name-work')
 export class ListNameWorkController {
   constructor(private listNameWorkService: ListNameWorkService) {}
@@ -24,6 +25,14 @@ export class ListNameWorkController {
   @Get('/')
   getAllList() {
     return this.listNameWorkService.getAllList();
+  }
+
+  @ApiOperation({ summary: 'Получение всех наименований без связных' })
+  @ApiResponse({ status: HttpStatus.OK, type: [ListNameWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/short')
+  getAllListShort() {
+    return this.listNameWorkService.getAllShort();
   }
 
   @ApiOperation({ summary: 'Получить один' })
@@ -40,6 +49,14 @@ export class ListNameWorkController {
   @Get('/copy/:id')
   copyListById(@Param('id') id: string) {
     return this.listNameWorkService.copyList(id);
+  }
+
+  @ApiOperation({ summary: 'Получаем списки по id объёма' })
+  @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
+  @ApiResponse({ type: HttpException })
+  @Get('/getByScopeWork/:id')
+  getByScopeWork(@Param('id') id: number) {
+    return this.listNameWorkService.getAllListByScopeWorkId(id);
   }
 
   @ApiOperation({ summary: 'Получение списка по тип работ' })

@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameWork } from 'src/name-work/name-work.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import {
   CreateNameListByNameDto,
   Item,
@@ -12,10 +13,12 @@ import { NameList } from './name-list.model';
 @Injectable()
 export class NameListService {
   constructor(
-    @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
     @InjectModel(NameList) private nameListRepository: typeof NameList,
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
+    @InjectModel(NameWork) private nameWorkRepositiry: typeof NameWork,
+    @InjectModel(TableAddingData)
+    private tableAddingDataRepository: typeof TableAddingData,
   ) {}
 
   // Сооздание
@@ -358,4 +361,88 @@ export class NameListService {
       );
     }
   }
+
+  async getDataProgressByList(listId: number, scopeWorkId: number) {
+    try {
+      const listArr = await this.nameListRepository.findAll({
+        where: {
+          listNameWorkId: listId,
+        },
+      });
+
+      let dataList = [];
+      // Теперь получаем quntity и nameWorkId для получения изменений по этип спискам
+      for (const list of listArr) {
+        const { id: nameListId, nameWorkId, listNameWorkId, quntity } = list;
+        // Теперь нужны данные из tableAddingdData - выполненые работы
+        const addingTableForOneList =
+          await this.tableAddingDataRepository.findAll({
+            where: {
+              nameListId,
+              scopeWorkId,
+            },
+          });
+
+        const cloneAddingTableForOneList = [...addingTableForOneList];
+        const addingCount = cloneAddingTableForOneList
+          .map((item) => Number(item.quntity))
+          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+
+        dataList.push({
+          listNameWorkId,
+          nameListId,
+          quntity,
+          isDifference: addingCount > quntity ? true : false,
+          quantityDifference: addingCount > quntity ? addingCount - quntity : 0,
+          addingCount,
+          percent: ((addingCount / quntity) * 100).toFixed(1),
+        });
+      }
+
+      return dataList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // получение всех наименований работ для одного списка
+  async getAllNameWorkByListId(id: number) {
+    try {
+      const list = await this.nameListRepository.findAll({
+        where: {
+          listNameWorkId: id,
+        },
+      });
+
+      const listNames = [];
+      for (const { nameWorkId, quntity, id } of list) {
+        const nameWork = await this.nameWorkRepositiry.findByPk(nameWorkId, {
+          raw: true,
+        });
+        listNames.push({
+          ...nameWork,
+          quntity,
+          nameListId: id,
+        });
+      }
+
+      return listNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Получим статистику по одному пользователю
 }

@@ -37,4 +37,22 @@ export class UserDescriptionService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async edit(userId: string, firstname: string, lastname: string) {
+    try {
+      const userDescription = await this.userDescriptionRepository.findOne({
+        where: { userId },
+      });
+      userDescription.firstname = firstname;
+      userDescription.lastname = lastname;
+      await userDescription.save();
+
+      return userDescription;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

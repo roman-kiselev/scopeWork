@@ -1,7 +1,9 @@
 import {
+    IEditUserDto,
     IUserLogin,
     IUserRegister,
     IUserResponseToken,
+    IUserWithDescription,
 } from "../../interfaces";
 import { mainApi } from "../main";
 
@@ -28,6 +30,13 @@ export const authApi = mainApi.injectEndpoints({
             query: () => ({
                 url: "/auth/check",
                 method: "GET",
+            }),
+        }),
+        edit: builder.mutation<IUserWithDescription, IEditUserDto>({
+            query: (data) => ({
+                url: "/auth/edit",
+                method: "POST",
+                body: data,
             }),
         }),
     }),

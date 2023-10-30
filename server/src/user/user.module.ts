@@ -2,9 +2,13 @@ import { Module } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common/utils';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from 'src/auth/auth.module';
+import { ListNameWork } from 'src/list-name-work/list-name-work.model';
+import { NameList } from 'src/name_list/name-list.model';
+import { Objects } from 'src/objects/objects.model';
 import { Roles } from 'src/roles/roles.model';
 import { RolesModule } from 'src/roles/roles.module';
 import { UserRole } from 'src/roles/user-role.model';
+import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { UserScopeWork } from 'src/scope-work/user-scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { UserDescription } from 'src/user-description/user-description.model';
@@ -23,10 +27,14 @@ import { UserService } from './user.service';
       UserDescription,
       UserScopeWork,
       TableAddingData,
+      Objects,
+      ListNameWork,
+      ScopeWork,
+      NameList,
     ]),
     RolesModule,
     forwardRef(() => AuthModule),
   ],
-  exports: [UserService],
+  exports: [UserService, UserModule],
 })
 export class UserModule {}

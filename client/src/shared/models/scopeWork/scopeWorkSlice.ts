@@ -30,7 +30,15 @@ const initialState: IScopeWorkSlice = {
         listNameWork: [],
         namesWorkGeneral: [],
         users: [],
+        addingCount: null,
+        idScopeWork: [],
+        isDifference: false,
+        listNameWorkId: [],
+        percent: "",
+        quantityDifference: null,
+        quntity: null,
     },
+    // selectedScopeWorkById: null,
     isError: false,
     isLoading: false,
     dataError: null,
@@ -127,10 +135,12 @@ export const scopeWorkSlice = createSlice({
                 );
         },
         delForEdit: (state, action) => {
-            state.selectedScopeWorkById.listNameWork =
-                state.selectedScopeWorkById.listNameWork.filter(
-                    (item) => item.id !== action.payload
-                );
+            if (state.selectedScopeWorkById !== null) {
+                state.selectedScopeWorkById.listNameWork =
+                    state.selectedScopeWorkById?.listNameWork.filter(
+                        (item) => item.id !== action.payload
+                    );
+            }
         },
 
         addNameListForEdit: (
@@ -147,10 +157,12 @@ export const scopeWorkSlice = createSlice({
                     listForPush.push(findedList);
                 }
             }
-            state.selectedScopeWorkById.listNameWork = [
-                ...state.selectedScopeWorkById.listNameWork,
-                ...listForPush,
-            ];
+            if (state.selectedScopeWorkById !== null) {
+                state.selectedScopeWorkById.listNameWork = [
+                    ...state.selectedScopeWorkById.listNameWork,
+                    ...listForPush,
+                ];
+            }
         },
         editUsers: (
             state,
@@ -168,7 +180,9 @@ export const scopeWorkSlice = createSlice({
                 }
             }
             state.scopeWorkData.users = [];
-            state.selectedScopeWorkById.users = arr;
+            if (state.selectedScopeWorkById !== null) {
+                state.selectedScopeWorkById.users = arr;
+            }
         },
     },
     extraReducers(builder) {

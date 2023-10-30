@@ -9,11 +9,11 @@ import {
 import { Param } from '@nestjs/common/decorators';
 import { Body } from '@nestjs/common/decorators/http';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/roles-auth.decorator';
+import { RolesGuard } from '../auth/roles.guard';
 import { CreateObjectDto } from './dto/create-object.dto';
 import { Objects } from './objects.model';
 import { ObjectsService } from './objects.service';
-import { Roles } from '../auth/roles-auth.decorator';
-import { RolesGuard } from '../auth/roles.guard';
 
 @ApiTags('Объекты')
 @Controller('objects')
@@ -28,6 +28,16 @@ export class ObjectsController {
   @Get('/')
   getAllObjects() {
     return this.objectsService.getAllObjects();
+  }
+
+  @Get('/shortData')
+  async getAllDataShort() {
+    return this.objectsService.getListObjectWithShortData();
+  }
+
+  @Get('/getData/:id')
+  getDataForOneObject(@Param('id') id: number) {
+    return this.objectsService.getDataByObjectId(id);
   }
 
   @ApiOperation({ summary: 'Создание объектов' })

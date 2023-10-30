@@ -1,16 +1,20 @@
-import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from 'src/user/dto/create-user.dto';
-import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/user.model';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UnauthorizedException } from '@nestjs/common/exceptions/unauthorized.exception';
-import { CreateUserAndDescription } from 'src/user/dto/create-user-and-description.dto';
+import { JwtService } from '@nestjs/jwt';
+import { InjectModel } from '@nestjs/sequelize';
+import * as bcrypt from 'bcrypt';
+import { UserDescription } from 'src/user-description/user-description.model';
 import { UserDescriptionService } from 'src/user-description/user-description.service';
+import { CreateUserAndDescription } from 'src/user/dto/create-user-and-description.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { EditUserDto } from 'src/user/dto/edit-user.dto';
+import { User } from 'src/user/user.model';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
+    @InjectModel(User) private userRepository: typeof User,
     private userService: UserService,
     private userDescriptionService: UserDescriptionService,
     private jwtService: JwtService,
@@ -211,6 +215,46 @@ export class AuthService {
 
       return token;
     } catch (e) {
+      throw new HttpException(
+        e.message || 'Произошла ошибка',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async editUser(dto: EditUserDto) {
+    try {
+      const { userId, firstname, lastname, email, banned } = dto;
+      const user = await this.userRepository.findByPk(userId);
+
+      user.email = email;
+      if (dto.password) {
+        const hashPassword = await bcrypt.hash(dto.password, 5);
+        user.password = dto.password ? hashPassword : user.password;
+      }
+
+      user.banned = banned;
+      user.save();
+
+      const userDesc = await this.userDescriptionService.edit(
+        userId,
+        firstname,
+        lastname,
+      );
+
+      const finishUser = await this.userRepository.findByPk(userId, {
+        include: [
+          {
+            model: UserDescription,
+          },
+        ],
+      });
+
+      return finishUser;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
       throw new HttpException(
         e.message || 'Произошла ошибка',
         HttpStatus.INTERNAL_SERVER_ERROR,

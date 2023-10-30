@@ -1,6 +1,7 @@
 import { Button, Modal, Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import React, { useState } from "react";
+import { EditNameWorkFeatures } from "../../../features";
 import { nameWorkApi } from "../../../shared/api";
 import { useAppSelector } from "../../../shared/hooks";
 import { INameWorkCreateResponse } from "../../../shared/interfaces";
@@ -22,7 +23,7 @@ const onChange: TableProps<NameWorkWithKey>["onChange"] = (
     sorter,
     extra
 ) => {
-    console.log("params", pagination, filters, sorter, extra);
+    // console.log("params", pagination, filters, sorter, extra);
 };
 
 const getData = (data: INameWorkCreateResponse[]) => {
@@ -73,14 +74,19 @@ const ModalEdit: React.FC<ModalEditProps> = ({
     }
     return (
         <Modal
-            title="Basic Modal"
+            title="Редактирование"
             open={isModalOpen}
             onOk={handleOk}
             onCancel={handleCancel}
         >
-            <p>{data.id}</p>
+            <EditNameWorkFeatures
+                selectedName={data.name}
+                selectedTypeWork={data.typeWorks}
+                selectedUnit={data.unit}
+            />
+            {/* <p>{data.id}</p>
             <p>{data.name}</p>
-            <p>{data.typeWorks}</p>
+            <p>{data.typeWorks}</p> */}
         </Modal>
     );
 };
@@ -97,7 +103,6 @@ const Catalog = () => {
     const showModal = (record: any) => {
         setSelectedData(record);
         setIsModalOpen(true);
-        console.log(record);
     };
 
     const handleOk = () => {

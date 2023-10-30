@@ -28,13 +28,13 @@ const LeftMenu = () => {
             rolesState,
             <HomeOutlined />
         ),
-        getItem(
-            <Link to="/objects">Объекты</Link>,
-            "objects",
-            [RoleString.USER, RoleString.ADMIN],
-            rolesState,
-            <BuildOutlined />
-        ),
+        // getItem(
+        //     <Link to="/objects">Объекты</Link>,
+        //     "objects",
+        //     [RoleString.USER, RoleString.ADMIN],
+        //     rolesState,
+        //     <BuildOutlined />
+        // ),
 
         { type: "divider" },
         getItem(
@@ -77,26 +77,29 @@ const LeftMenu = () => {
                     [
                         getItem(
                             //"Создать",
-                            <Link to="/admin/object/create">Создать</Link>,
+                            <Link to="/admin/object/create">
+                                Создать объект
+                            </Link>,
                             "objectsCreate",
                             [RoleString.ADMIN, RoleString.USER],
                             rolesState,
                             <PlusCircleOutlined />
                         ),
                         getItem(
-                            <Link to="/admin/object/scope">Создать объём</Link>,
-                            "createScope",
-                            [RoleString.ADMIN],
-                            rolesState,
-                            <AppstoreAddOutlined />
-                        ),
-                        getItem(
-                            <Link to="/admin/object/list">Создать список</Link>,
+                            <Link to="/admin/object/list">Списки</Link>,
                             "createList",
                             [RoleString.ADMIN],
                             rolesState,
                             <FileAddOutlined />
                         ),
+                        getItem(
+                            <Link to="/admin/object/scope">Объёмы</Link>,
+                            "createScope",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <AppstoreAddOutlined />
+                        ),
+
                         getItem(
                             <Link to="/admin/object">Конфигурирование</Link>,
                             "configuration",
@@ -138,16 +141,23 @@ const LeftMenu = () => {
                             rolesState,
                             <DeploymentUnitOutlined />
                         ),
-                        getItem(
-                            <Link to="/admin/nomenclature/othersOperation">
-                                Доп. операции
-                            </Link>,
-                            "othersOperation",
-                            [RoleString.ADMIN],
-                            rolesState,
-                            <ToolOutlined />
-                        ),
+                        // getItem(
+                        //     <Link to="/admin/nomenclature/othersOperation">
+                        //         Доп. операции
+                        //     </Link>,
+                        //     "othersOperation",
+                        //     [RoleString.ADMIN],
+                        //     rolesState,
+                        //     <ToolOutlined />
+                        // ),
                     ]
+                ),
+                getItem(
+                    <Link to="/admin/logList">Лог лист</Link>,
+                    "logList",
+                    [RoleString.ADMIN],
+                    rolesState,
+                    <UnorderedListOutlined />
                 ),
             ],
             "group"

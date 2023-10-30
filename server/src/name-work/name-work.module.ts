@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
-import { NameList } from 'src/name_list/name-list.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { Unit } from 'src/unit/unit.model';
@@ -20,10 +19,11 @@ import { NameWorkService } from './name-work.service';
       Unit,
       TypeWork,
       ListNameWork,
-      NameList,
       TableAddingData,
+      NameWorkTypeWork,
     ]),
     UnitModule,
+
     NameWorkTypeWork,
   ],
   exports: [NameWorkService],

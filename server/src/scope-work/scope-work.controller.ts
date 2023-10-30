@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
+import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { ScopeWork } from './scope-work.model';
 import { ScopeWorkService } from './scope-work.service';
 
@@ -21,7 +22,7 @@ export class ScopeWorkController {
   @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
   @ApiResponse({ type: HttpException })
   @Get('/')
-  async fetAll() {
+  async getAll() {
     return await this.scopeWorkService.getAllScopeWork();
   }
 
@@ -55,5 +56,13 @@ export class ScopeWorkController {
   @Post('/')
   async createScope(@Body() dto: CreateScopeWorkDto) {
     return await this.scopeWorkService.createScopeWork(dto);
+  }
+
+  @ApiOperation({ summary: 'Редактирование объёма' })
+  @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
+  @ApiResponse({ type: HttpException })
+  @Post('/edit')
+  async updateScopeWork(@Body() dto: EditScopeWorkDto) {
+    return await this.scopeWorkService.editScopeWork(dto);
   }
 }

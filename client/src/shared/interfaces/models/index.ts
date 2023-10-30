@@ -9,6 +9,7 @@ import {
 import { INameListForNameWork } from "./nameList";
 import {
     ICreateNameWorkAttr,
+    ICreateNameWorkExcel,
     INameWorkAndUnit,
     INameWorkCreateResponse,
     INameWorkWithNameList,
@@ -23,27 +24,48 @@ import {
 import { IRole } from "./roles";
 import {
     ICreateScopeWork,
+    IDataShortScopeWork,
+    IEditScopeWork,
     IListByScopeWorkId,
     IScopeWork,
     IScopeWorkData,
+    IScopeWorkPlusData,
     IScopeWorkSlice,
     IScopeWorkWithData,
 } from "./scopeWork";
-import { ITableAddingData, ITableAddingDataDto } from "./tableAddingData";
+import {
+    ILogList,
+    ITableAddingData,
+    ITableAddingDataDto,
+} from "./tableAddingData";
 import { ITypeWork } from "./typeWork";
 import { IUnit, IUnitsCreateAttr } from "./unit";
 import { IUserDescription } from "./userDescription";
-import { IUser, IUserToken, IUsersSlice } from "./users";
+import {
+    IEditUserDto,
+    IUser,
+    IUserToken,
+    IUserWithData,
+    IUserWithDescription,
+    IUsersSlice,
+} from "./users";
+
+import { IObjectShort, IOneObjectDataShort } from "./objects";
 
 export type {
     IAuthSlice,
     ICreateNameWorkAttr,
+    ICreateNameWorkExcel,
     ICreateScopeWork,
     IDataOneUserSlice,
+    IDataShortScopeWork,
     IEditOneQuntityPayload,
+    IEditScopeWork,
+    IEditUserDto,
     IListByScopeWorkId,
     IListByScopeWorkIdTest,
     IListData,
+    ILogList,
     INameListForNameWork,
     INameListWork,
     INameWorkAndUnit,
@@ -51,10 +73,13 @@ export type {
     INameWorkListSlice,
     INameWorkWithNameList,
     INameWorkWithQuantity,
+    IObjectShort,
     IOneItemForListNameWork,
+    IOneObjectDataShort,
     IRole,
     IScopeWork,
     IScopeWorkData,
+    IScopeWorkPlusData,
     IScopeWorkSlice,
     IScopeWorkWithData,
     ITableAddingData,
@@ -65,6 +90,8 @@ export type {
     IUser,
     IUserDescription,
     IUserToken,
+    IUserWithData,
+    IUserWithDescription,
     IUsersSlice,
     IValueForListData,
     Item,

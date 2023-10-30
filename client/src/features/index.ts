@@ -7,7 +7,11 @@ import {
     SuspenseLoadCheckR,
 } from "./check";
 import { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
-import { CreateNameWorkFeatures, CreateUnitForm } from "./forms";
+import {
+    CreateNameWorkFeatures,
+    CreateUnitForm,
+    EditNameWorkFeatures,
+} from "./forms";
 import { ListUnits } from "./list";
 import { LeftMenu } from "./menu";
 import { CreateAndEditListNameWork } from "./nameWork";
@@ -21,6 +25,7 @@ export {
     CreateNameWorkFeatures,
     CreateObjectFeatures,
     CreateUnitForm,
+    EditNameWorkFeatures,
     FormLoginFeatures,
     FormRegistrationFeatures,
     LeftMenu,

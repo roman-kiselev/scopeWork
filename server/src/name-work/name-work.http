@@ -1,0 +1,57 @@
+@hostJob = http://192.168.3.16:7000
+@hostHome = http://192.168.1.14:7000
+
+@host = {{hostJob}}
+
+@email = "admin@admin.ru"
+@password = "admin"
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLnJ1IiwiaWQiOjEsInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiLQkNC00LzQuNC90LjRgdGC0YDQsNGC0L7RgCIsImRlbGV0ZWRBdCI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyMy0xMC0wNlQxMzoxMDoxMi4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0xMC0wNlQxMzoxMDoxMi4wMDBaIn1dLCJiYW5uZWQiOmZhbHNlLCJpYXQiOjE2OTY4Mjg1NzIsImV4cCI6MTY5Njg2NDU3Mn0.sS-OW9LeDCOqKO1V4MU6HbEytoz1qjRQrOTQKdYbTLk
+
+
+### ------ Наименования работ 
+### Получение наименований
+GET {{host}}/name-work HTTP/1.1
+
+### Получение наименований
+GET {{host}}/name-work/getAll HTTP/1.1
+
+
+
+### Получение наименований по типу
+GET {{host}}/name-work/byTypeWork/?typeWorkId=2 HTTP/1.1
+
+### Создание наименования
+POST {{host}}/name-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "Труба",
+    "unitId": 2,
+    "typeWorkId": 4
+}
+
+
+### Создание нескольких типов
+POST {{host}}/name-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "Тест",
+    "unitId": 2,
+    "typeWorkId": [1, 2]
+}
+
+### Создание из массива
+POST {{host}}/name-work/arr HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+[{"name":"Кабель силовой ВВГ 2х2,5","typeWork":"АСКУЭ","unit":"шт","key":"1","state":""},{"name":"КСВВнг 2х2х0,97","typeWork":"АСКУЭ","unit":"шт","key":"2","state":""}]
+
+### Получить один по id
+
+GET {{host}}/name-work/1 HTTP/1.1
+
+### Получить один по id коротко
+GET {{host}}/name-work/short/1 HTTP/1.1
+
+###

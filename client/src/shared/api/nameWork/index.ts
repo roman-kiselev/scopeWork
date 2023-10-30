@@ -1,5 +1,6 @@
 import {
     ICreateNameWorkAttr,
+    ICreateNameWorkExcel,
     INameWorkAndUnit,
     INameWorkCreateResponse,
 } from "../../interfaces";
@@ -35,6 +36,13 @@ export const nameWorkApi = mainApi.injectEndpoints({
                 url: "name-work/byTypeWork",
                 method: "GET",
                 params: options,
+            }),
+        }),
+        createArr: builder.mutation<any, ICreateNameWorkExcel[]>({
+            query: (data) => ({
+                url: "/name-work/arr",
+                method: "POST",
+                body: data,
             }),
         }),
     }),

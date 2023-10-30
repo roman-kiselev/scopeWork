@@ -10,5 +10,6 @@ export interface IUser {
     createdAt?: Date;
     roles: IRole[];
     typeWorks: ITypeWork[];
+    banned: boolean;
     userDescription: IUserDescription;
 }

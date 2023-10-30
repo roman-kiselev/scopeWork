@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { AuthModule } from './auth/auth.module';
 import { ListNameWorkModule } from './list-name-work/list-name-work.module';
-import { ListWorkModule } from './list-work/list-work.module';
 import { NameWorkModule } from './name-work/name-work.module';
 import { NameListModule } from './name_list/name_list.module';
 import { ObjectsModule } from './objects/objects.module';
@@ -42,7 +41,6 @@ import { UserModule } from './user/user.module';
     ScopeWorkModule,
     NameWorkModule,
     UnitModule,
-    ListWorkModule,
     ListNameWorkModule,
     NameListModule,
     TableAddingDataModule,

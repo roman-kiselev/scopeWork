@@ -337,10 +337,42 @@ export class ListNameWorkService {
     }
   }
 
-  async getProgressByArrId(arrId: number[] | number) {
+  // ------------------------------------------------//
+
+  async getAllShort() {
     try {
+      const list = await this.listNameWorkRepository.findAll();
+      return list;
     } catch (e) {
-      console.log(e);
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
+
+  async getAllListByScopeWorkId(id: number) {
+    try {
+      const list = await this.listNameWorkRepository.findAll({
+        where: {
+          scopeWorkId: id,
+        },
+      });
+
+      return list;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера общая',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Получим список наименований в одном списке по id списка
 }

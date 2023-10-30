@@ -69,6 +69,8 @@ const getOptionsObjectUsersTypeWork = (
 const SelectedData = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams();
+    const [editScopeWork, { isLoading: isLoadingEdit }] =
+        scopeWorkApi.useEditScopeWorkMutation();
     const {
         data,
         isError,
@@ -82,10 +84,12 @@ const SelectedData = () => {
     const { data: dataTypeWork, isLoading: isLoadingTypeWork } =
         typeWorkApi.useGetAllTypeWorkQuery();
     const { isLoading } = useAppSelector((store) => store.scopeWork);
+
     const {
         object,
         typeWork,
         users,
+        listNameWork,
         id: idScopeWork,
     } = useAppSelector((store) => store.scopeWork.selectedScopeWorkById);
     useEffect(() => {
@@ -110,14 +114,10 @@ const SelectedData = () => {
         const name = `${findedUser?.userDescription.lastname} ${firstname}`;
 
         return findedUser?.id.toString() ?? "";
-        // return `${findedUser?.userDescription.lastname ?? ""} ${
-        //     Array.from(findedUser?.userDescription.firstname ?? "")[0] ?? ""
-        // }.`;
     });
-    console.log(namesUser);
+
     // Изменяем пользователей
     const handleChangeUsers = (arr: string[]) => {
-        console.log(arr);
         // let arrUsers = users.map((item) => item.id.toString());
         if (dataUsers) {
             dispatch(
@@ -134,6 +134,21 @@ const SelectedData = () => {
             dataTypeWork ?? [],
             dataObject ?? []
         );
+
+    const handleEditScopeWork = () => {
+        const userArr = users.map((item) => item.id);
+        const arrListId = listNameWork.map((item) => item.id);
+        console.log(userArr, arrListId);
+        if (idScopeWork && object && typeWork) {
+            editScopeWork({
+                scopeWorkId: idScopeWork,
+                listNameWork: arrListId,
+                users: userArr,
+                objectId: object?.id,
+                typeWorkId: typeWork.id,
+            });
+        }
+    };
 
     return (
         <Row
@@ -162,7 +177,7 @@ const SelectedData = () => {
                 options={listUsersOption}
             />
             <Button
-                onClick={() => {}}
+                onClick={handleEditScopeWork}
                 // disabled={
                 //     listNameWork.length === 0 ||
                 //     users.length === 0 ||

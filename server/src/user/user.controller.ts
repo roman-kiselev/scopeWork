@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Body, Get } from '@nestjs/common/decorators';
+import { Body, Get, Param } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -17,6 +17,38 @@ export class UserController {
   @Get('/')
   async getAllUsers() {
     return await this.userService.getAllUsers();
+  }
+
+  @Get('/withData')
+  async getAllWithData() {
+    return this.userService.getAllUserWithData();
+  }
+
+  @Get('/:id')
+  getUserById(@Param('id') id: number) {
+    return this.userService.findUserById(id);
+  }
+
+  @Get('/getStatistics/:id')
+  getStatisticsOneUser(@Param('id') id: string) {
+    return this.userService.getStatisticsOneUser(id);
+  }
+
+  // Получим объекты
+  @Get('/objectsUser/:id')
+  getAllObjectForUser(@Param('id') id: number) {
+    return this.userService.getAllObjectsForOneUser(id);
+  }
+  // Получим объёмы работ
+  @Get('/scopeWorkUser/:id')
+  getAllScopeWorkForUser(@Param('id') id: number) {
+    return this.userService.getAllScopeWorkForOneUser(id);
+  }
+  // Получим списки
+
+  @Get('/allListUser/:id')
+  getAllListsForOneUser(@Param('id') id: number) {
+    return this.userService.getAllListsForOneUser(id);
   }
 
   @ApiOperation({ summary: 'Получаем объект по email' })

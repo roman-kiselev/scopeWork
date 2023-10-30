@@ -1,5 +1,6 @@
 import {
     ICreateScopeWork,
+    IEditScopeWork,
     IListData,
     IScopeWork,
     IScopeWorkWithData,
@@ -40,6 +41,13 @@ export const scopeWorkApi = mainApi.injectEndpoints({
             query: (id) => ({
                 url: `/scope-work/getListByScopeWorkId/${id.id}`,
                 method: "GET",
+            }),
+        }),
+        editScopeWork: builder.mutation<IScopeWork, IEditScopeWork>({
+            query: (data) => ({
+                url: "/scope-work/edit",
+                method: "POST",
+                body: data,
             }),
         }),
     }),

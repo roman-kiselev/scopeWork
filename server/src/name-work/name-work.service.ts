@@ -3,8 +3,11 @@ import { InjectModel } from '@nestjs/sequelize';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
+import { Unit } from 'src/unit/unit.model';
 import { UnitService } from 'src/unit/unit.service';
+import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
+import { NameWorkTypeWork } from './name-work-typework';
 import { NameWork } from './name-work.model';
 
 @Injectable()
@@ -12,6 +15,9 @@ export class NameWorkService {
   constructor(
     @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
     @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
+    @InjectModel(NameWorkTypeWork)
+    private nameWorkTypeWorkRepository: typeof NameWorkTypeWork,
+    @InjectModel(Unit) private unitRepository: typeof Unit,
     private unitService: UnitService,
   ) {}
 
@@ -41,12 +47,20 @@ export class NameWorkService {
       const { name, typeWorkId, unitId } = dto;
       const isName = await this.nameWorkRepository.findOne({
         where: {
-          name,
+          name: name.trim(),
         },
       });
-      const isTypeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+
+      const isTypeWorkArr = [];
+      for (const item of typeWorkId) {
+        const isTypeWork = await this.typeWorkRepository.findByPk(item);
+        if (!isTypeWork) {
+          isTypeWorkArr.push(false);
+        }
+      }
+
       const isUnit = await this.unitService.getOneUnitById(unitId);
-      if (!isName || !isTypeWork || !isUnit) {
+      if (!isName || isTypeWorkArr.length > 0 || !isUnit) {
         return false;
       }
       return true;
@@ -140,6 +154,7 @@ export class NameWorkService {
 
   async create(dto: CreateNameWorkDto) {
     try {
+      console.log(dto);
       const { name, typeWorkId, unitId } = dto;
       // Проверим существование товара
       if (!this.checkNameWithDto(dto)) {
@@ -150,9 +165,112 @@ export class NameWorkService {
       }
       // Создаём наименование и связь
       const newNameWork = await this.nameWorkRepository.create({
-        name: name,
+        name: name.trim(),
         unitId: unitId,
       });
+      await newNameWork.$set('typeWorks', typeWorkId);
+
+      const nameWork = await this.nameWorkRepository.findOne({
+        where: { id: newNameWork.id },
+        include: [
+          {
+            model: TypeWork,
+            attributes: {
+              exclude: ['NameWorkTypeWork'],
+            },
+            through: { attributes: [] },
+          },
+          {
+            model: TableAddingData,
+          },
+        ],
+      });
+      if (!nameWork) {
+        throw new HttpException(
+          'Наименование не найдено',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      const unit = await this.unitService.getOneUnitById(nameWork.unitId);
+
+      const finishNameWork = {
+        id: nameWork.id,
+        name: nameWork.name,
+        deletedAt: nameWork.deletedAt,
+        createdAt: nameWork.createdAt,
+        updatedAt: nameWork.updatedAt,
+        unit: unit,
+        typeWorks: nameWork.typeWorks,
+      };
+
+      return finishNameWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async updateNameWork(dto: CreateNameWorkDto) {
+    try {
+      const { name, unitId, typeWorkId } = dto;
+
+      // const findedName = await this.
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async createNoChecks(dto: CreateNameWorkDto) {
+    try {
+      console.log(dto);
+      const { name, typeWorkId, unitId } = dto;
+
+      // Создаём наименование и связь
+      // Ищем наименование
+      const findedNameWork = await this.nameWorkRepository.findOne({
+        where: { name: name.trim() },
+      });
+      // Если есть
+      if (findedNameWork) {
+        // Проверяем связь с типом
+        const findNameAndType = await this.nameWorkTypeWorkRepository.findOne({
+          where: {
+            nameWorkId: findedNameWork.id,
+            typeWorkId: typeWorkId,
+          },
+        });
+        // Если связи нет , но при этом наименование есть
+        if (!findNameAndType) {
+          // Добавляем тип
+          await findedNameWork.$add('typeWorks', typeWorkId);
+          const unit = await this.unitService.getOneUnitById(
+            findedNameWork.unitId,
+          );
+
+          const finishNameWork = {
+            id: findedNameWork.id,
+            name: findedNameWork.name,
+            deletedAt: findedNameWork.deletedAt,
+            createdAt: findedNameWork.createdAt,
+            updatedAt: findedNameWork.updatedAt,
+            unit: unit,
+            typeWorks: findedNameWork.typeWorks,
+          };
+
+          return finishNameWork;
+        }
+      }
+
+      const newNameWork = await this.nameWorkRepository.create({
+        name: name.trim(),
+        unitId: unitId,
+      });
+
       await newNameWork.$set('typeWorks', typeWorkId);
 
       const nameWork = await this.nameWorkRepository.findOne({
@@ -294,6 +412,24 @@ export class NameWorkService {
     }
   }
 
+  async getOneByIdShort(id: number) {
+    try {
+      const nameWork = await this.nameWorkRepository.findByPk(id);
+      if (!nameWork) {
+        throw new HttpException(
+          'Наименование не найдено',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return nameWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   // Получить наименования по типу
   async getAllByTypeWorkId(typeWorkId: string) {
     try {
@@ -333,6 +469,74 @@ export class NameWorkService {
       );
 
       return newNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Создать из excel файла - получаем массив
+  async createArrNameWork(dto: CreateNameWorkArrDto[]) {
+    try {
+      const arr = [];
+
+      for (const { name, typeWork, unit } of dto) {
+        // Проверяем существование
+
+        const findedTypeWork = await this.typeWorkRepository.findOne({
+          where: { name: typeWork },
+        });
+        const findedName = await this.nameWorkRepository.findOne({
+          where: { name: name.trim() },
+        });
+        const findedUnit = await this.unitRepository.findOne({
+          where: { name: unit },
+        });
+        let isFindedNameTypeWork = false;
+        if (findedTypeWork && findedName) {
+          const findedNameTypeWork =
+            await this.nameWorkTypeWorkRepository.findOne({
+              where: {
+                nameWorkId: findedName.id,
+                typeWorkId: findedTypeWork.id,
+              },
+            });
+          if (findedNameTypeWork) {
+            isFindedNameTypeWork = true;
+          }
+        }
+
+        if (findedTypeWork && findedUnit && !isFindedNameTypeWork) {
+          arr.push({
+            name,
+            typeWorkId: findedTypeWork.id,
+            unitId: findedUnit.id,
+          });
+        }
+      }
+      console.log(arr);
+      const responseArr = [];
+
+      for (const item of arr) {
+        const itemCreate = await this.createNoChecks(item);
+        responseArr.push(itemCreate);
+      }
+
+      return responseArr;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // ----------------------------------------------------- //
+  // Получим список наименований для одного листа
+  async getAllNamesInByListId(id: number) {
+    try {
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

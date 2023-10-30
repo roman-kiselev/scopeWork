@@ -19,9 +19,15 @@ const TableSelected = () => {
         dispatch(delForEdit(id));
     };
     const { isLoading } = useAppSelector((store) => store.scopeWork);
-    const { listNameWork } = useAppSelector(
-        (store) => store.scopeWork.selectedScopeWorkById
+    const { selectedScopeWorkById } = useAppSelector(
+        (store) => store?.scopeWork
     );
+    let listNameWorkFinish;
+
+    if (selectedScopeWorkById) {
+        const { listNameWork } = selectedScopeWorkById;
+        listNameWorkFinish = listNameWork;
+    }
 
     if (isLoading) {
         return <Spin />;
@@ -67,7 +73,7 @@ const TableSelected = () => {
         // },
     ];
 
-    const data = listNameWork?.map((item, index) => {
+    const data = listNameWorkFinish?.map((item, index) => {
         const { id, name, description, nameWorks } = item;
 
         return {

@@ -90,6 +90,7 @@ const ListScopeWork = () => {
     ) {
         return <Spin />;
     }
+
     const dataForTable = dataScopeWork?.map((scopeWork, index) => {
         const { id, createdAt, objectId, typeWorkId, users, listNameWork } =
             scopeWork;
@@ -100,7 +101,7 @@ const ListScopeWork = () => {
         return {
             id,
             index: index + 1,
-            date: createdAt.toString(),
+            date: createdAt.toString().split("T")[0],
             key: id.toString(),
             number: id.toString(),
             object: findedObject?.name ?? "",
