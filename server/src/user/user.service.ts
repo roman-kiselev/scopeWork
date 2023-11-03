@@ -8,6 +8,7 @@ import { Objects } from 'src/objects/objects.model';
 import { Roles } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
+import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 import { CreateUserDto } from './dto/create-user.dto';
 import { EditUserDto } from './dto/edit-user.dto';
@@ -24,6 +25,8 @@ export class UserService {
     private listNameWorkRepository: typeof ListNameWork,
     @InjectModel(UserDescription)
     private userDescriptionRepository: typeof UserDescription,
+    @InjectModel(TableAddingData)
+    private tableAddingRepository: typeof TableAddingData,
     private rolesService: RolesService,
   ) {}
   // Создаём администратора
@@ -207,22 +210,34 @@ export class UserService {
   // Получим все объёмы работ
   async getAllScopeWorkForOneUser(id: number) {
     try {
-      const users = await this.userRepository.findOne({
+      // const users = await this.userRepository.findOne({
+      //   where: {
+      //     id,
+      //   },
+      //   include: [
+      //     {
+      //       model: ScopeWork,
+      //       through: {
+      //         attributes: [],
+      //       },
+      //     },
+      //   ],
+      // });
+      // const { scopeWork } = users;
+      const tableAdding = await this.tableAddingRepository.findAll({
         where: {
-          id,
+          userId: id,
         },
-        include: [
-          {
-            model: ScopeWork,
-            through: {
-              attributes: [],
-            },
-          },
-        ],
+        group: ['scopeWorkId'],
       });
-      const { scopeWork } = users;
 
-      return scopeWork;
+      let data: ScopeWork[] = [];
+      for (const { scopeWorkId } of tableAdding) {
+        const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
+        data.push(scopeWork);
+      }
+
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

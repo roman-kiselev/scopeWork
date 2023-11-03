@@ -16,6 +16,7 @@ import {
     FormCreateObject,
     ListInfiniteShort,
     ListShortObject,
+    OneObjectFull,
     OneObjectShort,
     OneShortObject,
 } from "./objects";
@@ -43,6 +44,7 @@ export {
     ListUsers,
     MainCard,
     MainNameWork,
+    OneObjectFull,
     OneObjectShort,
     OneScopeWorkForEdit,
     OneShortObject,

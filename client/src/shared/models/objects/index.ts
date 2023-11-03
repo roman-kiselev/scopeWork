@@ -1,3 +1,4 @@
-import {objectReducer, objectSlice} from "./objectsSlice"
+import GetOneObjectWithFullData from "./GetOneObjectWithFullData";
+import { objectReducer, objectSlice } from "./objectsSlice";
 
-export {objectReducer, objectSlice}
+export { GetOneObjectWithFullData, objectReducer, objectSlice };

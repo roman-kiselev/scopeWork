@@ -150,6 +150,51 @@ export class ScopeWorkService {
     }
   }
 
+  private async editArrUsers(arr: number[], scopeWorkId: number) {
+    try {
+      console.log(arr);
+      // Отсортируем массив
+      // Получим для начала уже существующий массив
+      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId, {
+        include: [
+          {
+            model: User,
+          },
+        ],
+      });
+
+      const { users } = scopeWork;
+      // Есть 2 массива
+      // Нужно найти id которые отсутствуют в scopeWork => users и добавить
+      const arrUsersId = users.map((item) => item.id);
+      // Проходим для добавления
+
+      for (const item of arr) {
+        const findedId = arrUsersId.find((user) => user === item);
+        if (!findedId) {
+          await scopeWork.$add('users', item);
+        }
+      }
+
+      for (const item of arrUsersId) {
+        const findedId = arr.find((user) => user === item);
+        if (!findedId) {
+          await scopeWork.$remove('users', item);
+        }
+      }
+
+      return scopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   private async createArrListNameWork(arr: number[], scopeWorkId: number) {
     try {
       const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
@@ -397,6 +442,7 @@ export class ScopeWorkService {
     }
   }
 
+  // Получение статистики
   async getAllListWorkForEditByScopeWorkId(id: string) {
     try {
       // Получаем объём
@@ -455,7 +501,8 @@ export class ScopeWorkService {
       const { listNameWork, objectId, typeWorkId, users, scopeWorkId } = dto;
       const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
 
-      await this.createArrUsers(users, scopeWork.id);
+      // const arr = await this.editArrUsers(users, scopeWorkId);
+      await this.editArrUsers(users, scopeWork.id);
       await this.createArrListNameWork(listNameWork, scopeWork.id);
       const dataScopeWork = await this.scopeWorkRepository.findByPk(
         scopeWork.id,

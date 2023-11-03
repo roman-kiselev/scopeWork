@@ -50,7 +50,16 @@ import {
     IUsersSlice,
 } from "./users";
 
-import { IObjectShort, IOneObjectDataShort } from "./objects";
+import {
+    IFinishUserAdding,
+    IListNamesWithData,
+    IMainFinishUserAddingForScopeWork,
+    IObjectFullData,
+    IObjectShort,
+    IObjectsSlice,
+    IOneObjectDataShort,
+    IOneScopeWorkWithData,
+} from "./objects";
 
 export type {
     IAuthSlice,
@@ -62,10 +71,13 @@ export type {
     IEditOneQuntityPayload,
     IEditScopeWork,
     IEditUserDto,
+    IFinishUserAdding,
     IListByScopeWorkId,
     IListByScopeWorkIdTest,
     IListData,
+    IListNamesWithData,
     ILogList,
+    IMainFinishUserAddingForScopeWork,
     INameListForNameWork,
     INameListWork,
     INameWorkAndUnit,
@@ -73,9 +85,12 @@ export type {
     INameWorkListSlice,
     INameWorkWithNameList,
     INameWorkWithQuantity,
+    IObjectFullData,
     IObjectShort,
+    IObjectsSlice,
     IOneItemForListNameWork,
     IOneObjectDataShort,
+    IOneScopeWorkWithData,
     IRole,
     IScopeWork,
     IScopeWorkData,

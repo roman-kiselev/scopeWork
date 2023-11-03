@@ -154,6 +154,29 @@ export class TableAddingDataService {
     }
   }
 
+  async getHistory(nameListId: number) {
+    try {
+      const findedList = await this.tableAddingDataRepository.findAll({
+        where: { nameListId },
+      });
+      let count = 0;
+      const arr = [];
+      findedList.forEach((item) => {
+        if (count < 90) {
+          count += item.quntity;
+        }
+        arr.push(count);
+      });
+
+      return findedList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   findOne(id: number) {
     return `This action returns a #${id} tableAddingDatum`;
   }

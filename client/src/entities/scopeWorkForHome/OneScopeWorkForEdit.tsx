@@ -1,4 +1,4 @@
-import { Button, Input, Progress, Space, Table } from "antd";
+import { Button, Input, Progress, Space, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -49,6 +49,20 @@ const OneScopeWorkForEdit = () => {
         });
         setDataList(dataValue);
     }, [idScopeWork, data]);
+
+    // Если нет доступа
+    const { scopeWorkData, isLoading } = useAppSelector(
+        (store) => store.dataOneUser
+    );
+    if (isLoading) {
+        return <Spin />;
+    }
+    const findedScopeWork = scopeWorkData?.find(
+        (item) => item.id === Number(idScopeWork)
+    );
+    if (!findedScopeWork) {
+        return <>Нет доступа</>;
+    }
 
     const getValue = (id: number, listNameWorkId: number) => {
         const findedValue = dataList.find(

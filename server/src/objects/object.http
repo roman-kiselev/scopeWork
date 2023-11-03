@@ -13,6 +13,10 @@ GET {{host}}/objects HTTP/1.1
 Authorization: Bearer {{token}}
 
 
+### Получение одного
+GET {{host}}/objects/1 HTTP/1.1
+Authorization: Bearer {{token}}
+
 ### Создание объекта
 POST {{host}}/objects HTTP/1.1
 Authorization: Bearer {{token}}
@@ -48,7 +52,11 @@ Content-type: application/json; charset=utf-8
 GET {{host}}/objects/getData/2 HTTP/1.1
 Authorization: Bearer {{token}}
 
-###
+
+### Получение полной информации по одному объекту
+GET {{host}}/objects/fullData/4 HTTP/1.1
+Authorization: Bearer {{token}}
+
 
 ### Получение списка с информацией по одному объекту
 GET {{host}}/objects/shortData/ HTTP/1.1

@@ -48,6 +48,11 @@ export class TableAddingDataController {
     return this.tableAddingDataService.findOne(+id);
   }
 
+  @Get('/history/:id')
+  getHistory(@Param('id') id: string) {
+    return this.tableAddingDataService.getHistory(Number(id));
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,

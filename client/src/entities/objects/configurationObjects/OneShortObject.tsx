@@ -68,6 +68,7 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
 
                 {dataObject.map((scopeWork) => (
                     <Col
+                        key={scopeWork.id}
                         style={{
                             display: "flex",
                             flexDirection: "column",

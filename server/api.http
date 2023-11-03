@@ -125,6 +125,17 @@ Content-type: application/json; charset=utf-8
 }
 ###
 
+POST {{host}}/auth/registration HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "email": "dev@email.ru",
+    "password": "1234",
+    "firstname": "Dev",
+    "lastname": "Dev"
+}
+###
+
 ### Edit
 POST {{host}}/auth/edit HTTP/1.1
 Content-type: application/json; charset=utf-8

@@ -7,7 +7,7 @@ const ListShortObject = () => {
     if (isLoading) {
         return <Spin />;
     }
-    console.log(data);
+
     return (
         <>
             {data?.map((object) => (

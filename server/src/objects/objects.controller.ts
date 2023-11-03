@@ -23,8 +23,8 @@ export class ObjectsController {
   @ApiOperation({ summary: 'Получение всех объектов' })
   @ApiResponse({ status: HttpStatus.OK, type: [Objects] })
   @ApiResponse({ type: HttpException })
-  @Roles('admin')
-  @UseGuards(RolesGuard)
+  // @Roles('admin')
+  // @UseGuards(RolesGuard)
   @Get('/')
   getAllObjects() {
     return this.objectsService.getAllObjects();
@@ -35,9 +35,24 @@ export class ObjectsController {
     return this.objectsService.getListObjectWithShortData();
   }
 
+  @ApiOperation({ summary: 'Получение одного объекта' })
+  @ApiResponse({ status: HttpStatus.OK, type: Objects })
+  @ApiResponse({ type: HttpException })
+  // @Roles('admin')
+  // @UseGuards(RolesGuard)
+  @Get('/:id')
+  getOneObject(@Param('id') id: number) {
+    return this.objectsService.getOneObject(id);
+  }
+
   @Get('/getData/:id')
   getDataForOneObject(@Param('id') id: number) {
     return this.objectsService.getDataByObjectId(id);
+  }
+
+  @Get('/fullData/:id')
+  async getWithFullData(@Param('id') id: number) {
+    return this.objectsService.getAllScopeWorksWithFullData(id);
   }
 
   @ApiOperation({ summary: 'Создание объектов' })

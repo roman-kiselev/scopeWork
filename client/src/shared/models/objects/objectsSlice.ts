@@ -1,16 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IDataError, IObjectCreateResponse } from "../../interfaces";
 import { objectsApi } from "../../api";
-
-interface IObjectsSlice {
-    listObject: IObjectCreateResponse[] | [];
-    isLoading: boolean;
-    isError: boolean;
-    dataError: IDataError | null;
-}
+import { IDataError, IObjectsSlice } from "../../interfaces";
+import GetOneObjectWithFullData from "./GetOneObjectWithFullData";
 
 const initialState: IObjectsSlice = {
     listObject: [],
+    oneObjectWithFullData: null,
     isLoading: false,
     isError: false,
     dataError: null,
@@ -82,6 +77,18 @@ export const objectSlice = createSlice({
             }
         );
         // GetAll Objects End //
+        builder.addMatcher(
+            objectsApi.endpoints.getFullDataForOne.matchPending,
+            GetOneObjectWithFullData.pending
+        );
+        builder.addMatcher(
+            objectsApi.endpoints.getFullDataForOne.matchFulfilled,
+            GetOneObjectWithFullData.fulfilled
+        );
+        builder.addMatcher(
+            objectsApi.endpoints.getFullDataForOne.matchRejected,
+            GetOneObjectWithFullData.rejected
+        );
     },
 });
 
