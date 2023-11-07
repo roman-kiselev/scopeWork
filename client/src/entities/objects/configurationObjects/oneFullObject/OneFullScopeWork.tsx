@@ -111,9 +111,9 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                                     getSumQuntity(item.finishUserAdding)
                                 }`}
                             </Tag>
-                            <Button type="primary" onClick={showChildrenDrawer}>
+                            {/* <Button type="primary" onClick={showChildrenDrawer}>
                                 Two-level drawer
-                            </Button>
+                            </Button> */}
                         </Col>
                     </Space>
                 </Row>
@@ -134,7 +134,7 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                             <label>
                                 <Space>
                                     {getUserName(item.userId, listUsers)}
-                                    <Tag color="cyan">{item.quntity} шт.</Tag>
+                                    <Tag color="cyan">{item.quntity} </Tag>
                                 </Space>
                             </label>
                             <Progress

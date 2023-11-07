@@ -10,11 +10,11 @@ const BodyCreateScopeWork = () => {
             label: "Основное",
             children: <TableSelectedListNameWork />,
         },
-        {
-            key: "2",
-            label: "Список наименований",
-            children: <h3>Список наименований</h3>,
-        },
+        // {
+        //     key: "2",
+        //     label: "Список наименований",
+        //     children: <h3>Список наименований</h3>,
+        // },
         // {
         //     key: "3",
         //     label: "Дополнительно",

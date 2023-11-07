@@ -101,7 +101,7 @@ const LeftMenu = () => {
                         ),
 
                         getItem(
-                            <Link to="/admin/object">Конфигурирование</Link>,
+                            <Link to="/admin/object">Статистика</Link>,
                             "configuration",
                             [RoleString.ADMIN],
                             rolesState,
