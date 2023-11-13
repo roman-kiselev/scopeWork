@@ -1,12 +1,12 @@
+import { Alert, Button, Card, Form, Row, Typography } from "antd";
 import React from "react";
-import { Form, Card, Button, Typography, Row, Alert } from "antd";
-import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
 import { Link as LinkDom } from "react-router-dom";
 import {
     IDataError,
     IInputFormItemProps,
     IInputPasswordFormItemProps,
 } from "../../shared/interfaces";
+import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
 const { Link, Text } = Typography;
 
 const propsEmail: IInputFormItemProps = {
@@ -85,7 +85,7 @@ const FormLogin: React.FC<IFormLoginProps> = ({
                         </Row>
                     )}
                     <Row>
-                        <Text>Нет аккаунта?</Text>
+                        <Text>Нет аккаунта??</Text>
                         <LinkDom to={"/register"}>Зарегистрироваться</LinkDom>
                     </Row>
                     <Row style={{ marginTop: 10 }}>
