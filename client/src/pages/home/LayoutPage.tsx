@@ -133,7 +133,7 @@ const LayoutPage = () => {
                         display: !collapsed && width < 500 ? "none" : "flex",
                     }}
                 >
-                    Ant Design ©2023 Created by Ant UED
+                    <p><a href="mailto:snab.pto@yandex.ru">Задавайте вопросы по электронной почте</a></p>
                 </Footer>
             </Layout>
         </Layout>
