@@ -1,7 +1,12 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { listNameWorkApi } from "../../api";
-import { INameWorkAndUnit, INameWorkListSlice, Item } from "../../interfaces";
+import { listNameWorkApi, nameWorkApi } from "../../api";
+import {
+    INameWorkAndUnit,
+    INameWorkListSlice,
+    ItemForListNameWork,
+} from "../../interfaces";
 
+import AddFromExcel from "./AddFromExcel";
 import CopyList from "./CopyList";
 import CreateList from "./CreateList";
 import EditList from "./EditList";
@@ -39,7 +44,7 @@ export const nameWorkListSlice = createSlice({
             state.selectedTypeWork = action.payload;
             state.oneItem.typeWorkId = action.payload;
         },
-        editList: (state, action: PayloadAction<Item[]>) => {
+        editList: (state, action: PayloadAction<ItemForListNameWork[]>) => {
             const newData = action.payload.map((nameWork, index) => {
                 return {
                     id: nameWork.id,
@@ -47,13 +52,13 @@ export const nameWorkListSlice = createSlice({
                     key: nameWork.key,
                     name: nameWork.name,
                     quntity: nameWork.quntity,
-                } as Item;
+                } as ItemForListNameWork;
             });
             // state.list = newData;
             state.oneItem.list = newData;
         },
         pushData: (state, action: PayloadAction<INameWorkAndUnit[]>) => {
-            let newData: Item[] = [];
+            let newData: ItemForListNameWork[] = [];
 
             if (action.payload.length === 0) {
                 state.oneItem.list = [];
@@ -69,7 +74,7 @@ export const nameWorkListSlice = createSlice({
                             key: String(id),
                             name: name,
                             quntity: 0,
-                        } as Item);
+                        } as ItemForListNameWork);
                     }
                 }
                 const data = [...state.oneItem.list, ...newData].map(
@@ -80,7 +85,7 @@ export const nameWorkListSlice = createSlice({
                             key: String(item.id),
                             name: item.name,
                             quntity: item.quntity,
-                        } as Item;
+                        } as ItemForListNameWork;
                     }
                 );
                 // state.list = data;
@@ -190,6 +195,19 @@ export const nameWorkListSlice = createSlice({
         builder.addMatcher(
             listNameWorkApi.endpoints.copyList.matchRejected,
             CopyList.rejected
+        );
+
+        builder.addMatcher(
+            nameWorkApi.endpoints.createExcelForList.matchPending,
+            AddFromExcel.pending
+        );
+        builder.addMatcher(
+            nameWorkApi.endpoints.createExcelForList.matchFulfilled,
+            AddFromExcel.fulfilled
+        );
+        builder.addMatcher(
+            nameWorkApi.endpoints.createExcelForList.matchRejected,
+            AddFromExcel.rejected
         );
     },
 });

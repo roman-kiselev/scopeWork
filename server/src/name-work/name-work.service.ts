@@ -6,6 +6,7 @@ import { CreateUniteDto } from 'src/unit/dto/unit.dto';
 import { Unit } from 'src/unit/unit.model';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
+import { CreateNameWorkRowDto } from './dto/create-name-work-row.dto';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
 import { NameWorkTypeWork } from './name-work-typework';
 import { NameWork } from './name-work.model';
@@ -95,16 +96,40 @@ export class NameWorkService {
     }
   }
 
+  private async addTypeWork(id: number, arr: number[]): Promise<void> {
+    try {
+      console.log(id);
+      console.log(arr);
+      // Проверяем существование типа и привязываем
+      const nameWork = await this.nameWorkRepository.findByPk(id);
+      if (nameWork) {
+        for (const item of arr) {
+          const typeWork = await this.typeWorkRepository.findByPk(item);
+          if (typeWork) {
+            await nameWork.$set('typeWorks', typeWork.id);
+          }
+        }
+      }
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async createNameWorkDefault(dto: CreateNameWorkDto) {
     try {
       // Проверяем существование штук
       const nameUnite = 'шт';
       const unit = await this.unitService.checkByName(nameUnite);
+
       // Проверяем существование товара
       const nameWork = await this.checkOneByName(dto.name);
       // Если нет товара и есть единица
       if (unit && !nameWork) {
         const foundUnit = await this.unitService.findByName(nameUnite);
+
         if (dto.unitId) {
           const newNameWork = await this.nameWorkRepository.create(dto);
           return newNameWork;
@@ -113,6 +138,8 @@ export class NameWorkService {
           ...dto,
           unitId: foundUnit.id,
         });
+        await newNameWork.$set('typeWorks', [dto.typeWorkId[0]]);
+
         return newNameWork;
       }
       if (!unit && !nameWork) {
@@ -121,6 +148,7 @@ export class NameWorkService {
           description: 'Штуки',
         };
         const newUnit = await this.unitService.createUnit(dtoUnit);
+
         if (dto.unitId) {
           const newNameWork = await this.nameWorkRepository.create(dto);
           return newNameWork;
@@ -129,8 +157,11 @@ export class NameWorkService {
           ...dto,
           unitId: newUnit.id,
         });
+        await newNameWork.$set('typeWorks', [dto.typeWorkId[0]]);
+
         return newNameWork;
       }
+
       if (!unit && nameWork) {
         const dtoUnit: CreateUniteDto = {
           name: 'шт',
@@ -516,7 +547,7 @@ export class NameWorkService {
           });
         }
       }
-      console.log(arr);
+
       const responseArr = [];
 
       for (const item of arr) {
@@ -537,6 +568,57 @@ export class NameWorkService {
   // Получим список наименований для одного листа
   async getAllNamesInByListId(id: number) {
     try {
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Создаём наименования и отдаём список
+  async createNameWork(dto: CreateNameWorkRowDto[]) {
+    try {
+      // Отдаём в любом случае наименование
+      const arrNames = Promise.all(
+        dto.map(async (nameWork) => {
+          if ((await this.checkOneByName(nameWork.name)) === false) {
+            console.log(false);
+            // const newNameWork = await this.createNameWorkDefault({
+            //   name: nameWork.name,
+            //   unitId: nameWork.unitId,
+            //   typeWorkId: [nameWork.typeWorkId],
+            // });
+            const newNameWork = await this.create({
+              name: nameWork.name,
+              unitId: nameWork.unitId,
+              typeWorkId: [nameWork.typeWorkId],
+            });
+
+            if (newNameWork) {
+              return {
+                id: newNameWork.id,
+                name: newNameWork.name,
+                typeWorkId: nameWork.typeWorkId,
+                unitId: newNameWork.unit.id,
+                row: nameWork.row,
+                quntity: nameWork.quntity,
+              } as CreateNameWorkRowDto;
+            }
+          }
+          const oldNameWork = await this.nameWorkRepository.findOne({
+            where: {
+              name: nameWork.name,
+            },
+          });
+          return {
+            ...nameWork,
+            id: oldNameWork.id,
+          };
+        }),
+      );
+
+      return arrNames;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -30,7 +30,7 @@ import { UserModule } from './user/user.module';
       models: [],
       autoLoadModels: true,
       synchronize: true,
-      //sync: { force: true },
+      // sync: { force: true },
     }),
     UserModule,
     AuthModule,
@@ -45,6 +45,7 @@ import { UserModule } from './user/user.module';
     NameListModule,
     TableAddingDataModule,
   ],
+
   controllers: [],
   providers: [],
 })

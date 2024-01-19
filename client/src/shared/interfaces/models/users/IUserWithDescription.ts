@@ -1,3 +1,4 @@
+import { IRole } from "../roles";
 import { IUserDescription } from "../userDescription";
 
 export interface IUserWithDescription {
@@ -9,4 +10,5 @@ export interface IUserWithDescription {
     createdAt: string;
     updatedAt: string;
     userDescription: IUserDescription;
+    roles: IRole[];
 }

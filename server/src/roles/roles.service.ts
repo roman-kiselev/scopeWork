@@ -1,16 +1,20 @@
 import {
-  Injectable,
-  NotFoundException,
   HttpException,
   HttpStatus,
+  Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { Roles } from './roles.model';
+import { UserRole } from './user-role.model';
 
 @Injectable()
 export class RolesService {
-  constructor(@InjectModel(Roles) private rolesRepository: typeof Roles) {}
+  constructor(
+    @InjectModel(Roles) private rolesRepository: typeof Roles,
+    @InjectModel(UserRole) private userRoleRepository: typeof UserRole,
+  ) {}
 
   private async checkRole(name: string) {
     try {
@@ -120,6 +124,26 @@ export class RolesService {
       role.description = dto.description ? dto.description : role.description;
       await role.save();
       return role;
+    } catch (e) {
+      throw new NotFoundException(e.message || 'Произошла ошибка');
+    }
+  }
+
+  async getAllRolesByUserId(id: number) {
+    try {
+      const roles = await this.userRoleRepository.findAll({
+        where: {
+          userId: id,
+        },
+      });
+
+      const listRoles: Roles[] = [];
+      for (const { roleId } of roles) {
+        const role = await this.rolesRepository.findByPk(roleId);
+        listRoles.push(role);
+      }
+
+      return listRoles;
     } catch (e) {
       throw new NotFoundException(e.message || 'Произошла ошибка');
     }

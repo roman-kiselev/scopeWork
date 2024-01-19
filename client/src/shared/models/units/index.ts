@@ -1,3 +1,3 @@
-import { unitReducer, unitSlice } from './unitSlice'
+import { unitReducer, unitSlice } from "./unitSlice";
 
-export { unitReducer, unitSlice }
+export { unitReducer, unitSlice };

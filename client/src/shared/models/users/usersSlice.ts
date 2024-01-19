@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { authApi, userApi } from "../../api";
 import { IUsersSlice } from "../../interfaces";
+import EditRolesForUser from "./EditRolesForUser";
 import EditUser from "./EditUser";
 import GetAllUsers from "./GetAllUsers";
 import GetOneUser from "./GetOneUser";
@@ -55,6 +56,19 @@ export const usersSlice = createSlice({
         builder.addMatcher(
             authApi.endpoints.edit.matchRejected,
             EditUser.rejected
+        );
+
+        builder.addMatcher(
+            userApi.endpoints.addRolesForUser.matchPending,
+            EditRolesForUser.pending
+        );
+        builder.addMatcher(
+            userApi.endpoints.addRolesForUser.matchFulfilled,
+            EditRolesForUser.fulfilled
+        );
+        builder.addMatcher(
+            userApi.endpoints.addRolesForUser.matchRejected,
+            EditRolesForUser.rejected
         );
     },
 });

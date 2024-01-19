@@ -1,5 +1,5 @@
 import { Controller } from '@nestjs/common';
-import { Body, Get, Param } from '@nestjs/common/decorators';
+import { Body, Get, Param, Post } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -57,5 +57,14 @@ export class UserController {
   @Get('/findByName')
   async getUserByName(@Body('email') email: string) {
     return await this.userService.findUserByEmail(email);
+  }
+
+  @ApiOperation({ summary: 'Изменяем роли' })
+  @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({ type: HttpException })
+  @Post('updateRoles/:id')
+  async updateRoles(@Param('id') id: string, @Body() roles: string[]) {
+    //console.log(id, roles);
+    return await this.userService.updateRolesForUser(id, roles);
   }
 }

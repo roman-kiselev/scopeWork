@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../../../app/store";
 import { typeWorkApi } from "../../api";
 import { IDataError } from "../../interfaces";
 import { ITypeWork } from "../../interfaces/models";
@@ -39,3 +40,6 @@ export const typeWorkSlice = createSlice({
 });
 
 export const typeWorkReducer = typeWorkSlice.reducer;
+
+export const typeWorkListState = (state: RootState) =>
+    state.typeWork.listTypeWork;

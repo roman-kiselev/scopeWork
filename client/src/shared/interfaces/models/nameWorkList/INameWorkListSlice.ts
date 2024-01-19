@@ -1,7 +1,7 @@
 import { IDataError } from "../../api";
 import { INameListWork } from "./INameListWork";
 
-export interface Item {
+export interface ItemForListNameWork {
     index: number;
     key: string;
     id: number;
@@ -15,12 +15,12 @@ export interface IOneItemForListNameWork {
     name: string;
     description: string;
     typeWorkId: number | null;
-    list: Item[] | [];
+    list: ItemForListNameWork[] | [];
 }
 
 export interface INameWorkListSlice {
     oneItem: IOneItemForListNameWork;
-    list: Item[] | [];
+    list: ItemForListNameWork[] | [];
     listItem: INameListWork[] | [];
     lastAddedItem: number | null;
     listByTypeId: INameListWork[] | [];

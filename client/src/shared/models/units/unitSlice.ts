@@ -1,7 +1,8 @@
-import { IUnit } from "../../interfaces/models";
-import { IDataError } from "../../interfaces";
 import { createSlice } from "@reduxjs/toolkit";
 import { unitsApi } from "../../api";
+import { IDataError } from "../../interfaces";
+import { IUnit } from "../../interfaces/models";
+import GetAllUnits from "./GetAllUnits";
 
 export interface IUnitSlice {
     listUnits: IUnit[] | [];
@@ -54,31 +55,15 @@ export const unitSlice = createSlice({
         // GetAll Start
         builder.addMatcher(
             unitsApi.endpoints.getAllUnits.matchPending,
-            (state, action) => {
-                state.isLoading = true;
-                state.isError = false;
-                state.dataError = null;
-            }
+            GetAllUnits.pending
         );
         builder.addMatcher(
             unitsApi.endpoints.getAllUnits.matchFulfilled,
-            (state, action) => {
-                const data = action.payload;
-                state.listUnits = data;
-                state.isLoading = false;
-            }
+            GetAllUnits.fulfilled
         );
         builder.addMatcher(
             unitsApi.endpoints.getAllUnits.matchRejected,
-            (state, action) => {
-                state.isLoading = false;
-                state.isError = true;
-                const { data, status } = action.payload as IDataError;
-                state.dataError = {
-                    status: Number(status),
-                    data,
-                };
-            }
+            GetAllUnits.rejected
         );
     },
 });

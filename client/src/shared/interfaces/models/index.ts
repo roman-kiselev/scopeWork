@@ -10,16 +10,18 @@ import { INameListForNameWork } from "./nameList";
 import {
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
+    ICreateNameWorkForList,
     INameWorkAndUnit,
     INameWorkCreateResponse,
     INameWorkWithNameList,
 } from "./nameWork";
 import {
     INameListWork,
+    INameWorkFromExcel,
     INameWorkListSlice,
     INameWorkWithQuantity,
     IOneItemForListNameWork,
-    Item,
+    ItemForListNameWork,
 } from "./nameWorkList";
 import { IRole } from "./roles";
 import {
@@ -65,6 +67,7 @@ export type {
     IAuthSlice,
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
+    ICreateNameWorkForList,
     ICreateScopeWork,
     IDataOneUserSlice,
     IDataShortScopeWork,
@@ -82,6 +85,7 @@ export type {
     INameListWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkFromExcel,
     INameWorkListSlice,
     INameWorkWithNameList,
     INameWorkWithQuantity,
@@ -109,5 +113,5 @@ export type {
     IUserWithDescription,
     IUsersSlice,
     IValueForListData,
-    Item,
+    ItemForListNameWork,
 };

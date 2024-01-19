@@ -1,13 +1,16 @@
 import { Button, Col, Form, Input, Row, Spin, Switch } from "antd";
 import { useForm, useWatch } from "antd/es/form/Form";
+import { useParams } from "react-router";
 import { authApi, userApi } from "../../../shared/api";
 import { useAppSelector } from "../../../shared/hooks";
+import { MultiSelectRoles } from "../../../shared/ui";
 
 interface OneUserFormProps {
     userId: string;
 }
 
 const OneUserForm: React.FC<OneUserFormProps> = ({ userId }) => {
+    const { id } = useParams();
     const [form] = useForm();
     const dataForm = useWatch([], form);
 
@@ -50,73 +53,89 @@ const OneUserForm: React.FC<OneUserFormProps> = ({ userId }) => {
     // if (isLoading) {
     //     return <Spin />;
     // }
+    const handleChange = (value: string) => {
+        console.log(`selected ${value}`);
+    };
+
     const handleFinish = (dataValue: any) => {
         console.log(dataValue);
     };
+    const handleSave = (dataForm: any, userId: any) => {
+        editUser({ ...dataForm, userId });
+    };
     return (
-        <Form name="formUser" form={form} layout="inline">
-            <Row style={{ display: "flex", flexDirection: "column" }}>
-                <Row>
-                    <Col>
+        <>
+            <Form name="formUser" form={form} layout="inline">
+                <Row style={{ display: "flex", flexDirection: "column" }}>
+                    <Row>
+                        <Col>
+                            <Form.Item
+                                style={{ margin: 10 }}
+                                label="Имя"
+                                initialValue={data?.userDescription.firstname}
+                                name="firstname"
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                style={{ margin: 10 }}
+                                label="Фамилия"
+                                initialValue={data?.userDescription.lastname}
+                                name="lastname"
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                        <Col>
+                            <Form.Item
+                                name="email"
+                                style={{ margin: 10 }}
+                                label="Почта"
+                                initialValue={data?.email}
+                            >
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                name="password"
+                                style={{ margin: 10 }}
+                                label="Новый пароль"
+                            >
+                                <Input />
+                            </Form.Item>
+                        </Col>
+                    </Row>
+                    <Row style={{ margin: 10 }}>
+                        <MultiSelectRoles />
+                    </Row>
+                    <Row style={{ margin: 10 }}>
                         <Form.Item
-                            style={{ margin: 10 }}
-                            label="Имя"
-                            initialValue={data?.userDescription.firstname}
-                            name="firstname"
+                            label={
+                                data?.banned
+                                    ? "Разблокировать"
+                                    : "Заблокировать"
+                            }
+                            valuePropName="checked"
+                            initialValue={data?.banned}
+                            name="banned"
                         >
-                            <Input />
+                            <Switch
+                            // defaultChecked={data?.banned}
+                            />
                         </Form.Item>
-                        <Form.Item
-                            style={{ margin: 10 }}
-                            label="Фамилия"
-                            initialValue={data?.userDescription.lastname}
-                            name="lastname"
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
-                    <Col>
-                        <Form.Item
-                            name="email"
-                            style={{ margin: 10 }}
-                            label="Почта"
-                            initialValue={data?.email}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Form.Item
-                            name="password"
-                            style={{ margin: 10 }}
-                            label="Новый пароль"
-                        >
-                            <Input />
-                        </Form.Item>
-                    </Col>
+                    </Row>
+                    <Row style={{ margin: 10 }}>
+                        {dataForm !== null ? (
+                            <Button
+                                onClick={() => handleSave(dataForm, userId)}
+                                type="primary"
+                            >
+                                Сохранить
+                            </Button>
+                        ) : null}
+                    </Row>
                 </Row>
-                <Row style={{ margin: 10 }}>
-                    <Form.Item
-                        label={
-                            data?.banned ? "Разблокировать" : "Заблокировать"
-                        }
-                        valuePropName="checked"
-                        initialValue={data?.banned}
-                        name="banned"
-                    >
-                        <Switch
-                        // defaultChecked={data?.banned}
-                        />
-                    </Form.Item>
-                </Row>
-                <Row style={{ margin: 10 }}>
-                    <Button
-                        onClick={() => editUser({ ...dataForm, userId })}
-                        type="primary"
-                    >
-                        Сохранить
-                    </Button>
-                </Row>
-            </Row>
-        </Form>
+            </Form>
+        </>
     );
 };
 

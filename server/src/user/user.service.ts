@@ -7,6 +7,7 @@ import { NameList } from 'src/name_list/name-list.model';
 import { Objects } from 'src/objects/objects.model';
 import { Roles } from 'src/roles/roles.model';
 import { RolesService } from 'src/roles/roles.service';
+import { UserRole } from 'src/roles/user-role.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { UserDescription } from 'src/user-description/user-description.model';
@@ -21,6 +22,8 @@ export class UserService {
     @InjectModel(Objects) private objectRepository: typeof Objects,
     @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
     @InjectModel(NameList) private nameListRepository: typeof NameList,
+    @InjectModel(Roles) private rolesRepository: typeof Roles,
+    @InjectModel(UserRole) private userRoleRepository: typeof UserRole,
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
     @InjectModel(UserDescription)
@@ -174,6 +177,12 @@ export class UserService {
         include: [
           {
             model: UserDescription,
+          },
+          {
+            model: Roles,
+            through: {
+              attributes: [],
+            },
           },
         ],
       });
@@ -434,6 +443,74 @@ export class UserService {
       await userDescription.save();
 
       return user;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async updateRolesForUser(id: string, roles: string[]) {
+    try {
+      const user = await this.userRepository.findByPk(id);
+      const rolesList: Roles[] = [];
+      for (const item of roles) {
+        const role = await this.rolesRepository.findOne({
+          where: { name: item },
+        });
+        rolesList.push(role);
+      }
+      // Получим все id role для пользователя
+      const currentRolesForUser = await this.userRoleRepository.findAll({
+        where: { userId: id },
+      });
+
+      const sendedRolesListNumber = rolesList
+        .map((item) => item.id)
+        .sort((a, b) => a - b);
+      const currentRolesForUserNumber = currentRolesForUser
+        .map((item) => item.roleId)
+        .sort((a, b) => a - b);
+
+      if (sendedRolesListNumber.length >= currentRolesForUserNumber.length) {
+        for (const item in sendedRolesListNumber) {
+          if (
+            !currentRolesForUserNumber.includes(sendedRolesListNumber[item])
+          ) {
+            // Если отправленной роли нет, добавляем
+            console.log(`1 - ${sendedRolesListNumber[item]}`);
+            const role = await this.rolesRepository.findByPk(
+              sendedRolesListNumber[item],
+            );
+            await user.$add('roles', [role.id]);
+            user.roles = [role];
+          }
+        }
+      }
+
+      if (currentRolesForUserNumber.length > sendedRolesListNumber.length) {
+        for (const item in currentRolesForUserNumber) {
+          if (
+            !sendedRolesListNumber.includes(currentRolesForUserNumber[item])
+          ) {
+            // Если отправленной роли нет, удаляем
+            const role = await this.rolesRepository.findByPk(
+              currentRolesForUserNumber[item],
+            );
+            await user.$remove('roles', [role.id]);
+            user.roles = [role];
+          }
+        }
+      }
+
+      const userFinish = this.userRepository.findByPk(id, {
+        include: [{ model: Roles }],
+      });
+
+      return userFinish;
+      // console.log(sendedRolesListNumber);
+      // console.log(currentRolesForUserNumber);
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

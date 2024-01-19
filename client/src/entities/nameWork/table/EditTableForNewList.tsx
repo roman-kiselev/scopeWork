@@ -94,6 +94,7 @@ const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
             console.log("Validate Failed:", e);
         }
     };
+
     // Формируются колонки
     const columns = [
         {

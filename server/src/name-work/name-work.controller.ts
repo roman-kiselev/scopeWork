@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
+import { CreateNameWorkRowDto } from './dto/create-name-work-row.dto';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
 import { NameWork } from './name-work.model';
 import { NameWorkService } from './name-work.service';
@@ -73,5 +74,13 @@ export class NameWorkController {
   @Post('/arr')
   createArr(@Body() dto: CreateNameWorkArrDto[]) {
     return this.nameWorkService.createArrNameWork(dto);
+  }
+
+  @ApiOperation({ summary: 'Создание массива из excel' })
+  @ApiResponse({ status: HttpStatus.OK, type: [CreateNameWorkRowDto] })
+  @ApiResponse({ type: HttpException })
+  @Post('/createExcel')
+  createExcel(@Body() dto: CreateNameWorkRowDto[]) {
+    return this.nameWorkService.createNameWork(dto);
   }
 }

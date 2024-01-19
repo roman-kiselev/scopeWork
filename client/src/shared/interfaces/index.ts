@@ -10,6 +10,7 @@ import {
     IAuthSlice,
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
+    ICreateNameWorkForList,
     ICreateScopeWork,
     IDataOneUserSlice,
     IDataShortScopeWork,
@@ -27,6 +28,7 @@ import {
     INameListWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkFromExcel,
     INameWorkListSlice,
     INameWorkWithNameList,
     INameWorkWithQuantity,
@@ -54,7 +56,7 @@ import {
     IUserWithDescription,
     IUsersSlice,
     IValueForListData,
-    Item,
+    ItemForListNameWork,
 } from "./models";
 import { IInputFormItemProps, IInputPasswordFormItemProps } from "./ui";
 
@@ -62,6 +64,7 @@ export type {
     IAuthSlice,
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
+    ICreateNameWorkForList,
     ICreateScopeWork,
     IDataError,
     IDataOneUserSlice,
@@ -82,6 +85,7 @@ export type {
     INameListWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkFromExcel,
     INameWorkListSlice,
     INameWorkWithNameList,
     INameWorkWithQuantity,
@@ -114,5 +118,5 @@ export type {
     IUserWithDescription,
     IUsersSlice,
     IValueForListData,
-    Item,
+    ItemForListNameWork,
 };

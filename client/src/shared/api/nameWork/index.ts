@@ -1,8 +1,10 @@
 import {
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
+    ICreateNameWorkForList,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkFromExcel,
 } from "../../interfaces";
 import { mainApi } from "../main";
 
@@ -38,9 +40,23 @@ export const nameWorkApi = mainApi.injectEndpoints({
                 params: options,
             }),
         }),
+
         createArr: builder.mutation<any, ICreateNameWorkExcel[]>({
             query: (data) => ({
                 url: "/name-work/arr",
+                method: "POST",
+                body: data,
+            }),
+        }),
+
+        // INameWorkFromExcel
+        // ICreateNameWorkForList
+        createExcelForList: builder.mutation<
+            INameWorkFromExcel[],
+            ICreateNameWorkForList[]
+        >({
+            query: (data) => ({
+                url: "/name-work/createExcel",
                 method: "POST",
                 body: data,
             }),

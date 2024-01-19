@@ -7,6 +7,19 @@
 @password = "admin"
 @token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkbWluQGFkbWluLnJ1IiwiaWQiOjEsInJvbGVzIjpbeyJpZCI6MSwibmFtZSI6ImFkbWluIiwiZGVzY3JpcHRpb24iOiLQkNC00LzQuNC90LjRgdGC0YDQsNGC0L7RgCIsImRlbGV0ZWRBdCI6bnVsbCwiY3JlYXRlZEF0IjoiMjAyMy0xMC0wNlQxMzoxMDoxMi4wMDBaIiwidXBkYXRlZEF0IjoiMjAyMy0xMC0wNlQxMzoxMDoxMi4wMDBaIn1dLCJiYW5uZWQiOmZhbHNlLCJpYXQiOjE2OTY4Mjg1NzIsImV4cCI6MTY5Njg2NDU3Mn0.sS-OW9LeDCOqKO1V4MU6HbEytoz1qjRQrOTQKdYbTLk
 
+
+### ----- Roles
+### Получение всех ролей
+GET {{host}}/roles HTTP/1.1
+
+### Получения ролей одного пользователя
+GET {{host}}/roles/user/3 HTTP/1.1
+
+
+
+
+
+
 ### ------ Еденицы измерения ---------------------------------------------------------------------
 ### Получение едениц измерения
 GET {{host}}/unit HTTP/1.1

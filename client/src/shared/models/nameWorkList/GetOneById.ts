@@ -1,5 +1,9 @@
 import { CaseReducer } from "@reduxjs/toolkit";
-import { INameListWork, INameWorkListSlice, Item } from "../../interfaces";
+import {
+    INameListWork,
+    INameWorkListSlice,
+    ItemForListNameWork,
+} from "../../interfaces";
 import { CreateHandler, IDataError } from "../../interfaces/api";
 
 class GetOneById
@@ -24,7 +28,7 @@ class GetOneById
                 key: item.id.toString(),
                 name: item.name,
                 quntity: Number(item.NameList.quntity),
-            } as Item;
+            } as ItemForListNameWork;
         });
 
         state.oneItem.idNumber = id;

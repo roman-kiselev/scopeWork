@@ -21,5 +21,15 @@ export const userApi = mainApi.injectEndpoints({
                 method: "GET",
             }),
         }),
+        addRolesForUser: builder.mutation<
+            IUserWithDescription,
+            { id: string; roles: string[] }
+        >({
+            query: ({ id, roles }) => ({
+                url: `/user/updateRoles/${id}`,
+                method: "POST",
+                body: roles,
+            }),
+        }),
     }),
 });

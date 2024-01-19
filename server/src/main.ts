@@ -28,8 +28,18 @@ async function bootstrap() {
     name: 'user',
     description: 'Пользователь',
   };
+  const roleMasterDto: CreateRoleDto = {
+    name: 'master',
+    description: 'Мастер',
+  };
+  const roleDevDto: CreateRoleDto = {
+    name: 'dev',
+    description: 'Разработчик',
+  };
   await rolesService.createRole(roleDto);
   await rolesService.createRole(roleUserDto);
+  await rolesService.createRole(roleMasterDto);
+  await rolesService.createRole(roleDevDto);
   const authService = app.get(AuthService);
 
   const adminDto: CreateUserAndDescription = {

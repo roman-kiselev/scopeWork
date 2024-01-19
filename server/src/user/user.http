@@ -45,4 +45,11 @@ GET {{host}}/user/allListUser/1 HTTP/1.1
 ### Редактирование пользователя
 GET {{host}}/user/edit/1 HTTP/1.1
 
-###
+### Изменяем роли
+POST {{host}}/user/updateRoles/1 HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+### []
+### ["admin","user"]
+### ["admin"]
+### ["user"]

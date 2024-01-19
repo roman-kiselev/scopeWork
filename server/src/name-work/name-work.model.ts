@@ -19,6 +19,7 @@ interface NameWorkAttr {
   id: number;
   name: string;
   unitId: number;
+  typeWork: number;
 }
 
 @Table({ tableName: 'name_work', paranoid: true })

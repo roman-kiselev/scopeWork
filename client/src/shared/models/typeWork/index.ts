@@ -1,3 +1,3 @@
-import { typeWorkReducer } from "./typeWorkSlice";
+import { typeWorkListState, typeWorkReducer } from "./typeWorkSlice";
 
-export { typeWorkReducer };
+export { typeWorkListState, typeWorkReducer };

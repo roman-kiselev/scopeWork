@@ -1,7 +1,6 @@
 import { CheckCircleOutlined, MinusCircleOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Space, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
-import axios from "axios";
 import { useState } from "react";
 import * as XLSX from "xlsx";
 import { nameWorkApi } from "../../shared/api";
@@ -11,15 +10,10 @@ interface DataType {
     __rowNum__: number;
     typeWork: string;
     name: string;
+    quntity?: number;
     unit: string;
     state?: string;
 }
-
-const handleQuery = async () => {
-    const { data } = await axios(
-        "https://speller.yandex.net/services/spellservice.json/checkText?text=синхрофaaaазотрон+в+дубне"
-    );
-};
 
 type DataTypeForTable = Omit<DataType, "__rowNum__">;
 
@@ -54,15 +48,36 @@ function ExportToExcel() {
 
     // Создайте объект с данными для заполнения листа
     const data = [
-        { typeWork: "Отопление(Пример)", name: "Труба(Пример)", unit: "шт" },
-        { typeWork: "АСКУЭ(Пример)", name: "Труба(Пример)", unit: "шт" },
+        {
+            typeWork: "Отопление(Пример)",
+            name: "Труба(Пример)",
+            quntity: 1,
+            unit: "шт",
+        },
+        {
+            typeWork: "АСКУЭ(Пример)",
+            name: "Труба(Пример)",
+            quntity: 1,
+            unit: "шт",
+        },
         {
             typeWork: "Водоснабжение(Пример)",
             name: "Труба(Пример)",
+            quntity: 1,
             unit: "шт",
         },
-        { typeWork: "Канализация(Пример)", name: "Труба(Пример)", unit: "шт" },
-        { typeWork: "Другое(Пример)", name: "Труба(Пример)", unit: "шт" },
+        {
+            typeWork: "Канализация(Пример)",
+            name: "Труба(Пример)",
+            quntity: 1,
+            unit: "шт",
+        },
+        {
+            typeWork: "Другое(Пример)",
+            name: "Труба(Пример)",
+            quntity: 1,
+            unit: "шт",
+        },
     ];
 
     // Создаем лист с данными

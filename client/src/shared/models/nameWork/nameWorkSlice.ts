@@ -43,6 +43,7 @@ export const nameWorkSlice = createSlice({
             });
             state.selectedData = selectedDataByType;
         },
+        addDataFromExcel: (state, action) => {},
         resetSelectedData: (state) => {
             state.selectedData = [];
         },

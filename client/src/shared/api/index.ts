@@ -3,6 +3,7 @@ import { listNameWorkApi } from "./listNameWork";
 import { mainApi, objectMainApi } from "./main";
 import { nameWorkApi } from "./nameWork";
 import { objectsApi } from "./objects";
+import { roleApi } from "./roles";
 import { scopeWorkApi } from "./scopeWork";
 import { tableAddingDataApi } from "./tableAddingData";
 import { typeWorkApi } from "./typeWork";
@@ -16,6 +17,7 @@ export {
     nameWorkApi,
     objectMainApi,
     objectsApi,
+    roleApi,
     scopeWorkApi,
     tableAddingDataApi,
     typeWorkApi,

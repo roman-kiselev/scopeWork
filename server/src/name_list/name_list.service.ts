@@ -444,5 +444,8 @@ export class NameListService {
     }
   }
 
-  // Получим статистику по одному пользователю
+  // Создаём список из excel документа
+  async createListExcel(data: Item[]) {
+
+  }
 }

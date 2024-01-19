@@ -55,6 +55,14 @@ export class RolesController {
     return this.rolesService.getRoleById(id);
   }
 
+  @ApiOperation({ summary: 'Получаем роль по userId' })
+  @ApiResponse({ status: 200, type: Roles })
+  // Получаем роль по id
+  @Get('user/:id')
+  findAllRolesByUserId(@Param('id') id: number) {
+    return this.rolesService.getAllRolesByUserId(id);
+  }
+
   @ApiOperation({ summary: 'Удаляем роль' })
   @ApiResponse({ status: 200, type: Roles })
   // Удаляем роль
