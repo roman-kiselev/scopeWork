@@ -1,23 +1,25 @@
-import { Button, Input, Progress, Space, Spin, Table } from "antd";
+import { Button, Input, Progress, Space, Spin, Table, Tag } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router";
+import { RoleString } from "src/shared/config";
 import { scopeWorkApi, tableAddingDataApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { IListData, IValueForListData } from "../../shared/interfaces";
+import { IListData, IRole, IValueForListData } from "../../shared/interfaces";
+
+const checkRole = (data: IRole[], name: RoleString): boolean => {
+    const findedRole = data.find((item) => item.name === name);
+    if (findedRole) {
+        return true;
+    }
+    return false;
+};
 
 const OneScopeWorkForEdit = () => {
     const dispatch = useAppDispatch();
     const { id: idScopeWork } = useParams();
-    // const { data } = scopeWorkApi.useGetListByScopeWorkIdQuery(
-    //     {
-    //         id: Number(idScopeWork),
-    //     },
-    //     {
-    //         pollingInterval: 10000,
-    //     }
-    // );
+    const { roles } = useAppSelector((store) => store.auth);
     const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
         dispatch(
             scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
@@ -139,9 +141,13 @@ const OneScopeWorkForEdit = () => {
             title: "Наименование",
             dataIndex: "name",
             key: "name",
-            render: (_: any, { name, percent }) => (
+            render: (_: any, { name, percent, quntity, count }) => (
                 <>
                     <p>{name}</p>
+                    {checkRole(roles, RoleString.MASTER) ||
+                    checkRole(roles, RoleString.ADMIN) ? (
+                        <Tag color="red">Ост. {quntity - count} ед.</Tag>
+                    ) : null}
                     {percent !== undefined && Number(percent) > 100 ? (
                         <Progress
                             percent={Number(percent)}

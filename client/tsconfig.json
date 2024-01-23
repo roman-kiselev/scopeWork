@@ -17,14 +17,14 @@
         "jsx": "react-jsx",
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src"],
-            "@app/*": ["src/app/*"],
-            "@store/*": ["src/app/store/*"],
-            "@entities/*": ["src/entities/*"],
-            "@features/*": ["src/features/*"],
-            "@pages/*": ["src/pages/*"],
-            "@shared/*": ["src/shared/*"],
-            "@widgets/*": ["src/widgets/*"]
+            // "@/*": ["src"],
+            // "@app/*": ["src/app/*"],
+            // "@store/*": ["src/app/store/*"],
+            // "@entities/*": ["src/entities/*"],
+            // "@features/*": ["src/features/*"],
+            // "@pages/*": ["src/pages/*"],
+            // "@shared/*": ["src/shared/*"],
+            // "@widgets/*": ["src/widgets/*"]
         }
     },
     "include": ["src"]
