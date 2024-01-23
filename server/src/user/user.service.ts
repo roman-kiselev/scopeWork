@@ -192,6 +192,7 @@ export class UserService {
           HttpStatus.NOT_FOUND,
         );
       }
+
       return user;
     } catch (e) {
       if (e instanceof HttpException) {

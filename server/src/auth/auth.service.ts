@@ -3,6 +3,7 @@ import { UnauthorizedException } from '@nestjs/common/exceptions/unauthorized.ex
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/sequelize';
 import * as bcrypt from 'bcrypt';
+import { Roles } from 'src/roles/roles.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 import { UserDescriptionService } from 'src/user-description/user-description.service';
 import { CreateUserAndDescription } from 'src/user/dto/create-user-and-description.dto';
@@ -246,6 +247,12 @@ export class AuthService {
         include: [
           {
             model: UserDescription,
+          },
+          {
+            model: Roles,
+            through: {
+              attributes: [],
+            },
           },
         ],
       });

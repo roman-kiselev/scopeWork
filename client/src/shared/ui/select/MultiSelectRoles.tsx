@@ -48,7 +48,7 @@ const MultiSelectRoles = () => {
                     allowClear
                     style={{ width: "100%" }}
                     placeholder="Выбор роли"
-                    defaultValue={["user", "master"]}
+                    defaultValue={dataRoles}
                     onChange={handleChange}
                     options={options}
                 />
