@@ -394,7 +394,11 @@ export class UserService {
   async getAllUserWithData() {
     try {
       const allUsers = await this.userRepository.findAll({
-        include: { all: true },
+        include: [
+          {
+            model: UserDescription,
+          },
+        ],
       });
       const finishArr = [];
       for (const item of allUsers) {

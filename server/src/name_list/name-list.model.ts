@@ -33,7 +33,7 @@ export class NameList
   id: number;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.FLOAT,
     allowNull: true,
   })
   quntity: number;
