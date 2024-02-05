@@ -400,6 +400,7 @@ export class UserService {
           },
         ],
       });
+      console.log(allUsers);
       const finishArr = [];
       for (const item of allUsers) {
         const { id, userDescription, scopeWork, tableAddingData } = item;
@@ -420,6 +421,7 @@ export class UserService {
       }
       return finishArr;
     } catch (e) {
+      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
