@@ -240,14 +240,18 @@ export class UserService {
         },
         group: ['scopeWorkId'],
       });
-
-      let data: ScopeWork[] = [];
-      for (const { scopeWorkId } of tableAdding) {
-        const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
-        data.push(scopeWork);
+      if (tableAdding) {
+        let data: ScopeWork[] = [];
+        for (const { scopeWorkId } of tableAdding) {
+          const scopeWork = await this.scopeWorkRepository.findByPk(
+            scopeWorkId,
+          );
+          data.push(scopeWork);
+        }
+        return data;
+      } else {
+        return [];
       }
-
-      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
