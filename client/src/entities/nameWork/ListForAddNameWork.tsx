@@ -43,6 +43,28 @@ interface Item {
     quntity: number;
 }
 
+const sumQuantity = (arr: any[]) => {
+    const result = arr.reduce((acc, currentItem) => {
+        const existingItem = acc.find((item: any) => {
+            const itemName: string = item.name.replace(/\s/g, "").toLowerCase();
+            const currentItemName: string = currentItem.name
+                .replace(/\s/g, "")
+                .toLowerCase();
+            return itemName === currentItemName;
+        });
+
+        if (existingItem) {
+            existingItem.quntity += currentItem.quntity;
+        } else {
+            acc.push({ ...currentItem });
+        }
+
+        return acc;
+    }, []);
+
+    return result;
+};
+
 // Начало основного компонента
 const ListForAddNameWork = () => {
     const dispatch = useAppDispatch();
@@ -132,8 +154,10 @@ const ListForAddNameWork = () => {
         typeWorkId,
         list,
     };
-    const [createList, { data, isError: isErrorSave }] =
-        listNameWorkApi.useCreateListMutation();
+    const [
+        createList,
+        { data, isError: isErrorSave, isLoading: isLoadingCreateList },
+    ] = listNameWorkApi.useCreateListMutation();
     const [
         editList,
         {
@@ -150,6 +174,7 @@ const ListForAddNameWork = () => {
     const [valueOption, setValueOption] = useState(0);
 
     const { data: dataTypeWorks } = typeWorkApi.useGetAllShortQuery();
+
     const { data: dataNameWork, isSuccess } =
         nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
             typeWorkId:
@@ -193,7 +218,15 @@ const ListForAddNameWork = () => {
             const sheet = workbook.Sheets[sheetName];
             const excelData: INameWorkFromExcel[] =
                 XLSX.utils.sheet_to_json(sheet);
+
             const excelDataForAdd = excelData.map((item) => {
+                interface INameWorkFromExcel {
+                    __rowNum__: number;
+                    name: string;
+                    quntity: number;
+                    typeWork: string;
+                    unit: string;
+                }
                 return {
                     name: item.name,
                     typeWorkId: arrTypeWork.getField<string, number>(
@@ -210,11 +243,12 @@ const ListForAddNameWork = () => {
                     row: item.__rowNum__,
                 };
             });
+
             handleSelectChange(excelDataForAdd[0].typeWorkId);
+            const dataEditQuantity = sumQuantity(excelDataForAdd);
+            const dataResponse = await createNameWork(dataEditQuantity);
 
-            const dataResponse = await createNameWork(excelDataForAdd);
-
-            // console.log(dataResponse)
+            // console.log(dataResponse);
             //setData(excelData);
             //console.log(excelData); // Вывод данных из Excel в консоль
         };
@@ -231,6 +265,7 @@ const ListForAddNameWork = () => {
     }, []);
     const handleFirstSave = async () => {
         const res = await createList(dataForSave);
+
         const { data } = res as { data: INameListWork };
         dispatch(resetForOneItem());
         openMessageSave(isErrorSave, data.id ?? 0);

@@ -44,7 +44,7 @@ export const dataOneUserSlice = createSlice({
                     }
                 }
             }
-            console.log(typeData);
+
             state.oneScopeWorkForOneTab = typeData;
             state.isLoading = false;
         },

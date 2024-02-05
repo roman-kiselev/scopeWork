@@ -25,7 +25,7 @@ export class NameListService {
   async create(dto: CreateNameListDto) {
     try {
       const { listNameWorkId, nameWorkId, quntity } = dto;
-      console.log(listNameWorkId, nameWorkId, quntity);
+
       const newName = await this.nameListRepository.create({
         listNameWorkId,
         nameWorkId,
@@ -445,7 +445,5 @@ export class NameListService {
   }
 
   // Создаём список из excel документа
-  async createListExcel(data: Item[]) {
-
-  }
+  async createListExcel(data: Item[]) {}
 }

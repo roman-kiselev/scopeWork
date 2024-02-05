@@ -36,7 +36,18 @@ class GetOneById
         state.oneItem.description = description;
         state.oneItem.typeWorkId = typeWorkId;
         state.oneItem.dateCreate = createdAt;
-        state.oneItem.list = newList;
+        if (newList) {
+            const sortData = newList.sort((a, b) => {
+                if (a.name < b.name) {
+                    return -1;
+                }
+                if (a.name > b.name) {
+                    return 1;
+                }
+                return 0;
+            });
+            state.oneItem.list = sortData;
+        }
 
         state.isLoading = false;
     };

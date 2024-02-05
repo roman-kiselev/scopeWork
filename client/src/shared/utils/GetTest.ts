@@ -10,6 +10,7 @@ export class ModelArrStandart<T> {
             const finded = this.arr.find(
                 (item: T) => (item as any)[field] === content
             );
+
             return (finded as any)[fieldR];
         }
 

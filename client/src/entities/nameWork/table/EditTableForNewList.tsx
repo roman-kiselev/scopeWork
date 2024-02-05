@@ -25,6 +25,7 @@ const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
     const { list: originalData } = useAppSelector(
         (store) => store.nameWorkList.oneItem
     );
+
     const [editingKey, setEditingKey] = useState("");
     // Функция выхода
     const cancel = () => {

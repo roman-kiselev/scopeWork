@@ -107,7 +107,6 @@ const CreateUser = () => {
     const [registered, { isSuccess }] = authApi.useRegisterMutation();
     const onFinish = async () => {
         const res = await registered(data);
-        console.log(res);
     };
     return (
         <>

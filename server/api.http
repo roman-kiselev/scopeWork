@@ -1,6 +1,8 @@
 @hostJob = http://192.168.3.16:7000
 @hostHome = http://192.168.1.14:7000
 
+
+
 @host = {{hostJob}}
 
 @email = "admin@admin.ru"
@@ -48,6 +50,46 @@ Content-type: application/json; charset=utf-8
     "description": "Метры"
 }
 
+####
+POST {{host}}/unit HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "м2",
+    "description": "м2"
+}
+####
+POST {{host}}/unit HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "м/п",
+    "description": "м/п"
+}
+####
+POST {{host}}/unit HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "кг",
+    "description": "кг"
+}
+####
+POST {{host}}/unit HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "м3",
+    "description": "м3"
+}
+####
+POST {{host}}/unit HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "комплект",
+    "description": "комплект"
+}
 ###
 
 
@@ -90,8 +132,25 @@ POST {{host}}/type-work HTTP/1.1
 Content-type: application/json; charset=utf-8
 
 {
+    "name": "Вентиляция",
+    "description": "Вентиляция"
+}
+###
+POST {{host}}/type-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
     "name": "Отопление",
     "description": "Отопление"
+}
+
+###
+POST {{host}}/type-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "ИТП",
+    "description": "ИТП"
 }
 ###
 POST {{host}}/type-work HTTP/1.1
@@ -100,6 +159,14 @@ Content-type: application/json; charset=utf-8
 {
     "name": "Другое",
     "description": "Другое"
+}
+###
+POST {{host}}/type-work HTTP/1.1
+Content-type: application/json; charset=utf-8
+
+{
+    "name": "Кондиционирование",
+    "description": "Кондиционирование"
 }
 ### 
 

@@ -28,7 +28,7 @@ class AddFromExcel
         //         quntity: item.quntity ? item.quntity : 0,
         //     };
         // });
-        console.log(action.payload);
+
         state.oneItem.list = action.payload.map((item, index) => {
             return {
                 id: item.id,

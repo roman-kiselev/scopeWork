@@ -119,8 +119,8 @@ const LayoutPage = () => {
                 <Content
                     className="site-layout-content"
                     style={{
-                        margin: "24px 16px",
-                        padding: 24,
+                        margin: "5px",
+                        // padding: 24,
                         minHeight: 280,
                         display: !collapsed && width < 500 ? "none" : "block",
                     }}
@@ -133,7 +133,11 @@ const LayoutPage = () => {
                         display: !collapsed && width < 500 ? "none" : "flex",
                     }}
                 >
-                    <p><a href="mailto:snab.pto@yandex.ru">Задавайте вопросы по электронной почте</a></p>
+                    <p>
+                        <a href="mailto:snab.pto@yandex.ru">
+                            Задавайте вопросы по электронной почте
+                        </a>
+                    </p>
                 </Footer>
             </Layout>
         </Layout>

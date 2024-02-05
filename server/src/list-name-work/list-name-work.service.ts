@@ -64,13 +64,14 @@ export class ListNameWorkService {
         listNameWorkId: nameList.id,
         typeWorkId: typeWorkId,
       });
+      if (finishedList) {
+        const newNameList = await this.listNameWorkRepository.findByPk(
+          nameList.id,
+          { include: { all: true } },
+        );
 
-      const newNameList = await this.listNameWorkRepository.findByPk(
-        nameList.id,
-        { include: { all: true } },
-      );
-
-      return newNameList;
+        return newNameList;
+      }
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -107,9 +108,23 @@ export class ListNameWorkService {
       const list = await this.listNameWorkRepository.findByPk(id, {
         include: { all: true },
       });
+
+      // const list = await this.listNameWorkRepository.findByPk(id, {
+      //   include: [
+      //     {
+      //       model: ScopeWork,
+      //     },
+      //     {
+      //       model: NameWork,
+      //       order: [[sequelize.literal('name'), 'ASC']],
+      //     },
+      //   ],
+      // });
+
       if (!list) {
         throw new HttpException('Список не найден', HttpStatus.BAD_REQUEST);
       }
+
       return list;
     } catch (e) {
       if (e instanceof HttpException) {

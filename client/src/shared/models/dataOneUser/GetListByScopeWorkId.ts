@@ -17,7 +17,17 @@ class GetListByScopeWorkId
         { payload: IListData[]; type: string }
     > = (state, action) => {
         state.isLoading = true;
-        state.listData = action.payload;
+        const sordData = action.payload.sort((a, b) => {
+            if (a.name < b.name) {
+                return -1;
+            }
+            if (a.name > b.name) {
+                return 1;
+            }
+            return 0;
+        });
+        state.listData = sordData;
+
         // state.listByScopeWorkId = action.payload;
         // const newArr: IListByScopeWorkIdTest[] = action.payload.map(
         //     (item, index) => {

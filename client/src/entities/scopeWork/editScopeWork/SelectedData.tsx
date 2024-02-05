@@ -138,7 +138,7 @@ const SelectedData = () => {
     const handleEditScopeWork = () => {
         const userArr = users.map((item) => item.id);
         const arrListId = listNameWork.map((item) => item.id);
-        console.log(userArr, arrListId);
+
         if (idScopeWork && object && typeWork) {
             editScopeWork({
                 scopeWorkId: idScopeWork,

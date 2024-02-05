@@ -18,7 +18,6 @@ export const authApi = mainApi.injectEndpoints({
         }),
         register: builder.mutation<IUserResponseToken, IUserRegister>({
             query: (userData) => {
-                console.log(userData);
                 return {
                     url: "/auth/registration",
                     method: "POST",

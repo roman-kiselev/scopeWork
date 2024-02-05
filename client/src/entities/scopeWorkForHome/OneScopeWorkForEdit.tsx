@@ -1,4 +1,14 @@
-import { Button, Input, Progress, Space, Spin, Table, Tag } from "antd";
+import {
+    Button,
+    Col,
+    Input,
+    Progress,
+    Row,
+    Space,
+    Spin,
+    Table,
+    Tag,
+} from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
@@ -177,35 +187,44 @@ const OneScopeWorkForEdit = () => {
             ) => (
                 <>
                     <Space>
-                        <Input
-                            style={{ minWidth: 50 }}
-                            value={getValue(nameWorkId, listNameWorkId)}
-                            onChange={(e) =>
-                                setValue(nameWorkId, listNameWorkId, e)
-                            }
-                        />
-                        <Button
-                            type="primary"
-                            onClick={() =>
-                                editData(
-                                    Number(
-                                        getValue(nameWorkId, listNameWorkId)
-                                    ),
-                                    nameWorkId,
-                                    nameListId,
-                                    Number(scopeWorkId),
-                                    userId,
-                                    listNameWorkId
-                                )
-                            }
-                            disabled={
-                                getValue(nameWorkId, listNameWorkId) === ""
-                                    ? true
-                                    : false
-                            }
-                        >
-                            Сохранить
-                        </Button>
+                        <Row>
+                            <Col>
+                                <Input
+                                    value={getValue(nameWorkId, listNameWorkId)}
+                                    onChange={(e) =>
+                                        setValue(nameWorkId, listNameWorkId, e)
+                                    }
+                                />
+                            </Col>
+                            <Col>
+                                <Button
+                                    type="primary"
+                                    onClick={() =>
+                                        editData(
+                                            Number(
+                                                getValue(
+                                                    nameWorkId,
+                                                    listNameWorkId
+                                                )
+                                            ),
+                                            nameWorkId,
+                                            nameListId,
+                                            Number(scopeWorkId),
+                                            userId,
+                                            listNameWorkId
+                                        )
+                                    }
+                                    disabled={
+                                        getValue(nameWorkId, listNameWorkId) ===
+                                        ""
+                                            ? true
+                                            : false
+                                    }
+                                >
+                                    Сохранить
+                                </Button>
+                            </Col>
+                        </Row>
                     </Space>
                 </>
             ),
