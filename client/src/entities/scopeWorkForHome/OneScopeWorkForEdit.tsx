@@ -11,12 +11,16 @@ import {
 } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { useParams } from "react-router";
 import { RoleString } from "src/shared/config";
-import { scopeWorkApi, tableAddingDataApi } from "../../shared/api";
+import { scopeWorkApi, tableAddingDataApi, unitsApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { IListData, IRole, IValueForListData } from "../../shared/interfaces";
+import {
+    IListData,
+    IRole,
+    IUnit,
+    IValueForListData,
+} from "../../shared/interfaces";
 
 const checkRole = (data: IRole[], name: RoleString): boolean => {
     const findedRole = data.find((item) => item.name === name);
@@ -26,18 +30,28 @@ const checkRole = (data: IRole[], name: RoleString): boolean => {
     return false;
 };
 
+const getUnit = (data: IUnit[] | undefined, id: number) => {
+    if (data) {
+        return data.find((item) => item.id === id)?.name;
+    }
+};
+
 const OneScopeWorkForEdit = () => {
     const dispatch = useAppDispatch();
     const [searchedText, setSearchedText] = useState("");
     const { id: idScopeWork } = useParams();
     const { roles } = useAppSelector((store) => store.auth);
-    const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
-        dispatch(
-            scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-                id: Number(idScopeWork),
-            })
-        )
-    );
+    const { data: dataUnit } = unitsApi.useGetAllUnitsQuery();
+    const { data, refetch } = scopeWorkApi.useGetListByScopeWorkIdQuery({
+        id: Number(idScopeWork),
+    });
+    // const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
+    //     dispatch(
+    //         scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
+    //             id: Number(idScopeWork),
+    //         })
+    //     )
+    // );
 
     const [setTableAddingData, { data: dataEdit }] =
         tableAddingDataApi.useAddDataMutation();
@@ -126,12 +140,12 @@ const OneScopeWorkForEdit = () => {
             });
         }
         //dispatch(editOneQuntity({ id: nameWorkId, listId: listNameWorkId }));
-
-        dispatch(
-            scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-                id: Number(idScopeWork),
-            })
-        );
+        refetch();
+        // dispatch(
+        //     scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
+        //         id: Number(idScopeWork),
+        //     })
+        // );
         setValue(nameWorkId, listNameWorkId);
     };
     const dataForTable = listData.map((item, index) => {
@@ -158,12 +172,15 @@ const OneScopeWorkForEdit = () => {
                     .toLowerCase()
                     .includes(value.toLowerCase());
             },
-            render: (_: any, { name, percent, quntity, count }) => (
+            render: (_: any, { name, percent, quntity, count, unitId }) => (
                 <>
                     <p>{name}</p>
                     {checkRole(roles, RoleString.MASTER) ||
                     checkRole(roles, RoleString.ADMIN) ? (
-                        <Tag color="red">Ост. {quntity - count} ед.</Tag>
+                        <Tag color="red">
+                            Ост. {quntity - count}{" "}
+                            {getUnit(dataUnit, unitId) || `ед.`}
+                        </Tag>
                     ) : null}
                     {percent !== undefined && Number(percent) > 100 ? (
                         <Progress

@@ -139,24 +139,6 @@ const CreateNameWorkExcel = () => {
         reader.readAsBinaryString(file);
     };
 
-    // const checkText = async (text: string) => {
-    //     const finishText = text.trim().split(" ").join("+");
-    //     console.log(finishText);
-    //     let finishValue = false;
-    //     const res = await axios(
-    //         `https://speller.yandex.net/services/spellservice.json/checkText?text=${finishText}`
-    //     ).then(({ data }) => {
-    //         if (data.length !== 0) {
-    //             finishValue = true;
-    //         }
-    //     });
-
-    //     return finishValue;
-    // };
-
-    // const x = checkText("   Труба гибкая ПНД 16");
-    // console.log(x); // TODO - Проверить орфографию
-
     const dataForTable: DataTypeForTable[] = data.map((item) => {
         return {
             name: item.name,

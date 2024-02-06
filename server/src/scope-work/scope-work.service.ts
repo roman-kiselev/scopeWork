@@ -464,7 +464,13 @@ export class ScopeWorkService {
 
         const { nameWorks } = oneList;
         const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
-        for (const { id: nameWorkId, name, NameList } of finishNameWorks) {
+
+        for (const {
+          id: nameWorkId,
+          name,
+          unitId,
+          NameList,
+        } of finishNameWorks) {
           const findedData =
             await this.nameListService.getDateByNameWorkIdAndListId(
               nameWorkId,
@@ -476,6 +482,7 @@ export class ScopeWorkService {
               ...item,
               scopeWorkId: id,
               name,
+              unitId,
             };
           });
 

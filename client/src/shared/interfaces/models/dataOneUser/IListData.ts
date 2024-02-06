@@ -18,4 +18,5 @@ export interface IListData {
     users: IUserCountAndPercent[];
     scopeWorkId: string;
     name: string;
+    unitId: number;
 }
