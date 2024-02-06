@@ -28,6 +28,7 @@ const checkRole = (data: IRole[], name: RoleString): boolean => {
 
 const OneScopeWorkForEdit = () => {
     const dispatch = useAppDispatch();
+    const [searchedText, setSearchedText] = useState("");
     const { id: idScopeWork } = useParams();
     const { roles } = useAppSelector((store) => store.auth);
     const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
@@ -151,6 +152,12 @@ const OneScopeWorkForEdit = () => {
             title: "Наименование",
             dataIndex: "name",
             key: "name",
+            filteredValue: [searchedText],
+            onFilter: (value: any, record: any) => {
+                return String(record.name)
+                    .toLowerCase()
+                    .includes(value.toLowerCase());
+            },
             render: (_: any, { name, percent, quntity, count }) => (
                 <>
                     <p>{name}</p>
@@ -231,7 +238,29 @@ const OneScopeWorkForEdit = () => {
         },
     ];
 
-    return <Table size="small" dataSource={dataForTable} columns={columns} />;
+    return (
+        <Row>
+            <Row>
+                <Input.Search
+                    placeholder="Поиск ..."
+                    style={{ margin: "10px 0" }}
+                    onSearch={(value) => {
+                        setSearchedText(value);
+                    }}
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        setSearchedText(e.target.value);
+                    }}
+                />
+            </Row>
+            <Row>
+                <Table
+                    size="small"
+                    dataSource={dataForTable}
+                    columns={columns}
+                />
+            </Row>
+        </Row>
+    );
 };
 
 export default OneScopeWorkForEdit;
