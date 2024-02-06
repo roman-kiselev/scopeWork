@@ -9,18 +9,27 @@ const FormRegistrationFeatures = () => {
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
 
-    const [registered, { isSuccess }] = authApi.useRegisterMutation();
+    const [registered, { isSuccess, isLoading, isError }] =
+        authApi.useRegisterMutation();
     const onFinish = async () => {
-        const res = await registered(data);
+        registered(data);
 
         if (isSuccess) {
             navigate("/");
         }
     };
+    if (isSuccess) {
+        navigate("/");
+    }
 
     return (
         <LayoutAuth>
-            <FormRegister form={form} onFinish={onFinish} />
+            <FormRegister
+                form={form}
+                onFinish={onFinish}
+                isError={isError}
+                isLoading={isLoading}
+            />
         </LayoutAuth>
     );
 };

@@ -1,117 +1,126 @@
-import React from 'react'
-import { Button, Card, Form, Row, Typography } from 'antd'
-import { InputFormItem, InputPasswordFormItem } from '../../shared/ui'
-import { Link as LinkDom } from 'react-router-dom'
-import { IInputFormItemProps, IInputPasswordFormItemProps } from '../../shared/interfaces'
+import { Button, Card, Form, Row, Spin, Typography } from "antd";
+import React from "react";
+import { Link as LinkDom } from "react-router-dom";
+import {
+    IInputFormItemProps,
+    IInputPasswordFormItemProps,
+} from "../../shared/interfaces";
+import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
 
-const { Link, Text } = Typography
+const { Link, Text } = Typography;
 
 const propsEmail: IInputFormItemProps = {
     input: {
-        placeholder: 'email@email.ru',
-        type: 'email',
-        size: 'large'
+        placeholder: "email@email.ru",
+        type: "email",
+        size: "large",
     },
-    name: 'email',
-    label: 'Почта',
-    tooltip: 'Введите почту',
+    name: "email",
+    label: "Почта",
+    tooltip: "Введите почту",
     rules: [
         {
             required: true,
-            message: 'Введите почту'
+            message: "Введите почту",
         },
         {
-            type: 'email',
-            message: 'Введите корректную почту'
-        }
-    ]
-}
+            type: "email",
+            message: "Введите корректную почту",
+        },
+    ],
+};
 const propsFirstname: IInputFormItemProps = {
     input: {
-        placeholder: 'Иван',
-        type: 'nickname',
-        size: 'large'
+        placeholder: "Иван",
+        type: "nickname",
+        size: "large",
     },
-    name: 'firstname',
-    label: 'Имя',
-    tooltip: 'Введите ваше имя',
+    name: "firstname",
+    label: "Имя",
+    tooltip: "Введите ваше имя",
     rules: [
         {
             required: true,
-            message: 'Обязательное поле',
-            whitespace: true
-        }
-    ]
-}
+            message: "Обязательное поле",
+            whitespace: true,
+        },
+    ],
+};
 const propsLastname: IInputFormItemProps = {
     input: {
-        placeholder: 'Иванов',
-        type: 'nickname',
-        size: 'large'
+        placeholder: "Иванов",
+        type: "nickname",
+        size: "large",
     },
-    name: 'lastname',
-    label: 'Фамилия',
-    tooltip: 'Введите вашу фамилию',
+    name: "lastname",
+    label: "Фамилия",
+    tooltip: "Введите вашу фамилию",
     rules: [
         {
             required: true,
-            message: 'Обязательное поле',
-            whitespace: true
-        }
-    ]
-}
-
+            message: "Обязательное поле",
+            whitespace: true,
+        },
+    ],
+};
 
 const propsPassword: IInputPasswordFormItemProps = {
     input: {
-        placeholder: 'Пароль',
-        type: 'password',
-        size: 'large'
+        placeholder: "Пароль",
+        type: "password",
+        size: "large",
     },
-    label: 'Пароль',
-    name: 'password',
+    label: "Пароль",
+    name: "password",
     rules: [
         {
             required: true,
-            message: 'Введите пароль'
-        }
-    ]
-}
+            message: "Введите пароль",
+        },
+    ],
+};
 const propsConfirm: IInputPasswordFormItemProps = {
     input: {
-        placeholder: 'Повторно пароль',
-        type: 'password',
-        size: 'large'
+        placeholder: "Повторно пароль",
+        type: "password",
+        size: "large",
     },
-    label: 'Ещё раз',
-    name: 'confirm',
-    dependencies: ['password'],
+    label: "Ещё раз",
+    name: "confirm",
+    dependencies: ["password"],
     rules: [
         {
             required: true,
-            message: 'Введите пароль ещё раз'
+            message: "Введите пароль ещё раз",
         },
         ({ getFieldValue }) => ({
             validator(_, value) {
-                if (!value || getFieldValue('password') === value) {
-                    return Promise.resolve()
+                if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
                 }
-                return Promise.reject(new Error('Пароли не совпадают'))
-            }
-        })
-    ]
-}
+                return Promise.reject(new Error("Пароли не совпадают"));
+            },
+        }),
+    ],
+};
 
 interface IFormRegisterProps {
     form: any;
     onFinish: (values: any) => void;
+    isLoading: boolean;
+    isError: boolean;
 }
 
-const FormRegister: React.FC<IFormRegisterProps> = ({ form, onFinish }) => {
+const FormRegister: React.FC<IFormRegisterProps> = ({
+    form,
+    onFinish,
+    isLoading,
+    isError,
+}) => {
     return (
         <>
-            <Card title='Регистрация' bordered={true} style={{ maxWidth: 400 }}>
-                <Form form={form} name='register' onFinish={onFinish}>
+            <Card title="Регистрация" bordered={true} style={{ maxWidth: 400 }}>
+                <Form form={form} name="register" onFinish={onFinish}>
                     <InputFormItem
                         input={propsEmail.input}
                         name={propsEmail.name}
@@ -149,17 +158,22 @@ const FormRegister: React.FC<IFormRegisterProps> = ({ form, onFinish }) => {
                     />
                     <Row>
                         <Text>У Вас уже есть аккаунт?</Text>
-                        <LinkDom to={'/login'}>Войти</LinkDom>
+                        <LinkDom to={"/login"}>Войти</LinkDom>
                     </Row>
                     <Row style={{ marginTop: 10 }}>
-                        <Button type='primary' htmlType='submit'>
-                            Зарегистрироваться
-                        </Button>
+                        {isError ? <p>Ошибка регистрации</p> : null}
+                        {isLoading ? (
+                            <Spin />
+                        ) : (
+                            <Button type="primary" htmlType="submit">
+                                Зарегистрироваться
+                            </Button>
+                        )}
                     </Row>
                 </Form>
             </Card>
         </>
-    )
-}
+    );
+};
 
-export default FormRegister
+export default FormRegister;
