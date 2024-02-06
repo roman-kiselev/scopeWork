@@ -238,6 +238,7 @@ export class UserService {
         where: {
           userId: id,
         },
+        // TODO какая то неисправность с группировкой
         //group: ['scopeWorkId'],
       });
 
@@ -396,7 +397,7 @@ export class UserService {
       const allUsers = await this.userRepository.findAll({
         include: { all: true },
       });
-      console.log(allUsers);
+
       const finishArr = [];
       for (const item of allUsers) {
         const { id, userDescription, scopeWork, tableAddingData } = item;
@@ -481,7 +482,7 @@ export class UserService {
             !currentRolesForUserNumber.includes(sendedRolesListNumber[item])
           ) {
             // Если отправленной роли нет, добавляем
-            console.log(`1 - ${sendedRolesListNumber[item]}`);
+
             const role = await this.rolesRepository.findByPk(
               sendedRolesListNumber[item],
             );
