@@ -239,8 +239,8 @@ const OneScopeWorkForEdit = () => {
     ];
 
     return (
-        <Row>
-            <Row>
+        <Col>
+            <Col style={{ maxWidth: "300px" }}>
                 <Input.Search
                     placeholder="Поиск ..."
                     style={{ margin: "10px 0" }}
@@ -251,15 +251,10 @@ const OneScopeWorkForEdit = () => {
                         setSearchedText(e.target.value);
                     }}
                 />
-            </Row>
-            <Row>
-                <Table
-                    size="small"
-                    dataSource={dataForTable}
-                    columns={columns}
-                />
-            </Row>
-        </Row>
+            </Col>
+
+            <Table size="small" dataSource={dataForTable} columns={columns} />
+        </Col>
     );
 };
 
