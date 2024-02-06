@@ -240,18 +240,14 @@ export class UserService {
         },
         group: ['scopeWorkId'],
       });
-      if (tableAdding) {
-        let data: ScopeWork[] = [];
-        for (const { scopeWorkId } of tableAdding) {
-          const scopeWork = await this.scopeWorkRepository.findByPk(
-            scopeWorkId,
-          );
-          data.push(scopeWork);
-        }
-        return data;
-      } else {
-        return [];
+
+      let data: ScopeWork[] = [];
+      for (const { scopeWorkId } of tableAdding) {
+        const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
+        data.push(scopeWork);
       }
+
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
@@ -398,13 +394,8 @@ export class UserService {
   async getAllUserWithData() {
     try {
       const allUsers = await this.userRepository.findAll({
-        include: [
-          {
-            model: UserDescription,
-          },
-        ],
+        include: { all: true },
       });
-      console.log(allUsers);
       const finishArr = [];
       for (const item of allUsers) {
         const { id, userDescription, scopeWork, tableAddingData } = item;
@@ -425,7 +416,6 @@ export class UserService {
       }
       return finishArr;
     } catch (e) {
-      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
