@@ -238,7 +238,7 @@ export class UserService {
         where: {
           userId: id,
         },
-        group: ['scopeWorkId'],
+        //group: ['scopeWorkId'],
       });
 
       let data: ScopeWork[] = [];
@@ -396,6 +396,7 @@ export class UserService {
       const allUsers = await this.userRepository.findAll({
         include: { all: true },
       });
+      console.log(allUsers);
       const finishArr = [];
       for (const item of allUsers) {
         const { id, userDescription, scopeWork, tableAddingData } = item;
