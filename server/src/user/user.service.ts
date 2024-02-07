@@ -239,7 +239,6 @@ export class UserService {
         where: {
           userId: id,
         },
-        // TODO какая то неисправность с группировкой
         attributes: ['scopeWorkId'],
         group: 'scopeWorkId',
       });

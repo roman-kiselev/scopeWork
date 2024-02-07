@@ -347,8 +347,8 @@ export class ObjectsService {
             };
           }),
         },
-        // group: [`userId`],
-        // TODO - возможно проблема здесь
+        attributes: ['userId'],
+        group: ['userId'],
       });
       for (const { userId } of users) {
         const findedUser = pinnedUser.find((item) => item.id === userId);
@@ -637,8 +637,6 @@ export class ObjectsService {
         objectData,
       };
     } catch (e) {
-      // TODO - Исправить ошибку (Не выводится информация ор объекте, на PC работает)
-      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
