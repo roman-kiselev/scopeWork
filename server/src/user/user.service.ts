@@ -234,11 +234,13 @@ export class UserService {
       //   ],
       // });
       // const { scopeWork } = users;
+
       const tableAdding = await this.tableAddingRepository.findAll({
         where: {
           userId: id,
         },
         // TODO какая то неисправность с группировкой
+        attributes: ['scopeWorkId'],
         group: 'scopeWorkId',
       });
 
