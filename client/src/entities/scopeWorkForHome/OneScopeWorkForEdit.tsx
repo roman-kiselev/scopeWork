@@ -1,63 +1,22 @@
-import { UnorderedListOutlined } from "@ant-design/icons";
-import {
-    Button,
-    Col,
-    Input,
-    Progress,
-    Row,
-    Space,
-    Spin,
-    Table,
-    Tag,
-} from "antd";
+import { Col, Input, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { RoleString } from "src/shared/config";
-import { scopeWorkApi, tableAddingDataApi, unitsApi } from "../../shared/api";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import {
-    IListData,
-    IRole,
-    IUnit,
-    IValueForListData,
-} from "../../shared/interfaces";
-
-const checkRole = (data: IRole[], name: RoleString): boolean => {
-    const findedRole = data.find((item) => item.name === name);
-    if (findedRole) {
-        return true;
-    }
-    return false;
-};
-
-const getUnit = (data: IUnit[] | undefined, id: number) => {
-    if (data) {
-        return data.find((item) => item.id === id)?.name;
-    }
-};
+import { scopeWorkApi } from "../../shared/api";
+import { useAppSelector } from "../../shared/hooks";
+import { IListData, IValueForListData } from "../../shared/interfaces";
+import ColumnName from "./oneScopeWork/ColumnName";
+import ColumnQuntity from "./oneScopeWork/ColumnQuntity";
 
 const OneScopeWorkForEdit = () => {
-    const dispatch = useAppDispatch();
     const [searchedText, setSearchedText] = useState("");
     const { id: idScopeWork } = useParams();
-    const { roles } = useAppSelector((store) => store.auth);
-    const { data: dataUnit } = unitsApi.useGetAllUnitsQuery();
     const { data, refetch } = scopeWorkApi.useGetListByScopeWorkIdQuery({
         id: Number(idScopeWork),
     });
-    // const { data } = useQuery(["getListByScopeWorkId", idScopeWork], () =>
-    //     dispatch(
-    //         scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-    //             id: Number(idScopeWork),
-    //         })
-    //     )
-    // );
 
-    const [setTableAddingData, { data: dataEdit }] =
-        tableAddingDataApi.useAddDataMutation();
     const { listData } = useAppSelector((store) => store.dataOneUser);
-    const { id: userId } = useAppSelector((store) => store.auth);
+
     const dataValue = listData?.map((item) => {
         return {
             idNameWork: item.nameWorkId,
@@ -82,9 +41,9 @@ const OneScopeWorkForEdit = () => {
     const { scopeWorkData, isLoading } = useAppSelector(
         (store) => store.dataOneUser
     );
-    if (isLoading) {
-        return <Spin />;
-    }
+    // if (isLoading) {
+    //     return <Spin />;
+    // }
     const findedScopeWork = scopeWorkData?.find(
         (item) => item.id === Number(idScopeWork)
     );
@@ -92,63 +51,6 @@ const OneScopeWorkForEdit = () => {
         return <>Нет доступа</>;
     }
 
-    const getValue = (id: number, listNameWorkId: number) => {
-        const findedValue = dataList.find(
-            (item) =>
-                item.idNameWork === id && item.listNameWorkId === listNameWorkId
-        );
-
-        return findedValue?.value ?? "";
-    };
-
-    const setValue = (
-        idNameWork: number,
-        listNameWorkId: number,
-        e?: React.ChangeEvent<HTMLInputElement>
-    ) => {
-        const value = e?.target.value ?? "";
-        const updatedList = [...dataList];
-        const index = updatedList.findIndex(
-            (item) =>
-                item.idNameWork === idNameWork &&
-                item.listNameWorkId === listNameWorkId
-        );
-
-        if (index !== -1) {
-            updatedList[index] = {
-                ...updatedList[index],
-                value,
-            };
-        }
-        setDataList(updatedList);
-    };
-
-    const editData = (
-        currentQuntity: number,
-        nameWorkId: number,
-        nameListId: number,
-        scopeWorkId: number,
-        userId: number | null,
-        listNameWorkId: number
-    ) => {
-        if (userId !== null) {
-            setTableAddingData({
-                quntity: currentQuntity,
-                nameWorkId,
-                nameListId,
-                scopeWorkId,
-                userId,
-            });
-        }
-        //dispatch(editOneQuntity({ id: nameWorkId, listId: listNameWorkId }));
-        refetch();
-        // dispatch(
-        //     scopeWorkApi.endpoints.getListByScopeWorkId.initiate({
-        //         id: Number(idScopeWork),
-        //     })
-        // );
-        setValue(nameWorkId, listNameWorkId);
-    };
     const dataForTable = listData.map((item, index) => {
         return {
             ...item,
@@ -174,36 +76,14 @@ const OneScopeWorkForEdit = () => {
                     .includes(value.toLowerCase());
             },
             render: (_: any, { name, percent, quntity, count, unitId }) => (
-                <>
-                    <p>{name}</p>
-                    {checkRole(roles, RoleString.MASTER) ||
-                    checkRole(roles, RoleString.ADMIN) ? (
-                        <Tag color="red">
-                            Ост. {quntity - count}{" "}
-                            {getUnit(dataUnit, unitId) || `ед.`}
-                        </Tag>
-                    ) : null}
-                    <Button size="small">
-                        <UnorderedListOutlined />
-                    </Button>
-
-                    {percent !== undefined && Number(percent) > 100 ? (
-                        <Progress
-                            percent={Number(percent)}
-                            strokeColor="yellow"
-                            status={"success"}
-                        />
-                    ) : (
-                        <Progress
-                            percent={Number(percent)}
-                            status={
-                                percent === undefined || Number(percent) < 100
-                                    ? "active"
-                                    : "success"
-                            }
-                        />
-                    )}
-                </>
+                <ColumnName
+                    count={count}
+                    name={name}
+                    percent={percent}
+                    quntity={quntity}
+                    unitId={unitId}
+                    isLoading={isLoading}
+                />
             ),
         },
         {
@@ -214,48 +94,15 @@ const OneScopeWorkForEdit = () => {
                 _: any,
                 { nameListId, listNameWorkId, scopeWorkId, nameWorkId }
             ) => (
-                <>
-                    <Space>
-                        <Row>
-                            <Col>
-                                <Input
-                                    value={getValue(nameWorkId, listNameWorkId)}
-                                    onChange={(e) =>
-                                        setValue(nameWorkId, listNameWorkId, e)
-                                    }
-                                />
-                            </Col>
-                            <Col>
-                                <Button
-                                    type="primary"
-                                    onClick={() =>
-                                        editData(
-                                            Number(
-                                                getValue(
-                                                    nameWorkId,
-                                                    listNameWorkId
-                                                )
-                                            ),
-                                            nameWorkId,
-                                            nameListId,
-                                            Number(scopeWorkId),
-                                            userId,
-                                            listNameWorkId
-                                        )
-                                    }
-                                    disabled={
-                                        getValue(nameWorkId, listNameWorkId) ===
-                                        ""
-                                            ? true
-                                            : false
-                                    }
-                                >
-                                    Сохранить
-                                </Button>
-                            </Col>
-                        </Row>
-                    </Space>
-                </>
+                <ColumnQuntity
+                    dataList={dataList}
+                    listNameWorkId={listNameWorkId}
+                    nameListId={nameListId}
+                    nameWorkId={nameWorkId}
+                    scopeWorkId={scopeWorkId}
+                    setDataList={setDataList}
+                    refetch={refetch}
+                />
             ),
         },
     ];
