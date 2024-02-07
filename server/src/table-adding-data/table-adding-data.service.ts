@@ -10,6 +10,7 @@ import { UserDescription } from 'src/user-description/user-description.model';
 import { User } from 'src/user/user.model';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { UpdateTableAddingDatumDto } from './dto/update-table-adding-datum.dto';
+import { IGetHistory } from './interfaces/IGetHistory';
 import { TableAddingData } from './table-adding-data.model';
 
 @Injectable()
@@ -169,6 +170,16 @@ export class TableAddingDataService {
       });
 
       return findedList;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async getHistoryByNameWorkId(params: IGetHistory) {
+    try {
     } catch (e) {
       if (e instanceof HttpException) {
         return e;

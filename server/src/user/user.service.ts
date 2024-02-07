@@ -239,7 +239,7 @@ export class UserService {
           userId: id,
         },
         // TODO какая то неисправность с группировкой
-        //group: ['scopeWorkId'],
+        group: 'scopeWorkId',
       });
 
       let data: ScopeWork[] = [];

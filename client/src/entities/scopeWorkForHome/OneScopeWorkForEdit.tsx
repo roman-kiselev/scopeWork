@@ -1,3 +1,4 @@
+import { UnorderedListOutlined } from "@ant-design/icons";
 import {
     Button,
     Col,
@@ -182,6 +183,10 @@ const OneScopeWorkForEdit = () => {
                             {getUnit(dataUnit, unitId) || `ед.`}
                         </Tag>
                     ) : null}
+                    <Button size="small">
+                        <UnorderedListOutlined />
+                    </Button>
+
                     {percent !== undefined && Number(percent) > 100 ? (
                         <Progress
                             percent={Number(percent)}

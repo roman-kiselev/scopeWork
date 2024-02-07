@@ -34,7 +34,7 @@ export class TableAddingData extends Model<
 
   @ApiProperty({ example: 20, description: 'Количество' })
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.FLOAT,
   })
   quntity: number;
 
