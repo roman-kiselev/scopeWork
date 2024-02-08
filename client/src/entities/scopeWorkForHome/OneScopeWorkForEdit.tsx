@@ -75,7 +75,19 @@ const OneScopeWorkForEdit = () => {
                     .toLowerCase()
                     .includes(value.toLowerCase());
             },
-            render: (_: any, { name, percent, quntity, count, unitId }) => (
+            render: (
+                _: any,
+                {
+                    name,
+                    percent,
+                    quntity,
+                    count,
+                    unitId,
+                    nameListId,
+                    nameWorkId,
+                    scopeWorkId,
+                }
+            ) => (
                 <ColumnName
                     count={count}
                     name={name}
@@ -83,6 +95,9 @@ const OneScopeWorkForEdit = () => {
                     quntity={quntity}
                     unitId={unitId}
                     isLoading={isLoading}
+                    nameListId={nameListId}
+                    nameWorkId={nameWorkId}
+                    scopeWorkId={scopeWorkId}
                 />
             ),
         },

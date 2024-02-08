@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+import { Op, QueryTypes } from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameWork } from 'src/name-work/name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
@@ -10,6 +10,7 @@ import { UserDescription } from 'src/user-description/user-description.model';
 import { User } from 'src/user/user.model';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { UpdateTableAddingDatumDto } from './dto/update-table-adding-datum.dto';
+import { IDataGetHistoryForNameWorkId } from './interfaces/IDataGetHistoryForNameWorkId';
 import { IGetHistory } from './interfaces/IGetHistory';
 import { TableAddingData } from './table-adding-data.model';
 
@@ -178,8 +179,36 @@ export class TableAddingDataService {
     }
   }
 
-  async getHistoryByNameWorkId(params: IGetHistory) {
+  async getHistoryForNameWorkId(params: IGetHistory) {
     try {
+      const query = `
+        SELECT 
+            \`table-adding-data\`.id,
+            \`user-description\`.firstname AS \`firstname\`,
+            \`user-description\`.lastname AS \`lastname\`,
+            \`table-adding-data\`.quntity,
+            \`table-adding-data\`.createdAt
+        FROM
+            scopework.\`table-adding-data\`
+                INNER JOIN
+            \`user-description\` ON \`user-description\`.userId = scopework.      \`table-adding-data\`.userId
+        WHERE
+            nameWorkId = :nameWorkId AND nameListId = :nameListId
+                AND scopeWorkId = :scopeWorkId
+      `;
+      const replacements = {
+        nameListId: params.nameListId,
+        nameWorkId: params.nameWorkId,
+        scopeWorkId: params.scopeWorkId,
+      };
+
+      const data: IDataGetHistoryForNameWorkId[] =
+        await this.tableAddingDataRepository.sequelize.query(query, {
+          type: QueryTypes.SELECT,
+          replacements,
+        });
+
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         return e;

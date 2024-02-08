@@ -43,6 +43,19 @@ export class TableAddingDataController {
     );
   }
 
+  @Get('/historyForName')
+  getHistoryForNameWorkId(
+    @Query('nameListId') nameListId: number,
+    @Query('nameWorkId') nameWorkId: number,
+    @Query('scopeWorkId') scopeWorkId: number,
+  ) {
+    return this.tableAddingDataService.getHistoryForNameWorkId({
+      nameListId,
+      nameWorkId,
+      scopeWorkId,
+    });
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tableAddingDataService.findOne(+id);

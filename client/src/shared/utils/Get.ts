@@ -5,3 +5,14 @@ export const getUnit = (data: IUnit[] | undefined, id: number) => {
         return data.find((item) => item.id === id)?.name;
     }
 };
+
+export const getDate = (createDate: Date) => {
+    const date = new Date(createDate);
+    const dateDay = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
+    const dateMonthFrom =
+        date.getMonth() + 1 < 10
+            ? `0${date.getMonth() + 1}`
+            : `${date.getMonth() + 1}`;
+    const year = date.getFullYear();
+    return `${dateDay}.${dateMonthFrom}.${year}`;
+};

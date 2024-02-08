@@ -470,3 +470,5 @@ Content-type: application/json; charset=utf-8
 }
 
 ###
+
+GET {{host}}/table-adding-data/historyForName/?nameListId=288&nameWorkId=290&scopeWorkId=4
