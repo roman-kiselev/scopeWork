@@ -7,6 +7,7 @@ import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { Unit } from 'src/unit/unit.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 import { User } from 'src/user/user.model';
+import { DelTableAddingData } from './del-table-adding-data.model';
 import { TableAddingDataController } from './table-adding-data.controller';
 import { TableAddingData } from './table-adding-data.model';
 import { TableAddingDataService } from './table-adding-data.service';
@@ -24,6 +25,7 @@ import { TableAddingDataService } from './table-adding-data.service';
       ListNameWork,
       UserDescription,
       Unit,
+      DelTableAddingData,
     ]),
   ],
 })

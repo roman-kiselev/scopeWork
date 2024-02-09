@@ -1,13 +1,13 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
   Post,
   Query,
 } from '@nestjs/common';
+import { CreateDelTableDto } from './dto/create-deltable.dto';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { UpdateTableAddingDatumDto } from './dto/update-table-adding-datum.dto';
 import { TableAddingDataService } from './table-adding-data.service';
@@ -66,6 +66,11 @@ export class TableAddingDataController {
     return this.tableAddingDataService.getHistory(Number(id));
   }
 
+  @Post('/createCandidateDel')
+  createCandidateDel(@Body() dto: CreateDelTableDto) {
+    return this.tableAddingDataService.createCandidateDel(dto);
+  }
+
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -74,8 +79,21 @@ export class TableAddingDataController {
     return this.tableAddingDataService.update(+id, updateTableAddingDatumDto);
   }
 
-  @Delete(':id')
+  @Patch('/remove/:id')
   remove(@Param('id') id: string) {
     return this.tableAddingDataService.remove(+id);
+  }
+
+  @Patch('/recovery/:id')
+  recover(@Param('id') id: string) {
+    return this.tableAddingDataService.recovery(+id);
+  }
+
+  @Patch('/confirm/:id')
+  confirmDelCandidate(
+    @Param('id') id: string,
+    @Query('idDelCandidate') idDelCandidate: number,
+  ) {
+    return this.tableAddingDataService.confirmDelCandidate(+id, idDelCandidate);
   }
 }

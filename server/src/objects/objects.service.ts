@@ -447,6 +447,7 @@ export class ObjectsService {
               scopeWorkId: idScopeWork,
               nameListId,
               userId: item,
+              deletedAt: null,
             },
             attributes: [
               [Sequelize.fn('SUM', Sequelize.col('quntity')), 'quntity'],

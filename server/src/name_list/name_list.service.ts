@@ -380,6 +380,7 @@ export class NameListService {
             where: {
               nameListId,
               scopeWorkId,
+              deletedAt: null,
             },
           });
 

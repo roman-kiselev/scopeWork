@@ -4,4 +4,6 @@ export interface IDataGetHistoryForNameWorkId {
   lastname: string;
   quntity: number;
   createdAt: Date;
+  deletedAt: Date | null;
+  delCandidate: number | null;
 }

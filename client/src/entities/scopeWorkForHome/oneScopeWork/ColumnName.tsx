@@ -18,6 +18,7 @@ interface IColumnNameProps {
     nameListId: number;
     nameWorkId: number;
     scopeWorkId: string;
+    refetch: any;
 }
 
 const ColumnName: React.FC<IColumnNameProps> = ({
@@ -30,6 +31,7 @@ const ColumnName: React.FC<IColumnNameProps> = ({
     nameListId,
     nameWorkId,
     scopeWorkId,
+    refetch,
 }) => {
     const dispatch = useAppDispatch();
     const { roles } = useAppSelector((store) => store.auth);
@@ -45,7 +47,7 @@ const ColumnName: React.FC<IColumnNameProps> = ({
         setOpen(false);
     };
 
-    const handleClick = async () => {
+    const handleClickQuery = async () => {
         const data = await dispatch(
             tableAddingDataApi.endpoints.historyForName.initiate({
                 nameListId,
@@ -55,33 +57,15 @@ const ColumnName: React.FC<IColumnNameProps> = ({
         ).unwrap();
 
         setDataTimeline(data);
+    };
 
+    const handleClick = async () => {
+        handleClickQuery();
         showDrawer();
     };
 
     return (
         <>
-            {/* <>
-                <Drawer title={name} onClose={onClose} open={open}>
-                    <Timeline
-                        items={dataTimeline.map((item) => ({
-                            children: (
-                                <>
-                                    <p>
-                                        {item.id}. {item.firstname}{" "}
-                                        {item.lastname} - {item.quntity}{" "}
-                                        {getUnit(dataUnit, unitId) || `ед.`}
-
-                                    </p>{" "}
-                                    <Button size="small">
-                                        Пометить на удаление
-                                    </Button>
-                                </>
-                            ),
-                        }))}
-                    />
-                </Drawer>
-            </> */}
             <DrawerTimelineNameWork
                 dataTimeline={dataTimeline}
                 dataUnit={dataUnit || []}
@@ -89,6 +73,13 @@ const ColumnName: React.FC<IColumnNameProps> = ({
                 onClose={onClose}
                 open={open}
                 unitId={unitId}
+                roles={roles}
+                nameListId={nameListId}
+                nameWorkId={nameListId}
+                scopeWorkId={Number(scopeWorkId)}
+                handleClickQuery={handleClickQuery}
+                refetch={refetch}
+                isLoading={isLoading}
             />
             <>
                 <p>{name}</p>

@@ -1,4 +1,4 @@
-import { Col, Input, Table } from "antd";
+import { Col, Input, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
@@ -9,9 +9,16 @@ import ColumnName from "./oneScopeWork/ColumnName";
 import ColumnQuntity from "./oneScopeWork/ColumnQuntity";
 
 const OneScopeWorkForEdit = () => {
+    const { id, banned } = useAppSelector((store) => store.auth);
+
     const [searchedText, setSearchedText] = useState("");
+
     const { id: idScopeWork } = useParams();
-    const { data, refetch } = scopeWorkApi.useGetListByScopeWorkIdQuery({
+    const {
+        data,
+        refetch,
+        isLoading: isLoadingQuery,
+    } = scopeWorkApi.useGetListByScopeWorkIdQuery({
         id: Number(idScopeWork),
     });
 
@@ -41,13 +48,25 @@ const OneScopeWorkForEdit = () => {
     const { scopeWorkData, isLoading } = useAppSelector(
         (store) => store.dataOneUser
     );
-    // if (isLoading) {
-    //     return <Spin />;
-    // }
+
     const findedScopeWork = scopeWorkData?.find(
         (item) => item.id === Number(idScopeWork)
     );
-    if (!findedScopeWork) {
+
+    if (id) {
+        const { data, isLoading: isLoadingTest } =
+            scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
+                id: id,
+            });
+        if (isLoadingTest) {
+            return <Spin />;
+        }
+    }
+    if (isLoadingQuery) {
+        return <Spin />;
+    }
+
+    if (!findedScopeWork || banned) {
         return <>Нет доступа</>;
     }
 
@@ -98,6 +117,7 @@ const OneScopeWorkForEdit = () => {
                     nameListId={nameListId}
                     nameWorkId={nameWorkId}
                     scopeWorkId={scopeWorkId}
+                    refetch={refetch}
                 />
             ),
         },

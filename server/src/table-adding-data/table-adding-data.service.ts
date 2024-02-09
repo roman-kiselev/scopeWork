@@ -8,6 +8,8 @@ import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { Unit } from 'src/unit/unit.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 import { User } from 'src/user/user.model';
+import { DelTableAddingData } from './del-table-adding-data.model';
+import { CreateDelTableDto } from './dto/create-deltable.dto';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { UpdateTableAddingDatumDto } from './dto/update-table-adding-datum.dto';
 import { IDataGetHistoryForNameWorkId } from './interfaces/IDataGetHistoryForNameWorkId';
@@ -28,6 +30,8 @@ export class TableAddingDataService {
     @InjectModel(UserDescription)
     private userDescriptionRepository: typeof UserDescription,
     @InjectModel(Unit) private unitRepository: typeof Unit,
+    @InjectModel(DelTableAddingData)
+    private delTableAddingDataRepository: typeof DelTableAddingData,
   ) {}
   async create(createTableAddingDatumDto: CreateTableAddingDatumDto) {
     try {
@@ -182,19 +186,24 @@ export class TableAddingDataService {
   async getHistoryForNameWorkId(params: IGetHistory) {
     try {
       const query = `
-        SELECT 
-            \`table-adding-data\`.id,
-            \`user-description\`.firstname AS \`firstname\`,
-            \`user-description\`.lastname AS \`lastname\`,
-            \`table-adding-data\`.quntity,
-            \`table-adding-data\`.createdAt
-        FROM
-            scopework.\`table-adding-data\`
-                INNER JOIN
-            \`user-description\` ON \`user-description\`.userId = scopework.      \`table-adding-data\`.userId
-        WHERE
-            nameWorkId = :nameWorkId AND nameListId = :nameListId
-                AND scopeWorkId = :scopeWorkId
+      SELECT 
+      \`table-adding-data\`.id,
+      \`user-description\`.firstname AS \`firstname\`,
+      \`user-description\`.lastname AS \`lastname\`,
+      \`table-adding-data\`.quntity,
+      \`table-adding-data\`.createdAt,
+      \`table-adding-data\`.deletedAt,
+      \`del_table_adding_data\`.id AS \`delCandidate\`
+  FROM
+      scopework.\`table-adding-data\`
+          INNER JOIN
+      \`user-description\` ON \`user-description\`.userId = scopework.\`table-adding-data\`.userId
+          LEFT JOIN
+      \`del_table_adding_data\` ON \`del_table_adding_data\`.tableAddingDataId = scopework.\`table-adding-data\`.id
+          AND \`del_table_adding_data\`.deletedAt IS NULL
+  WHERE
+              nameWorkId = :nameWorkId AND nameListId = :nameListId
+              ORDER BY createdAt ASC;
       `;
       const replacements = {
         nameListId: params.nameListId,
@@ -225,7 +234,142 @@ export class TableAddingDataService {
     return `This action updates a #${id} tableAddingDatum`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} tableAddingDatum`;
+  async remove(id: number) {
+    try {
+      const querySelect = `
+      SELECT 
+          *
+      FROM
+          scopework.\`table-adding-data\`
+      WHERE
+          id = :id;`;
+
+      const queryUpdateRemove = `
+      UPDATE scopework.\`table-adding-data\` 
+      SET 
+          deletedAt = CURRENT_TIMESTAMP
+      WHERE
+          id = :id;
+      
+      `;
+
+      const replacements = {
+        id,
+      };
+      const dataSelect: TableAddingData[] =
+        await this.tableAddingDataRepository.sequelize.query(querySelect, {
+          type: QueryTypes.SELECT,
+          replacements,
+        });
+      const data = await this.tableAddingDataRepository.sequelize.query(
+        queryUpdateRemove,
+        {
+          type: QueryTypes.UPDATE,
+          replacements,
+        },
+      );
+
+      if (data) {
+        return dataSelect;
+      }
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async recovery(id: number) {
+    try {
+      const querySelect = `
+      SELECT 
+          *
+      FROM
+          scopework.\`table-adding-data\`
+      WHERE
+          id = :id;`;
+
+      const queryUpdateRemove = `
+      UPDATE scopework.\`table-adding-data\` 
+      SET 
+          deletedAt = null
+      WHERE
+          id = :id;
+      
+      `;
+
+      const replacements = {
+        id,
+      };
+      const dataSelect: TableAddingData[] =
+        await this.tableAddingDataRepository.sequelize.query(querySelect, {
+          type: QueryTypes.SELECT,
+          replacements,
+        });
+      const data = await this.tableAddingDataRepository.sequelize.query(
+        queryUpdateRemove,
+        {
+          type: QueryTypes.UPDATE,
+          replacements,
+        },
+      );
+
+      if (data) {
+        return dataSelect;
+      }
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async createCandidateDel(dto: CreateDelTableDto) {
+    try {
+      const data = await this.delTableAddingDataRepository.create({
+        tableAddingDataId: dto.tableAddingDataId,
+        userId: dto.userId,
+      });
+
+      return data;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async confirmDelCandidate(tableAddingDataId: number, idDelCandidate: number) {
+    try {
+      const removeData = await this.remove(tableAddingDataId);
+      const queryConfirmDel = `
+      UPDATE scopework.\`del_table_adding_data\` 
+      SET 
+          deletedAt = CURRENT_TIMESTAMP
+      WHERE
+          id = :idDelCandidate;
+      
+      `;
+      const replacements = {
+        idDelCandidate,
+      };
+      const data = await this.delTableAddingDataRepository.sequelize.query(
+        queryConfirmDel,
+        {
+          type: QueryTypes.UPDATE,
+          replacements,
+        },
+      );
+
+      return removeData;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        return e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

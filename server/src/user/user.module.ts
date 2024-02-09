@@ -10,6 +10,7 @@ import { RolesModule } from 'src/roles/roles.module';
 import { UserRole } from 'src/roles/user-role.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { UserScopeWork } from 'src/scope-work/user-scope-work.model';
+import { DelTableAddingData } from 'src/table-adding-data/del-table-adding-data.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { UserDescription } from 'src/user-description/user-description.model';
 import { UserController } from './user.controller';
@@ -31,6 +32,7 @@ import { UserService } from './user.service';
       ListNameWork,
       ScopeWork,
       NameList,
+      DelTableAddingData,
     ]),
     RolesModule,
     forwardRef(() => AuthModule),

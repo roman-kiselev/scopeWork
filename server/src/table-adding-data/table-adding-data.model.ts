@@ -3,6 +3,7 @@ import {
   Column,
   DataType,
   ForeignKey,
+  HasOne,
   Model,
   Table,
 } from 'sequelize-typescript';
@@ -10,6 +11,7 @@ import { NameWork } from 'src/name-work/name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { User } from 'src/user/user.model';
+import { DelTableAddingData } from './del-table-adding-data.model';
 
 interface TableAddingDataAttr {
   quntity: number;
@@ -54,4 +56,7 @@ export class TableAddingData extends Model<
 
   @ForeignKey(() => User)
   userId: number;
+
+  @HasOne(() => DelTableAddingData)
+  delTableAddingData: DelTableAddingData;
 }
