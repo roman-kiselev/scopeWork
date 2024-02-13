@@ -12,6 +12,7 @@ import {
     Tag,
 } from "antd";
 import { useState } from "react";
+import { ButtonExcel, ModalDownloadScopework } from "src/shared/ui";
 import { typeWorkApi } from "../../../../shared/api";
 import { useAppSelector } from "../../../../shared/hooks";
 import {
@@ -84,6 +85,11 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
         setChildrenDrawer(false);
     };
 
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const handleClickShowModal = () => {
+        setShowModal(true);
+    };
+
     const itemsForCollapse = scopeWork.listNamesWithData.map((item) => {
         return {
             key: item.nameListId,
@@ -154,14 +160,24 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
 
     return (
         <Row>
+            <>
+                <ModalDownloadScopework
+                    open={showModal}
+                    handleCancel={() => setShowModal(!showModal)}
+                    idScopeWork={scopeWork.id.toString()}
+                />
+            </>
             <Card
                 style={{ marginTop: 16, width: "100%" }}
                 type="inner"
                 title={getTypeWork(scopeWork.typeWorkId, listTypeWork)}
                 extra={
-                    <Button onClick={showDrawer} type="primary">
-                        Просмотр наименований
-                    </Button>
+                    <Space>
+                        <Button onClick={showDrawer} type="primary">
+                            Просмотр наименований
+                        </Button>
+                        <ButtonExcel handleClick={handleClickShowModal} />
+                    </Space>
                 }
             >
                 <Row>

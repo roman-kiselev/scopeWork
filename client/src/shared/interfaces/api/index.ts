@@ -9,6 +9,8 @@ export type {
     ITableAddingData,
 } from "./tableAddingData";
 
+export type { IScopeworkShort } from "./scopework";
+
 export type {
     CreateHandler,
     IDataError,

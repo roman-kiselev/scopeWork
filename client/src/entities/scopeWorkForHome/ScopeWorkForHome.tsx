@@ -76,27 +76,38 @@ const columns: ColumnsType<DataType> = [
 
 const ScopeWorkForHome = () => {
     const { id, banned } = useAppSelector((store) => store.auth);
-    if (id) {
-        const { data } = scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
-            id: id,
-        });
-    }
-    const { scopeWorkData, isLoading } = useAppSelector(
-        (store) => store.dataOneUser
-    );
-    // Подсчитаем прогресс
+    const { data, isLoading, isError } = scopeWorkApi.useGetShortSqlQuery();
+    // if (id) {
+    //     const { data } = scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
+    //         id: id,
+    //     });
+    //     console.log(data);
+    // }
+    // const { scopeWorkData, isLoading } = useAppSelector(
+    //     (store) => store.dataOneUser
+    // );
+    // // Подсчитаем прогресс
 
-    const dataForTable = scopeWorkData.map((scopeWork) => {
-        const { object, typeWork, id, percent } = scopeWork;
-        return {
-            key: id ?? "",
-            number: id ?? "",
-            action: id ?? "",
-            progress: percent,
-            object: object?.name,
-            typeWork: typeWork?.name,
-        } as DataType;
-    });
+    // const dataForTable = scopeWorkData.map((scopeWork) => {
+    //     const { object, typeWork, id, percent } = scopeWork;
+    //     return {
+    //         key: id ?? "",
+    //         number: id ?? "",
+    //         action: id ?? "",
+    //         progress: percent,
+    //         object: object?.name,
+    //         typeWork: typeWork?.name,
+    //     } as DataType;
+    // });
+
+    const dataForTable = data?.map((item) => ({
+        key: item.id.toString() ?? "",
+        number: item.id.toString() ?? "",
+        action: item.id.toString() ?? "",
+        progress: item.percent !== null ? item.percent.toString() : "0",
+        object: item.nameObject.toString(),
+        typeWork: item.nameTypework.toString(),
+    }));
 
     if (isLoading) {
         return <Spin />;

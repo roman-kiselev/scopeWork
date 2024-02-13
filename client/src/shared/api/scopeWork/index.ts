@@ -1,3 +1,4 @@
+import { IScopeworkShort } from "src/shared/interfaces/api";
 import {
     ICreateScopeWork,
     IEditScopeWork,
@@ -48,6 +49,21 @@ export const scopeWorkApi = mainApi.injectEndpoints({
                 url: "/scope-work/edit",
                 method: "POST",
                 body: data,
+            }),
+        }),
+        getShortSql: builder.query<IScopeworkShort[], void>({
+            query: () => ({
+                url: "/scope-work/getShort",
+                method: "GET",
+            }),
+        }),
+        getHistory: builder.query<
+            any,
+            { id: string; dateFrom: string; dateTo: string }
+        >({
+            query: ({ id, dateFrom, dateTo }) => ({
+                url: `/scope-work/getHistory/${id}?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+                method: "GET",
             }),
         }),
     }),

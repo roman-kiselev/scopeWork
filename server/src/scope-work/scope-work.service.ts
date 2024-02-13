@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import sequelize from 'sequelize';
+import sequelize, { QueryTypes } from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameListService } from 'src/name_list/name_list.service';
 import { Objects } from 'src/objects/objects.model';
@@ -10,6 +10,8 @@ import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
+import { HistoryTimelineDto } from './dto/history-timeline.dto';
+import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
@@ -516,6 +518,97 @@ export class ScopeWorkService {
         { include: { all: true } },
       );
       return dataScopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getAllScopeWorkSqlShort() {
+    try {
+      const query = `
+      SELECT 
+      sw.id,
+      sw.deletedAt,
+      tw.name as nameTypework,
+      obj.name AS nameObject ,
+      SUM(sumSw.t1Quntity) AS sum,
+      SUM(sumSw.t2Quntity) AS sumCurrent,
+      ROUND(sumSw.t2Quntity / sumSw.t1Quntity * 100, 2) as percent
+  FROM
+      scopework.scope_work AS sw
+          INNER JOIN
+      (SELECT 
+          scopework.\`scope_work\`.id AS scope_workId,
+              SUM(t1.quntity) AS t1Quntity,
+              SUM(t2.quntitySum) AS t2Quntity
+      FROM
+          scopework.\`scope_work\`
+      LEFT JOIN scopework.\`list_name_work\` lnw ON lnw.scopeWorkId = scopework.\`scope_work\`.id
+      LEFT JOIN (SELECT 
+          listNameWorkId, ROUND(SUM(quntity), 1) AS quntity
+      FROM
+          scopework.\`name-list\`
+      GROUP BY scopework.\`name-list\`.listNameWorkId) t1 ON t1.listNameWorkId = lnw.id
+      LEFT JOIN (SELECT 
+          SUM(tad.quntity) AS quntitySum,
+              nl.listNameWorkId AS listNameWorkId
+      FROM
+          scopework.\`table-adding-data\` tad
+      LEFT JOIN scopework.\`name-list\` nl ON nl.id = tad.nameListId
+      WHERE
+          tad.deletedAt IS NULL
+      GROUP BY listNameWorkId) t2 ON t2.listNameWorkId = lnw.id
+      GROUP BY scopework.\`scope_work\`.id) sumSw ON sumSw.scope_workId = sw.id
+          INNER JOIN
+      scopework.type_work tw ON tw.id = sw.typeWorkId
+          INNER JOIN
+      scopework.objects obj ON obj.id = sw.objectId
+  GROUP BY id; 
+      `;
+
+      const data: IScopeworkShort[] =
+        await this.scopeWorkRepository.sequelize.query(query, {
+          type: QueryTypes.SELECT,
+        });
+
+      return data;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getHistoryTimeline(dto: HistoryTimelineDto) {
+    try {
+      console.log(dto);
+      const query = `
+      SELECT *
+      FROM scopework.\`table-adding-data\` tad
+      WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
+      ORDER BY tad.createdAt ASC;
+      `;
+      const replacements = {
+        idScopeWork: dto.idScopeWork,
+        dateFrom: dto.dateFrom,
+        dateTo: dto.dateTo,
+      };
+      const data = await this.scopeWorkRepository.sequelize.query(query, {
+        type: QueryTypes.SELECT,
+        replacements,
+      });
+      // console.log(data);
+      // return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

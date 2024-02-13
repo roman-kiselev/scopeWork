@@ -10,6 +10,10 @@ import {
     SelectUser,
 } from "./select";
 
+export { ButtonExcel } from "./button";
+
+export { ModalDownloadScopework } from "./modal";
+
 export {
     InputCreateNameWork,
     InputFormItem,
