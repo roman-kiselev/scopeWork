@@ -16,7 +16,7 @@ const OneObjectFull = () => {
     if (isLoadingQuery || isLoadingStore) {
         return <Spin />;
     }
-    console.log(oneObjectWithFullData);
+
     return (
         <Row style={{ display: "flex", flexDirection: "column" }}>
             <Row>

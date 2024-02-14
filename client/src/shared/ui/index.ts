@@ -10,7 +10,7 @@ import {
     SelectUser,
 } from "./select";
 
-export { ButtonExcel } from "./button";
+export { ButtonExcel, ButtonExcelWithParams } from "./button";
 
 export { ModalDownloadScopework } from "./modal";
 

@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import * as ExcelJS from 'exceljs';
 import sequelize, { QueryTypes } from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameListService } from 'src/name_list/name_list.service';
@@ -8,10 +9,12 @@ import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
+import * as stream from 'stream';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
+import { ResHistoryTimeline } from './interfaces/ResHistoryTimeline';
 import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
@@ -529,7 +532,7 @@ export class ScopeWorkService {
     }
   }
 
-  async getAllScopeWorkSqlShort() {
+  async getAllScopeWorkSqlShort(id: string) {
     try {
       const query = `
       SELECT 
@@ -572,9 +575,64 @@ export class ScopeWorkService {
   GROUP BY id; 
       `;
 
+      const query2 = `
+      SELECT 
+      sw.id,
+      sw.deletedAt,
+      sw.nameTypework,
+      sw.nameObject,
+      sw.sum,
+      sw.sumCurrent,
+      sw.percent
+  FROM
+      scopework.\`user-scope-work\` usw
+          INNER JOIN
+      (SELECT 
+          sw.id,
+              sw.deletedAt,
+              tw.name AS nameTypework,
+              obj.name AS nameObject,
+              SUM(sumSw.t1Quntity) AS sum,
+              SUM(sumSw.t2Quntity) AS sumCurrent,
+              ROUND(sumSw.t2Quntity / sumSw.t1Quntity * 100, 2) AS percent
+      FROM
+          scopework.scope_work AS sw
+      LEFT JOIN (SELECT 
+          scopework.\`scope_work\`.id AS scope_workId,
+              SUM(t1.quntity) AS t1Quntity,
+              SUM(t2.quntitySum) AS t2Quntity
+      FROM
+          scopework.\`scope_work\`
+      LEFT JOIN scopework.\`list_name_work\` lnw ON lnw.scopeWorkId = scopework.\`scope_work\`.id
+      LEFT JOIN (SELECT 
+          listNameWorkId, ROUND(SUM(quntity), 1) AS quntity
+      FROM
+          scopework.\`name-list\`
+      GROUP BY scopework.\`name-list\`.listNameWorkId) t1 ON t1.listNameWorkId = lnw.id
+      LEFT JOIN (SELECT 
+          SUM(tad.quntity) AS quntitySum,
+              nl.listNameWorkId AS listNameWorkId
+      FROM
+          scopework.\`table-adding-data\` tad
+      LEFT JOIN scopework.\`name-list\` nl ON nl.id = tad.nameListId
+      WHERE
+          tad.deletedAt IS NULL
+      GROUP BY listNameWorkId) t2 ON t2.listNameWorkId = lnw.id
+      GROUP BY scopework.\`scope_work\`.id) sumSw ON sumSw.scope_workId = sw.id
+      INNER JOIN scopework.type_work tw ON tw.id = sw.typeWorkId
+      INNER JOIN scopework.objects obj ON obj.id = sw.objectId
+      GROUP BY id) sw ON sw.id = usw.scopeWorkId
+  WHERE
+      userId = :userId;
+      `;
+      const replacements = {
+        userId: id,
+      };
+
       const data: IScopeworkShort[] =
-        await this.scopeWorkRepository.sequelize.query(query, {
+        await this.scopeWorkRepository.sequelize.query(query2, {
           type: QueryTypes.SELECT,
+          replacements,
         });
 
       return data;
@@ -591,24 +649,111 @@ export class ScopeWorkService {
 
   async getHistoryTimeline(dto: HistoryTimelineDto) {
     try {
-      console.log(dto);
       const query = `
       SELECT *
       FROM scopework.\`table-adding-data\` tad
       WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
       ORDER BY tad.createdAt ASC;
       `;
+      const query2 = `
+      SELECT 
+	tad.scopeWorkId as scopeWorkId,
+    tad.nameListId as nameListId,
+    CONCAT(ud.lastname, " " ,ud.firstname) as userName,
+    SUM(tad.quntity) as quntity,
+    sw.name as nameTypeWork,
+    nw.name as nameWork,
+    nw.unitName as unitName
+FROM
+    scopework.\`table-adding-data\` tad
+    INNER JOIN (
+		SELECT 
+			sw.id as id,
+			tw.name
+        FROM scopework.scope_work sw
+        INNER JOIN
+        scopework.type_work tw ON tw.id  = sw.typeWorkId
+    ) sw ON sw.id = tad.scopeWorkId
+    INNER JOIN (
+		SELECT 
+			scopework.\`name_work\`.id as id,
+            scopework.\`name_work\`.name as name,
+            u.name as unitName
+		FROM scopework.\`name_work\`
+        INNER JOIN 
+        scopework.unit u ON u.id = scopework.\`name_work\`.unitId
+    ) nw ON nw.id = tad.nameWorkId
+    INNER JOIN
+    scopework.\`user-description\` ud ON ud.userId = tad.userId
+WHERE
+    tad.scopeWorkId = :idScopeWork
+        AND tad.createdAt BETWEEN :dateFrom AND :dateTo
+        AND tad.deletedAt IS NULL
+        AND tad.quntity IS NOT NULL
+GROUP BY nameWork
+ORDER BY nameWork ASC;
+      `;
       const replacements = {
         idScopeWork: dto.idScopeWork,
         dateFrom: dto.dateFrom,
         dateTo: dto.dateTo,
       };
-      const data = await this.scopeWorkRepository.sequelize.query(query, {
-        type: QueryTypes.SELECT,
-        replacements,
-      });
-      // console.log(data);
-      // return data;
+      const data: ResHistoryTimeline[] =
+        await this.scopeWorkRepository.sequelize.query(query2, {
+          type: QueryTypes.SELECT,
+          replacements,
+        });
+
+      return data;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async createExcelForScopeWork(
+    dto: HistoryTimelineDto,
+  ): Promise<stream.Readable> {
+    try {
+      //
+      const data = await this.getHistoryTimeline(dto);
+      if (data) {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Sheet 1');
+
+        // Добявляем заголовки
+        worksheet.addRow([
+          '№ Объёма',
+          'Тип работ',
+          'Пользователь',
+          'Наименование',
+          'Количество',
+          'Ед.',
+        ]);
+        data.forEach((item) => {
+          worksheet.addRow([
+            item.scopeWorkId,
+            item.nameTypeWork,
+            item.userName,
+            item.nameWork,
+            item.quntity,
+            item.unitName,
+          ]);
+        });
+        // Создаем поток для записи данных в файл
+        const streamEx = new stream.PassThrough();
+
+        await workbook.xlsx.write(streamEx);
+        streamEx.end();
+
+        return streamEx;
+      }
+      throw new HttpException('Нет данных', HttpStatus.BAD_REQUEST);
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

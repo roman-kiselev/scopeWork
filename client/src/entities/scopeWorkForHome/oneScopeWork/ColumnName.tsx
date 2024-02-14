@@ -93,6 +93,7 @@ const ColumnName: React.FC<IColumnNameProps> = ({
                 <Button onClick={handleClick} size="small">
                     <UnorderedListOutlined />
                 </Button>
+
                 {isLoading && <Spin />}
 
                 {percent !== undefined && Number(percent) > 100 ? (

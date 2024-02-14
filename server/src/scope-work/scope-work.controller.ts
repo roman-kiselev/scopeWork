@@ -7,8 +7,10 @@ import {
   Param,
   Post,
   Query,
+  Res,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Response } from 'express';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
@@ -31,9 +33,9 @@ export class ScopeWorkController {
   @ApiOperation({ summary: 'Получить все объёмы SQL' })
   @ApiResponse({ status: HttpStatus.OK, type: [IScopeworkShort] })
   @ApiResponse({ type: HttpException })
-  @Get('/getShort')
-  async getShort() {
-    return await this.scopeWorkService.getAllScopeWorkSqlShort();
+  @Get('/getShort/:id')
+  async getShort(@Param('id') id: string) {
+    return await this.scopeWorkService.getAllScopeWorkSqlShort(id);
   }
 
   @ApiOperation({ summary: 'Получить один' })
@@ -60,12 +62,18 @@ export class ScopeWorkController {
     @Param('id') id: string,
     @Query('dateFrom') dateFrom: string,
     @Query('dateTo') dateTo: string,
+    @Res() res: Response,
   ) {
-    return await this.scopeWorkService.getHistoryTimeline({
+    const fileStream = await this.scopeWorkService.createExcelForScopeWork({
       idScopeWork: +id,
       dateFrom,
       dateTo,
     });
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats');
+    res.setHeader('Content-Disposition', 'attachment; filename=example.xlsx');
+
+    fileStream.pipe(res);
   }
 
   @ApiOperation({ summary: 'Получить все наменования для одного объёма' })

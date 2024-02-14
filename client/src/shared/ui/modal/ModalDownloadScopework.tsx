@@ -1,8 +1,6 @@
 import { Button, Col, Modal, Row, Space } from "antd";
 import React, { useState } from "react";
-import { scopeWorkApi } from "src/shared/api";
-import { useAppDispatch } from "src/shared/hooks";
-import { getDate } from "src/shared/utils";
+import { getDate } from "src/shared/utils/Get";
 
 interface IModalDownloadScopework {
     open: boolean;
@@ -15,23 +13,32 @@ const ModalDownloadScopework: React.FC<IModalDownloadScopework> = ({
     handleCancel,
     idScopeWork,
 }) => {
-    const dispatch = useAppDispatch();
     const date = new Date();
 
     const [dateFrom, setDateFrom] = useState<string>(getDate(date));
     const [dateTo, setDateTo] = useState<string>(getDate(date));
 
     const handleClick = async () => {
-        console.log(idScopeWork);
-        console.log(dateFrom);
-        console.log(dateTo);
-        const data = await dispatch(
-            scopeWorkApi.endpoints.getHistory.initiate({
-                id: idScopeWork,
-                dateFrom,
-                dateTo,
-            })
-        ).unwrap();
+        try {
+            const response = await fetch(
+                `http://192.168.3.16:7000/scope-work/getHistory/${idScopeWork}?dateFrom=${dateFrom}&dateTo=${dateTo}`
+            );
+            if (!response.ok) {
+                throw new Error("Ошибка при загрузке файла");
+            }
+
+            const blob = await response.blob();
+
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `Объём работ.xlsx`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (error) {
+            console.error("Ошибка при загрузке файла:", error);
+        }
     };
 
     return (

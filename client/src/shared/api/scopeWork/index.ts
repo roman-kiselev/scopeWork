@@ -51,9 +51,9 @@ export const scopeWorkApi = mainApi.injectEndpoints({
                 body: data,
             }),
         }),
-        getShortSql: builder.query<IScopeworkShort[], void>({
-            query: () => ({
-                url: "/scope-work/getShort",
+        getShortSql: builder.query<IScopeworkShort[], { id: string }>({
+            query: ({ id }) => ({
+                url: `/scope-work/getShort/${id}`,
                 method: "GET",
             }),
         }),
