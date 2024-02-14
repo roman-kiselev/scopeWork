@@ -21,7 +21,7 @@ const ModalDownloadScopework: React.FC<IModalDownloadScopework> = ({
     const handleClick = async () => {
         try {
             const response = await fetch(
-                `http://192.168.3.16:7000/scope-work/getHistory/${idScopeWork}?dateFrom=${dateFrom}&dateTo=${dateTo}`
+                `http://192.168.3.16:7000/scope-work/getHistory/${idScopeWork}?dateFrom=${dateFrom} 00.00.00&dateTo=${dateTo} 23.59.59`
             );
             if (!response.ok) {
                 throw new Error("Ошибка при загрузке файла");

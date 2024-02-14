@@ -649,6 +649,7 @@ export class ScopeWorkService {
 
   async getHistoryTimeline(dto: HistoryTimelineDto) {
     try {
+      console.log(dto);
       const query = `
       SELECT *
       FROM scopework.\`table-adding-data\` tad
