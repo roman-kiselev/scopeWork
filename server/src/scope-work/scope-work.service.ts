@@ -649,7 +649,6 @@ export class ScopeWorkService {
 
   async getHistoryTimeline(dto: HistoryTimelineDto) {
     try {
-      console.log(dto);
       const query = `
       SELECT *
       FROM scopework.\`table-adding-data\` tad
@@ -691,7 +690,7 @@ WHERE
         AND tad.createdAt BETWEEN :dateFrom AND :dateTo
         AND tad.deletedAt IS NULL
         AND tad.quntity IS NOT NULL
-GROUP BY nameWork
+GROUP BY tad.nameWorkId, tad.userId
 ORDER BY nameWork ASC;
       `;
       const replacements = {
