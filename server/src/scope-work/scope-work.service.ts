@@ -755,6 +755,7 @@ ORDER BY nameWork ASC;
       }
       throw new HttpException('Нет данных', HttpStatus.BAD_REQUEST);
     } catch (e) {
+      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
