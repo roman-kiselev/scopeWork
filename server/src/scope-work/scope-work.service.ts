@@ -706,6 +706,7 @@ ORDER BY nameWork ASC;
 
       return data;
     } catch (e) {
+      console.log(e);
       if (e instanceof HttpException) {
         throw e;
       }
