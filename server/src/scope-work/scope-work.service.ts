@@ -10,6 +10,8 @@ import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { User } from 'src/user/user.model';
 import * as stream from 'stream';
+
+import { DatabaseService } from 'src/database/database.service';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
@@ -31,6 +33,7 @@ export class ScopeWorkService {
     @InjectModel(TableAddingData)
     private tableAddingDataRepository: typeof TableAddingData,
     private nameListService: NameListService,
+    private databaseService: DatabaseService,
   ) {}
 
   private async getDataCount(arr: ScopeWork[]) {
@@ -649,17 +652,17 @@ export class ScopeWorkService {
 
   async getHistoryTimeline(dto: HistoryTimelineDto) {
     try {
-      const query = `
-      SELECT *
-      FROM scopework.\`table-adding-data\` tad
-      WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
-      ORDER BY tad.createdAt ASC;
-      `;
+      // const query = `
+      // SELECT *
+      // FROM scopework.\`table-adding-data\` tad
+      // WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
+      // ORDER BY tad.createdAt ASC;
+      // `;
       const query2 = `
       SELECT 
 	tad.scopeWorkId as scopeWorkId,
     tad.nameListId as nameListId,
-    CONCAT(ud.lastname, " " ,ud.firstname) as userName,
+    CONCAT(ud.lastname, ' ' ,ud.firstname) as userName,
     SUM(tad.quntity) as quntity,
     sw.name as nameTypeWork,
     nw.name as nameWork,
@@ -693,21 +696,29 @@ WHERE
 GROUP BY tad.nameWorkId, tad.userId
 ORDER BY nameWork ASC;
       `;
+      console.log(dto);
       const replacements = {
         idScopeWork: dto.idScopeWork,
         dateFrom: dto.dateFrom,
         dateTo: dto.dateTo,
       };
+
+      // const data: ResHistoryTimeline[] =
+      //   await this.scopeWorkRepository.sequelize.query(query2, {
+      //     type: QueryTypes.SELECT,
+      //     replacements,
+      //   });
+
       const data: ResHistoryTimeline[] =
-        await this.scopeWorkRepository.sequelize.query(query2, {
-          type: QueryTypes.SELECT,
-          replacements,
-        });
+        await this.databaseService.executeQuery(query2, replacements);
+
+      //const data = await this.scopeWorkRepository.findAll();
 
       return data;
     } catch (e) {
       console.log(e);
       if (e instanceof HttpException) {
+        console.log(e);
         throw e;
       }
       throw new HttpException(

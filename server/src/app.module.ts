@@ -13,6 +13,7 @@ import { TypeWorkModule } from './type-work/type-work.module';
 import { UnitModule } from './unit/unit.module';
 import { UserDescriptionModule } from './user-description/user-description.module';
 import { UserModule } from './user/user.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { UserModule } from './user/user.module';
     ListNameWorkModule,
     NameListModule,
     TableAddingDataModule,
+    DatabaseModule,
   ],
 
   controllers: [],
