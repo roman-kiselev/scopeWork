@@ -693,7 +693,7 @@ WHERE
         AND tad.createdAt BETWEEN :dateFrom AND :dateTo
         AND tad.deletedAt IS NULL
         AND tad.quntity IS NOT NULL
-GROUP BY tad.nameWorkId, tad.userId
+        GROUP BY tad.scopeWorkId, tad.nameListId, ud.lastname, ud.firstname, sw.name, nw.name, nw.unitName
 ORDER BY nameWork ASC;
       `;
       console.log(dto);
