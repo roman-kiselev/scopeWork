@@ -35,7 +35,7 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
   @ApiProperty({ example: 'Товар', description: 'Товар' })
   @Column({
-    type: DataType.STRING,
+    type: DataType.TEXT,
     unique: true,
   })
   name: string;
