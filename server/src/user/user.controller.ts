@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { Body, Get, Param, Post } from '@nestjs/common/decorators';
 import { HttpStatus } from '@nestjs/common/enums';
 import { HttpException } from '@nestjs/common/exceptions';
+import { EventPattern } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './user.model';
 import { UserService } from './user.service';
@@ -66,5 +67,13 @@ export class UserController {
   async updateRoles(@Param('id') id: string, @Body() roles: string[]) {
     //console.log(id, roles);
     return await this.userService.updateRolesForUser(id, roles);
+  }
+
+  @EventPattern('hello')
+  async handleHello(data: string) {
+    const user = await this.userService.getAllUsers();
+    // console.log(JSON.stringify(user));
+    // console.log(data);
+    return JSON.stringify(user);
   }
 }

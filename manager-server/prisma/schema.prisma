@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Order {
+  id        Int       @id @unique @default(autoincrement())
+  userId    Int
+  toUserId  Int
+  createdAt DateTime?
+  updatedAt DateTime?
+}
+
+model TransportCompany {
+  id                         Int                          @id @unique @default(autoincrement())
+  name                       String                       @unique
+  address                    String
+  providers                  Providers[]
+  TransportCompanyToProvider TransportCompanyToProvider[]
+}
+
+model Providers {
+  id                         Int                          @id @unique @default(autoincrement())
+  name                       String                       @unique
+  address                    String
+  transportCompany           TransportCompany[]
+  TransportCompanyToProvider TransportCompanyToProvider[]
+}
+
+model TransportCompanyToProvider {
+  id                 Int              @id @unique @default(autoincrement())
+  transportCompany   TransportCompany @relation(fields: [transportCompanyId], references: [id])
+  transportCompanyId Int
+  providers          Providers        @relation(fields: [providersId], references: [id])
+  providersId        Int
+}
+
+model Stage {
+  id        Int      @id @unique @default(autoincrement())
+  name      String
+  status    String
+  createdAt DateTime
+  updatedAt DateTime
+}

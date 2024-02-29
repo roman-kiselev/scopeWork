@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { AuthService } from './auth/auth.service';
@@ -12,6 +13,16 @@ async function bootstrap() {
   const PORT = process.env.PORT || 4000;
   const app = await NestFactory.create(AppModule);
   app.enableCors();
+  const microcervice = app.connectMicroservice<MicroserviceOptions>({
+    transport: Transport.RMQ,
+    options: {
+      urls: ['amqp://localhost:5672'],
+      queue: 'scopework_queue',
+      queueOptions: {
+        durable: true,
+      },
+    },
+  });
   const config = new DocumentBuilder()
     .setTitle('ScopeWork')
     .setDescription('ScopeWork Api')
@@ -61,6 +72,8 @@ async function bootstrap() {
   };
 
   await authService.registrationAdminWithDescription(adminDto);
+
+  await app.startAllMicroservices();
   await app.listen(PORT, () => {
     console.log(`App listening on port ${PORT}`);
   });
