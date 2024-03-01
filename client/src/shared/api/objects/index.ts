@@ -2,6 +2,7 @@ import {
     IObjectCreateAttr,
     IObjectCreateResponse,
     IObjectFullData,
+    IObjectShort,
     IOneObjectDataShort,
 } from "../../interfaces";
 import { objectMainApi } from "../main";
@@ -31,6 +32,12 @@ export const objectsApi = objectMainApi.injectEndpoints({
         getFullDataForOne: builder.query<IObjectFullData, number>({
             query: (id) => ({
                 url: `/fullData/${id}`,
+                method: "GET",
+            }),
+        }),
+        getAllObjectShort: builder.query<IObjectShort[], void>({
+            query: () => ({
+                url: `/shortAllObjects`,
                 method: "GET",
             }),
         }),

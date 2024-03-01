@@ -81,6 +81,21 @@ export class ObjectsService {
     }
   }
 
+  async getShortAllObjects() {
+    try {
+      const objects = await this.objectsRepository.findAll({});
+      return objects;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   async getAllObjects() {
     try {
       const objects = await this.objectsRepository.findAll({

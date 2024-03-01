@@ -3,4 +3,6 @@ export enum RoleString {
     USER = "user",
     MASTER = "master",
     DEV = "dev",
+    MANAGER = "manager",
+    DRIVER = "driver",
 }

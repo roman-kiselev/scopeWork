@@ -35,6 +35,14 @@ export class ObjectsController {
     return this.objectsService.getListObjectWithShortData();
   }
 
+  @ApiOperation({ summary: 'Получение всех объектов(без зависимостей)' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Objects] })
+  @ApiResponse({ type: HttpException })
+  @Get('/shortAllObjects')
+  async getAllShortData() {
+    return this.objectsService.getShortAllObjects();
+  }
+
   @ApiOperation({ summary: 'Получение одного объекта' })
   @ApiResponse({ status: HttpStatus.OK, type: Objects })
   @ApiResponse({ type: HttpException })

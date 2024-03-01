@@ -1,25 +1,17 @@
-import {
+export {
     InputCreateNameWork,
     InputFormItem,
     InputPasswordFormItem,
 } from "./input";
-import {
+export {
     MultiSelectRoles,
     SelectObject,
+    SelectObjectWithData,
     SelectTypeWork,
     SelectUser,
 } from "./select";
 
 export { ButtonExcel, ButtonExcelWithParams } from "./button";
 
+export { CreateStorage } from "./forms";
 export { ModalDownloadScopework } from "./modal";
-
-export {
-    InputCreateNameWork,
-    InputFormItem,
-    InputPasswordFormItem,
-    MultiSelectRoles,
-    SelectObject,
-    SelectTypeWork,
-    SelectUser,
-};

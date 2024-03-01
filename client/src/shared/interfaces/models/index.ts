@@ -1,13 +1,13 @@
-import { IAuthSlice } from "./auth";
-import {
+export type { IAuthSlice } from "./auth";
+export type {
     IDataOneUserSlice,
     IEditOneQuntityPayload,
     IListByScopeWorkIdTest,
     IListData,
     IValueForListData,
 } from "./dataOneUser";
-import { INameListForNameWork } from "./nameList";
-import {
+export type { INameListForNameWork } from "./nameList";
+export type {
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
     ICreateNameWorkForList,
@@ -15,7 +15,7 @@ import {
     INameWorkCreateResponse,
     INameWorkWithNameList,
 } from "./nameWork";
-import {
+export type {
     INameListWork,
     INameWorkFromExcel,
     INameWorkListSlice,
@@ -23,27 +23,28 @@ import {
     IOneItemForListNameWork,
     ItemForListNameWork,
 } from "./nameWorkList";
-import { IRole } from "./roles";
-import {
+export type { IRole } from "./roles";
+export type {
     ICreateScopeWork,
     IDataShortScopeWork,
     IEditScopeWork,
     IListByScopeWorkId,
+    IResScopeWorkByUserAndObject,
     IScopeWork,
     IScopeWorkData,
     IScopeWorkPlusData,
     IScopeWorkSlice,
     IScopeWorkWithData,
 } from "./scopeWork";
-import {
+export type {
     ILogList,
     ITableAddingData,
     ITableAddingDataDto,
 } from "./tableAddingData";
-import { ITypeWork } from "./typeWork";
-import { IUnit, IUnitsCreateAttr } from "./unit";
-import { IUserDescription } from "./userDescription";
-import {
+export type { ITypeWork } from "./typeWork";
+export type { IUnit, IUnitsCreateAttr } from "./unit";
+export type { IUserDescription } from "./userDescription";
+export type {
     IEditUserDto,
     IUser,
     IUserToken,
@@ -52,7 +53,7 @@ import {
     IUsersSlice,
 } from "./users";
 
-import {
+export type {
     IFinishUserAdding,
     IListNamesWithData,
     IMainFinishUserAddingForScopeWork,
@@ -62,56 +63,3 @@ import {
     IOneObjectDataShort,
     IOneScopeWorkWithData,
 } from "./objects";
-
-export type {
-    IAuthSlice,
-    ICreateNameWorkAttr,
-    ICreateNameWorkExcel,
-    ICreateNameWorkForList,
-    ICreateScopeWork,
-    IDataOneUserSlice,
-    IDataShortScopeWork,
-    IEditOneQuntityPayload,
-    IEditScopeWork,
-    IEditUserDto,
-    IFinishUserAdding,
-    IListByScopeWorkId,
-    IListByScopeWorkIdTest,
-    IListData,
-    IListNamesWithData,
-    ILogList,
-    IMainFinishUserAddingForScopeWork,
-    INameListForNameWork,
-    INameListWork,
-    INameWorkAndUnit,
-    INameWorkCreateResponse,
-    INameWorkFromExcel,
-    INameWorkListSlice,
-    INameWorkWithNameList,
-    INameWorkWithQuantity,
-    IObjectFullData,
-    IObjectShort,
-    IObjectsSlice,
-    IOneItemForListNameWork,
-    IOneObjectDataShort,
-    IOneScopeWorkWithData,
-    IRole,
-    IScopeWork,
-    IScopeWorkData,
-    IScopeWorkPlusData,
-    IScopeWorkSlice,
-    IScopeWorkWithData,
-    ITableAddingData,
-    ITableAddingDataDto,
-    ITypeWork,
-    IUnit,
-    IUnitsCreateAttr,
-    IUser,
-    IUserDescription,
-    IUserToken,
-    IUserWithData,
-    IUserWithDescription,
-    IUsersSlice,
-    IValueForListData,
-    ItemForListNameWork,
-};

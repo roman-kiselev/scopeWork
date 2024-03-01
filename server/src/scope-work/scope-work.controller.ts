@@ -30,6 +30,14 @@ export class ScopeWorkController {
     return await this.scopeWorkService.getAllScopeWork();
   }
 
+  @Get('/getSw')
+  async getSw(@Query('user') user: string, @Query('object') object: string) {
+    return await this.scopeWorkService.getScopeWorkByUserIdAndObjectId({
+      userId: user,
+      objectId: object,
+    });
+  }
+
   @ApiOperation({ summary: 'Получить все объёмы SQL' })
   @ApiResponse({ status: HttpStatus.OK, type: [IScopeworkShort] })
   @ApiResponse({ type: HttpException })

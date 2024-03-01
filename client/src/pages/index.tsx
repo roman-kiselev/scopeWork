@@ -12,6 +12,8 @@ const HomePage = lazy(() => import("./home/HomePage"));
 const LayoutPage = lazy(() => import("./home/LayoutPage"));
 const ObjectsRoutes = lazy(() => import("./objects/index"));
 const AdminRoutes = lazy(() => import("./admin/index"));
+const OrdersRouter = lazy(() => import("./orders/index"));
+const StorageRouter = lazy(() => import("./storage/index"));
 
 const Routing = () => {
     return (
@@ -44,16 +46,31 @@ const Routing = () => {
                 /> */}
 
                 <Route
-                    path="objects/*"
+                    path="orders/*"
                     element={
                         <SuspenseLoadCheckR
                             roles={[
                                 RoleString.USER,
                                 RoleString.ADMIN,
-                                RoleString.DEV,
+                                RoleString.MASTER,
                             ]}
                         >
-                            <h3>В разработке</h3>
+                            <OrdersRouter />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+
+                <Route
+                    path="storage/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[
+                                RoleString.MASTER,
+                                RoleString.ADMIN,
+                                RoleString.MANAGER,
+                            ]}
+                        >
+                            <StorageRouter />
                         </SuspenseLoadCheckR>
                     }
                 />
