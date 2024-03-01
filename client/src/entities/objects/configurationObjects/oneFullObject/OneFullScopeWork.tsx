@@ -108,13 +108,19 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                         <Col>
                             <Tag color="green">
                                 {`Выполнено
-                                ${getSumQuntity(item.finishUserAdding)}`}
+                                ${getSumQuntity(item.finishUserAdding).toFixed(
+                                    2
+                                )}`}
                             </Tag>
                             <Tag color="orange">
                                 {`Осталось выполнить
                                 ${
-                                    item.quntity -
-                                    getSumQuntity(item.finishUserAdding)
+                                    Number(Number(item.quntity).toFixed(2)) -
+                                    Number(
+                                        getSumQuntity(
+                                            item.finishUserAdding
+                                        ).toFixed(2)
+                                    )
                                 }`}
                             </Tag>
                             {/* <Button type="primary" onClick={showChildrenDrawer}>
@@ -140,7 +146,9 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                             <label>
                                 <Space>
                                     {getUserName(item.userId, listUsers)}
-                                    <Tag color="cyan">{item.quntity} </Tag>
+                                    <Tag color="cyan">
+                                        {Number(item.quntity).toFixed(2)}
+                                    </Tag>
                                 </Space>
                             </label>
                             <Progress
@@ -197,8 +205,12 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                                     alignItems: "center",
                                 }}
                                 title="Количество "
-                                value={scopeWork.countTableAddingData}
-                                suffix={`/${scopeWork.countListNameWorksArr}`}
+                                value={scopeWork.countTableAddingData.toFixed(
+                                    2
+                                )}
+                                suffix={`/${scopeWork.countListNameWorksArr.toFixed(
+                                    2
+                                )}`}
                             />
                         </Col>
                         <Col style={{ margin: 10 }}>
