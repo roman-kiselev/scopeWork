@@ -201,9 +201,9 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
                                 style={{
                                     display: "flex",
                                     flexDirection: "column",
-
                                     alignItems: "center",
                                 }}
+                                groupSeparator=""
                                 title="Количество "
                                 value={scopeWork.countTableAddingData.toFixed(
                                     2

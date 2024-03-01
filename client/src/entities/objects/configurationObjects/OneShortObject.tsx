@@ -60,9 +60,10 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
                     <li>Общий прогресс</li>
                     <Progress type="circle" percent={Number(percentAll)} />
                     <Statistic
+                        groupSeparator=""
                         title="Количество"
-                        value={countTableAddingData}
-                        suffix={`/${mainCount}`}
+                        value={countTableAddingData.toFixed(2)}
+                        suffix={`/${mainCount.toFixed(2)}`}
                     />
                 </Col>
 
@@ -72,7 +73,6 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
                         style={{
                             display: "flex",
                             flexDirection: "column",
-
                             alignItems: "center",
                             margin: "0 20px",
                         }}
@@ -89,20 +89,20 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
                             style={{
                                 display: "flex",
                                 flexDirection: "column",
-
                                 alignItems: "center",
                             }}
+                            groupSeparator=""
                             title="Количество"
-                            value={scopeWork.countTableAddingData}
-                            suffix={`/${scopeWork.mainCount}`}
+                            value={scopeWork.countTableAddingData.toFixed(2)}
+                            suffix={`/${scopeWork.mainCount.toFixed(2)}`}
                         />
                         <Statistic
                             style={{
                                 display: "flex",
                                 flexDirection: "column",
-
                                 alignItems: "center",
                             }}
+                            groupSeparator=""
                             title="В работе(дней)"
                             value={`${getCurrentDay(
                                 scopeWork.createdAt.toString()
