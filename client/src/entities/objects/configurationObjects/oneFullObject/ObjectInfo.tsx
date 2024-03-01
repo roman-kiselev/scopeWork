@@ -47,12 +47,16 @@ const ObjectInfo: React.FC<ObjectInfoProps> = ({ oneObjectWithFullData }) => {
                         style={{
                             display: "flex",
                             flexDirection: "column",
-
                             alignItems: "center",
                         }}
+                        groupSeparator=""
                         title="Количество "
-                        value={oneObjectWithFullData.countTableAddingDataObject}
-                        suffix={`/${oneObjectWithFullData.countListNameWorksObject}`}
+                        value={oneObjectWithFullData.countTableAddingDataObject.toFixed(
+                            2
+                        )}
+                        suffix={`/${oneObjectWithFullData.countListNameWorksObject.toFixed(
+                            2
+                        )}`}
                     />
                 </Col>
                 <Col style={{ margin: 10 }}>
