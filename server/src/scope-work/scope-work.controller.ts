@@ -46,6 +46,14 @@ export class ScopeWorkController {
     return await this.scopeWorkService.getAllScopeWorkSqlShort(id);
   }
 
+  @ApiOperation({ summary: 'Быстрый запрос' })
+  @ApiResponse({ status: HttpStatus.OK, type: [IScopeworkShort] })
+  @ApiResponse({ type: HttpException })
+  @Get('/quickWithoutGroup/:id')
+  async quickOneScopeWorkById(@Param('id') id: string) {
+    return await this.scopeWorkService.quickOneScopeWorkById(id);
+  }
+
   @ApiOperation({ summary: 'Получить один' })
   @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
   @ApiResponse({ type: HttpException })

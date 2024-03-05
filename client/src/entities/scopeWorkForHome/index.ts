@@ -1,3 +1,4 @@
 import OneScopeWorkForEdit from "./OneScopeWorkForEdit";
+import OneScopeWorkForEditQuick from "./OneScopeWorkForEditQuick";
 
-export { OneScopeWorkForEdit };
+export { OneScopeWorkForEdit, OneScopeWorkForEditQuick };

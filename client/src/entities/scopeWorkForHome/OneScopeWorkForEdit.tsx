@@ -10,6 +10,11 @@ import ColumnQuntity from "./oneScopeWork/ColumnQuntity";
 
 const OneScopeWorkForEdit = () => {
     const { id, banned } = useAppSelector((store) => store.auth);
+    // const { data: scopeWorkDataQuick } =
+    //     scopeWorkApi.useQuickOneScopeWorkByIdQuery({
+    //         id: id !== null && !banned ? id.toString() : "0",
+    //     });
+    // console.log(scopeWorkDataQuick);
 
     const [searchedText, setSearchedText] = useState("");
 

@@ -1,9 +1,11 @@
-import { IScopeworkShort } from "src/shared/interfaces/api";
+import {
+    IResQuickOneScopeWorkById,
+    IScopeworkShort,
+} from "src/shared/interfaces/api";
 import {
     ICreateScopeWork,
     IEditScopeWork,
     IListData,
-    IResScopeWorkByUserAndObject,
     IScopeWork,
     IScopeWorkWithData,
 } from "../../interfaces/models";
@@ -67,12 +69,12 @@ export const scopeWorkApi = mainApi.injectEndpoints({
                 method: "GET",
             }),
         }),
-        getScopeWorkByUserAndObject: builder.query<
-            IResScopeWorkByUserAndObject[],
-            { userId: string; objectId: string }
+        quickOneScopeWorkById: builder.query<
+            IResQuickOneScopeWorkById[],
+            { id: string }
         >({
-            query: ({ userId, objectId }) => ({
-                url: `/scope-work/getSw/?user=${userId}&object=${objectId}`,
+            query: ({ id }) => ({
+                url: `/scope-work/quickWithoutGroup/${id}`,
                 method: "GET",
             }),
         }),

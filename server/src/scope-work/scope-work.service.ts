@@ -15,7 +15,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
-import { IResScopeWorkByUserAndObject } from './interfaces/IResScopeWorkByUserAndObject';
+import { IResQuickOneScopeWorkById } from './interfaces/IResQuickOneScopeWorkById';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { ResHistoryTimeline } from './interfaces/ResHistoryTimeline';
 import { UserScopeWork } from './user-scope-work.model';
@@ -817,6 +817,68 @@ ORDER BY nameWork ASC;
     } catch (e) {
       console.log(e);
       if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Без повторяющихся наименований(без группировки)
+  async quickOneScopeWorkById(id: string) {
+    try {
+      const query = `
+      SELECT 
+    nl.id AS id,
+    nl.nameWorkId AS nameWorkId,
+    nw.name AS name,
+    u.name AS unitName,
+    ROUND(SUM(nl.quntity), 2) AS quntityMain,
+    ROUND(SUM(tadQ.quntitySum), 2) AS quntityCompleted,
+    ROUND(SUM(nl.quntity) - SUM(tadQ.quntitySum),
+            2) AS remainderQuntity,
+    ROUND(tadQ.quntitySum / nl.quntity * 100, 1) AS percent,
+    nl.listNameWorkId AS listNameWorkId
+FROM
+    scopework.\`name-list\` nl
+        INNER JOIN
+    scopework.\`name_work\` nw ON nw.id = nl.nameWorkId
+        LEFT JOIN
+    (SELECT 
+        tad.nameListId AS nameListId,
+            ROUND(SUM(quntity), 2) AS quntitySum
+    FROM
+        scopework.\`table-adding-data\` tad
+    WHERE
+        tad.deletedAt IS NULL
+            AND quntity IS NOT NULL
+    GROUP BY tad.nameListId) tadQ ON tadQ.nameListId = nl.id
+        INNER JOIN
+    scopework.unit u ON nw.unitId = u.id
+WHERE
+    nl.listNameWorkId IN (SELECT 
+            id
+        FROM
+            scopework.\`list_name_work\`
+        WHERE
+            scopeWorkId = :id)
+        AND nl.deletedAt IS NULL
+GROUP BY nl.id, nl.nameWorkId, nw.name, u.id, u.name, nl.quntity, tadQ.quntitySum, nl.quntity
+ORDER BY nw.name ASC;
+      `;
+      const replacements = {
+        id: id,
+      };
+
+      const data: IResQuickOneScopeWorkById[] =
+        await this.databaseService.executeQuery(query, replacements);
+
+      return data;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        console.log(e);
         throw e;
       }
       throw new HttpException(

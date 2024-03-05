@@ -1,7 +1,7 @@
-import { CreateHandler } from "./CreateHandler";
-import { IUserLogin, IUserRegister, IUserResponseToken } from "./authApi";
-import { IDataError } from "./error";
-import { IObjectCreateAttr, IObjectCreateResponse } from "./objects";
+export type { CreateHandler } from "./CreateHandler";
+export type { IUserLogin, IUserRegister, IUserResponseToken } from "./authApi";
+export type { IDataError } from "./error";
+export type { IObjectCreateAttr, IObjectCreateResponse } from "./objects";
 export type {
     ICreateCandidateDel,
     IDataGetHistoryForNameWorkId,
@@ -9,14 +9,4 @@ export type {
     ITableAddingData,
 } from "./tableAddingData";
 
-export type { IScopeworkShort } from "./scopework";
-
-export type {
-    CreateHandler,
-    IDataError,
-    IObjectCreateAttr,
-    IObjectCreateResponse,
-    IUserLogin,
-    IUserRegister,
-    IUserResponseToken,
-};
+export type { IResQuickOneScopeWorkById, IScopeworkShort } from "./scopework";
