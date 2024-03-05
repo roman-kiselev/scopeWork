@@ -1,9 +1,9 @@
-import { CheckAuth, CheckRole, SuspenseLoad } from "./check";
-import { FormLogin } from "./formLogin";
-import { FormRegister } from "./formRegister";
-import { SimpleShortItemForList, SimpleShortList } from "./list";
-import { ListNameWorkTable } from "./listNameWorks";
-import {
+export { CheckAuth, CheckRole, SuspenseLoad } from "./check";
+export { FormLogin } from "./formLogin";
+export { FormRegister } from "./formRegister";
+export { SimpleShortItemForList, SimpleShortList } from "./list";
+export { ListNameWorkTable } from "./listNameWorks";
+export {
     CreateNameWorkExcel,
     FormCreateNameWork,
     ListForAddNameWork,
@@ -11,8 +11,8 @@ import {
     ShortListNames,
     ShortListNamesWithoutTypes,
 } from "./nameWork";
-import { MainCard } from "./objectCardMain";
-import {
+export { MainCard } from "./objectCardMain";
+export {
     FormCreateObject,
     ListInfiniteShort,
     ListShortObject,
@@ -20,38 +20,10 @@ import {
     OneObjectShort,
     OneShortObject,
 } from "./objects";
-import { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
-import { OneScopeWorkForEdit } from "./scopeWorkForHome";
-import { FormUnit } from "./units";
-import { ListUsers, OneUserForm } from "./users";
-
+export { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
 export {
-    CheckAuth,
-    CheckRole,
-    CreateNameWorkExcel,
-    CreateScopeWork,
-    EditScopeWork,
-    FormCreateNameWork,
-    FormCreateObject,
-    FormLogin,
-    FormRegister,
-    FormUnit,
-    ListForAddNameWork,
-    ListInfiniteShort,
-    ListNameWorkTable,
-    ListScopeWork,
-    ListShortObject,
-    ListUsers,
-    MainCard,
-    MainNameWork,
-    OneObjectFull,
-    OneObjectShort,
     OneScopeWorkForEdit,
-    OneShortObject,
-    OneUserForm,
-    ShortListNames,
-    ShortListNamesWithoutTypes,
-    SimpleShortItemForList,
-    SimpleShortList,
-    SuspenseLoad,
-};
+    OneScopeWorkForEditQuick,
+} from "./scopeWorkForHome";
+export { FormUnit } from "./units";
+export { ListUsers, OneUserForm } from "./users";

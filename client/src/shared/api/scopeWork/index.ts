@@ -1,4 +1,7 @@
-import { IScopeworkShort } from "src/shared/interfaces/api";
+import {
+    IResQuickOneScopeWorkById,
+    IScopeworkShort,
+} from "src/shared/interfaces/api";
 import {
     ICreateScopeWork,
     IEditScopeWork,
@@ -63,6 +66,15 @@ export const scopeWorkApi = mainApi.injectEndpoints({
         >({
             query: ({ id, dateFrom, dateTo }) => ({
                 url: `/scope-work/getHistory/${id}?dateFrom=${dateFrom}&dateTo=${dateTo}`,
+                method: "GET",
+            }),
+        }),
+        quickOneScopeWorkById: builder.query<
+            IResQuickOneScopeWorkById[],
+            { id: string }
+        >({
+            query: ({ id }) => ({
+                url: `/scope-work/quickWithoutGroup/${id}`,
                 method: "GET",
             }),
         }),
