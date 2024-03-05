@@ -818,7 +818,7 @@ WHERE
         WHERE
             scopeWorkId = :id)
         AND nl.deletedAt IS NULL
-GROUP BY nl.nameWorkId
+GROUP BY nl.id, nl.nameWorkId, nw.name, u.id, u.name, nl.quntity, tadQ.quntitySum, nl.quntity
 ORDER BY nw.name ASC;
       `;
       const replacements = {
