@@ -326,6 +326,22 @@ export class ObjectsService {
     }
   }
 
+  // Получим объект без зависимостей
+  async getOneObjectShort(id: number) {
+    try {
+      const oneObject = await this.objectsRepository.findByPk(id);
+      return oneObject;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
   // Получим пользователей по id объекта
   private async getUsersByObjectId(idObject: number) {
     try {

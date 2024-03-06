@@ -76,4 +76,10 @@ export class UserController {
     // console.log(data);
     return JSON.stringify(user);
   }
+
+  @EventPattern('getOneUserById')
+  async eventGetUserById(id: string) {
+    const user = await this.userService.findUserById(+id);
+    return JSON.stringify(user);
+  }
 }

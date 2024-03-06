@@ -9,7 +9,6 @@ import { OrderService } from './order.service';
       {
         name: 'ORDER_SERVICE',
         transport: Transport.RMQ,
-
         options: {
           urls: ['amqp://localhost:5672'],
           queue: 'scopework_queue',

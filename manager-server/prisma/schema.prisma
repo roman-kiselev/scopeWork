@@ -1,16 +1,10 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+}
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Order {
@@ -25,24 +19,24 @@ model TransportCompany {
   id                         Int                          @id @unique @default(autoincrement())
   name                       String                       @unique
   address                    String
-  providers                  Providers[]
   TransportCompanyToProvider TransportCompanyToProvider[]
+  providers                  Providers[]                  @relation("ProvidersToTransportCompany")
 }
 
 model Providers {
   id                         Int                          @id @unique @default(autoincrement())
   name                       String                       @unique
   address                    String
-  transportCompany           TransportCompany[]
   TransportCompanyToProvider TransportCompanyToProvider[]
+  transportCompany           TransportCompany[]           @relation("ProvidersToTransportCompany")
 }
 
 model TransportCompanyToProvider {
   id                 Int              @id @unique @default(autoincrement())
-  transportCompany   TransportCompany @relation(fields: [transportCompanyId], references: [id])
   transportCompanyId Int
-  providers          Providers        @relation(fields: [providersId], references: [id])
   providersId        Int
+  providers          Providers        @relation(fields: [providersId], references: [id])
+  transportCompany   TransportCompany @relation(fields: [transportCompanyId], references: [id])
 }
 
 model Stage {
@@ -51,4 +45,26 @@ model Stage {
   status    String
   createdAt DateTime
   updatedAt DateTime
+}
+
+model Storage {
+  id            Int             @id @unique @default(autoincrement())
+  name          String
+  address       String
+  ObjectStorage ObjectStorage[]
+  UserStorage   UserStorage[]
+}
+
+model ObjectStorage {
+  id        Int     @id @unique @default(autoincrement())
+  objectId  Int
+  storageId Int
+  storage   Storage @relation(fields: [storageId], references: [id])
+}
+
+model UserStorage {
+  id        Int     @id @unique @default(autoincrement())
+  userId    Int
+  storageId Int
+  storage   Storage @relation(fields: [storageId], references: [id])
 }

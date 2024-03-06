@@ -20,10 +20,12 @@ export {
     OneObjectShort,
     OneShortObject,
 } from "./objects";
+export { OrderBasedOn } from "./orderBasedOn";
 export { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
 export {
     OneScopeWorkForEdit,
     OneScopeWorkForEditQuick,
 } from "./scopeWorkForHome";
+export { SimpleOrder } from "./simpleOrder";
 export { FormUnit } from "./units";
 export { ListUsers, OneUserForm } from "./users";

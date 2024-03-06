@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
 import { OrderModule } from './order/order.module';
+import { StorageModule } from './storage/storage.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -10,6 +12,8 @@ import { OrderModule } from './order/order.module';
     }),
     DatabaseModule,
     OrderModule,
+    StorageModule,
+    UserModule,
   ],
 
   controllers: [],

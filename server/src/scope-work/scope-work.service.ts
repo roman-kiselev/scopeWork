@@ -16,6 +16,7 @@ import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
 import { IResQuickOneScopeWorkById } from './interfaces/IResQuickOneScopeWorkById';
+import { IResScopeWorkByUserAndObject } from './interfaces/IResScopeWorkByUserAndObject';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { ResHistoryTimeline } from './interfaces/ResHistoryTimeline';
 import { UserScopeWork } from './user-scope-work.model';
@@ -315,7 +316,7 @@ export class ScopeWorkService {
         objectId: dto.objectId,
       };
 
-      const data: IResScopeWorkByUserAndObject =
+      const data: IResScopeWorkByUserAndObject[] =
         await this.databaseService.executeQuery(query, replacements);
 
       return data;
