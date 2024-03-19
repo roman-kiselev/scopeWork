@@ -14,7 +14,14 @@
 GET {{host}}/order HTTP/1.1
 
 ### --- Storage
-GET {{host}}/storage/128 HTTP/1.1
+GET {{host}}/storage HTTP/1.1
+
+
+### --- Storage
+GET {{host}}/storage/short HTTP/1.1
+
+###
+GET {{host}}/storage/141 HTTP/1.1
 
 ### 
 POST {{host}}/storage HTTP/1.1

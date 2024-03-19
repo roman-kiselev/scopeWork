@@ -63,3 +63,9 @@ export type {
     IOneObjectDataShort,
     IOneScopeWorkWithData,
 } from "./objects";
+
+export type {
+    ICreateStorageDto,
+    IStorage,
+    IStorageAndUsersAndObjects,
+} from "./storage";

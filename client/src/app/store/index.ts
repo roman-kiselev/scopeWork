@@ -3,7 +3,12 @@ import {
     configureStore,
     createListenerMiddleware,
 } from "@reduxjs/toolkit";
-import { authApi, mainApi, objectMainApi } from "../../shared/api";
+import {
+    authApi,
+    mainApi,
+    mainManagerApi,
+    objectMainApi,
+} from "../../shared/api";
 import {
     authReducer,
     dataOneUserReducer,
@@ -39,13 +44,18 @@ const rootReducer = combineReducers({
     dataOneUser: dataOneUserReducer,
     [mainApi.reducerPath]: mainApi.reducer,
     [objectMainApi.reducerPath]: objectMainApi.reducer,
+    [mainManagerApi.reducerPath]: mainManagerApi.reducer,
 });
 
 const store = configureStore({
     reducer: rootReducer,
     middleware(getDefaultMiddleware) {
         return getDefaultMiddleware()
-            .concat(mainApi.middleware, objectMainApi.middleware)
+            .concat(
+                mainApi.middleware,
+                objectMainApi.middleware,
+                mainManagerApi.middleware
+            )
             .prepend(listenerMiddleware.middleware);
     },
 });

@@ -2,10 +2,12 @@ FROM node
 
 WORKDIR /serverScopeWork
 
-COPY . .
+COPY package.json .
 
 RUN npm install
 
+COPY . .
+
 EXPOSE 7000
 
-CMD ["npm", "run","startJob:dev"]
+CMD ["npm", "run","start"]

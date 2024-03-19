@@ -7,14 +7,16 @@ import {
   Inject,
   Param,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { firstValueFrom } from 'rxjs';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateStorageDto } from './dto/create-storage.dto';
-import { IStorage } from './interfaces/IStorage';
+import { Storage } from './interfaces/Storage';
+import { StorageAndUsersAndObjects } from './interfaces/StorageAndUsersAndObjects';
 import { StorageService } from './storage.service';
 
+@ApiTags('Склады')
 @Controller('storage')
 export class StorageController {
   constructor(
@@ -22,55 +24,42 @@ export class StorageController {
     private storageService: StorageService,
   ) {}
 
+  @ApiOperation({ summary: 'Получение всех складов' })
+  @ApiResponse({ status: HttpStatus.OK, type: [StorageAndUsersAndObjects] })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpException })
+  @Get('/')
+  async getAll() {
+    return this.storageService.getAll();
+  }
+
+  @ApiOperation({ summary: 'Получение всех складов(коротко)' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Storage] })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpException })
+  @Get('/short')
+  async getAllShort() {
+    return this.storageService.getAllShort();
+  }
+
+  @ApiOperation({ summary: 'проверка наименования' })
+  @ApiResponse({ status: HttpStatus.OK, type: HttpException })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: HttpException })
+  @Get('/checkName')
+  async checkName(@Query('name') name: string) {
+    return this.storageService.checkNameStorage(name);
+  }
+
+  @ApiOperation({ summary: 'Получаем по id' })
+  @ApiResponse({ status: HttpStatus.OK, type: StorageAndUsersAndObjects })
   @Get('/:id')
   async getOneStorageById(@Param('id') id: string) {
-    // const response = await firstValueFrom(
-    //   this.client.send('getOneUserById', id),
-    // );
-    // const user: IGetUserById = JSON.parse(response);
-
-    const resStorage = await this.storageService.findOneStorage(+id);
-    const {
-      UserStorage,
-      ObjectStorage,
-      id: idStorage,
-      name,
-      address,
-    } = resStorage;
-    const users = UserStorage.map(({ userId }) => userId);
-    const objects = ObjectStorage.map(({ objectId }) => objectId);
-    const data = {
-      idStorage,
-      name,
-      address,
-      users: [],
-      objects: [],
-    };
-    if (users.length > 0) {
-      for (const user of users) {
-        const dataUser = await firstValueFrom(
-          this.client.send('getOneUserById', user),
-        );
-
-        data.users.push(JSON.parse(dataUser));
-      }
-    }
-
-    if (objects.length > 0) {
-      for (const object of objects) {
-        const dataObject = await firstValueFrom(
-          this.client.send('getObjectById', object),
-        );
-
-        data.objects.push(JSON.parse(dataObject));
-      }
-    }
-
-    return data;
+    return await this.storageService.findOneStorage(+id);
   }
 
   @ApiOperation({ summary: 'Создаём склад' })
-  @ApiResponse({ status: HttpStatus.CREATED, type: IStorage || HttpException })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    type: Storage || HttpException,
+  })
   @Post()
   createStorage(@Body() dto: CreateStorageDto) {
     return this.storageService.createStorage(dto);
