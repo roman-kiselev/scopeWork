@@ -25,6 +25,6 @@ import { StorageService } from './storage.service';
     ),
     DatabaseModule,
   ],
-  exports: [StorageModule, StorageService],
+  exports: [StorageService],
 })
 export class StorageModule {}

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateStorageDto {
+export abstract class CreateStorageDto {
   @ApiProperty({ example: 'Основной', description: 'Наименование склада' })
   readonly name: string;
   @ApiProperty({ example: 'Основной', description: 'Наименование склада' })

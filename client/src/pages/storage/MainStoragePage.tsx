@@ -50,10 +50,20 @@ const MainStoragePage = () => {
                     <Card
                         size="small"
                         title="Общий список"
-                        extra={<Link to="list">Перейти</Link>}
+                        extra={<Link to="listStorage">Перейти</Link>}
                         style={{ width: 300 }}
                     >
                         <p>Склады</p>
+                    </Card>
+                </Col>
+                <Col>
+                    <Card
+                        size="small"
+                        title="Пополнение"
+                        extra={<Link to="add-name-in-storage">Перейти</Link>}
+                        style={{ width: 300 }}
+                    >
+                        <p>Добавить на склад</p>
                     </Card>
                 </Col>
             </Row>

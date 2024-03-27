@@ -4,6 +4,7 @@ import { Storage } from '@prisma/client';
 import { firstValueFrom } from 'rxjs';
 import { DatabaseService } from '../database/database.service';
 import { CreateStorageDto } from './dto/create-storage.dto';
+import { EditStorageDto } from './dto/edit-storage.dto';
 import { StorageAndUsersAndObjects } from './interfaces/StorageAndUsersAndObjects';
 
 @Injectable()
@@ -231,6 +232,77 @@ export class StorageService {
       const data = await this.clientDatabase.storage.findMany();
 
       return data;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Редактирование описания склада
+  async editStorageDescription(dto: EditStorageDto) {
+    try {
+      const { id } = dto;
+      const checkStorage = await this.clientDatabase.storage.findUnique({
+        where: {
+          id: +id,
+        },
+        include: {
+          ObjectStorage: true,
+          UserStorage: true,
+        },
+      });
+
+      if (
+        checkStorage &&
+        dto.objectId !== undefined &&
+        dto.userId !== undefined
+      ) {
+        const data = await this.clientDatabase.storage.update({
+          where: {
+            id: +dto.id,
+          },
+          data: {
+            name: dto.name,
+            address: dto.address,
+            ObjectStorage: {
+              update: {
+                where: {
+                  id: checkStorage.ObjectStorage[0].id,
+                },
+                data: {
+                  objectId: +dto.objectId,
+                },
+              },
+            },
+            UserStorage: {
+              update: {
+                where: {
+                  id: checkStorage.UserStorage[0].id,
+                },
+                data: {
+                  userId: +dto.userId,
+                },
+              },
+            },
+          },
+        });
+      }
+      const storage = await this.clientDatabase.storage.findUnique({
+        where: {
+          id: +id,
+        },
+        include: {
+          ObjectStorage: true,
+          UserStorage: true,
+        },
+      });
+
+      return storage;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

@@ -27,5 +27,6 @@ export {
     OneScopeWorkForEditQuick,
 } from "./scopeWorkForHome";
 export { SimpleOrder } from "./simpleOrder";
+export { StorageDescriptionShort } from "./storage";
 export { FormUnit } from "./units";
 export { ListUsers, OneUserForm } from "./users";
