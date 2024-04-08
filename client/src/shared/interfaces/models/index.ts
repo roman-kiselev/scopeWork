@@ -69,3 +69,16 @@ export type {
     IStorage,
     IStorageAndUsersAndObjects,
 } from "./storage";
+
+export type {
+    ICreateTransportCompanyDto,
+    ITransportCompany,
+    ITransportCompanyToProvider,
+} from "./transportCompany";
+
+export type {
+    ICreateProviderDto,
+    ICreateProviderWithTkDto,
+    IProvider,
+    IProviderWithTk,
+} from "./providers";

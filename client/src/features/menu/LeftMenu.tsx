@@ -7,6 +7,7 @@ import {
     FileAddOutlined,
     HomeOutlined,
     PlusCircleOutlined,
+    ProfileOutlined,
     ToolOutlined,
     UnorderedListOutlined,
     UserAddOutlined,
@@ -35,6 +36,14 @@ const LeftMenu = () => {
             [RoleString.USER, RoleString.MASTER, RoleString.ADMIN],
             rolesState,
             <AppstoreAddOutlined />
+        ),
+        { type: "divider" },
+        getItem(
+            <Link to="/providers">Поставщики</Link>,
+            "providers",
+            [RoleString.MANAGER, RoleString.ADMIN],
+            rolesState,
+            <ProfileOutlined />
         ),
         { type: "divider" },
         getItem(

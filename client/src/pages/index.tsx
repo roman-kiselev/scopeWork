@@ -14,6 +14,7 @@ const ObjectsRoutes = lazy(() => import("./objects/index"));
 const AdminRoutes = lazy(() => import("./admin/index"));
 const OrdersRouter = lazy(() => import("./orders/index"));
 const StorageRouter = lazy(() => import("./storage/index"));
+const ProvidersRouter = lazy(() => import("./providers/index"));
 
 const Routing = () => {
     return (
@@ -71,6 +72,20 @@ const Routing = () => {
                             ]}
                         >
                             <StorageRouter />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+                <Route
+                    path="providers/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[
+                                RoleString.MASTER,
+                                RoleString.ADMIN,
+                                RoleString.MANAGER,
+                            ]}
+                        >
+                            <ProvidersRouter />
                         </SuspenseLoadCheckR>
                     }
                 />

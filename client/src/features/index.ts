@@ -1,4 +1,4 @@
-import {
+export {
     CheckA,
     CheckAR,
     CheckR,
@@ -6,32 +6,14 @@ import {
     SuspenseLoadCheckAR,
     SuspenseLoadCheckR,
 } from "./check";
-import { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
-import {
+export { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
+export {
     CreateNameWorkFeatures,
     CreateUnitForm,
     EditNameWorkFeatures,
 } from "./forms";
-import { ListUnits } from "./list";
-import { LeftMenu } from "./menu";
-import { CreateAndEditListNameWork } from "./nameWork";
-import { CreateObjectFeatures, ListInfiniteShortFeatures } from "./objects";
-
-export {
-    CheckA,
-    CheckAR,
-    CheckR,
-    CreateAndEditListNameWork,
-    CreateNameWorkFeatures,
-    CreateObjectFeatures,
-    CreateUnitForm,
-    EditNameWorkFeatures,
-    FormLoginFeatures,
-    FormRegistrationFeatures,
-    LeftMenu,
-    ListInfiniteShortFeatures,
-    ListUnits,
-    SuspenseLoadCheckA,
-    SuspenseLoadCheckAR,
-    SuspenseLoadCheckR,
-};
+export { ListUnits } from "./list";
+export { LeftMenu } from "./menu";
+export { CreateAndEditListNameWork } from "./nameWork";
+export { CreateObjectFeatures, ListInfiniteShortFeatures } from "./objects";
+export { ProviderFeatures } from "./providerFeatures";

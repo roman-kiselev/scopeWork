@@ -21,12 +21,14 @@ export {
     OneShortObject,
 } from "./objects";
 export { OrderBasedOn } from "./orderBasedOn";
+export { CreateProvider } from "./providers";
 export { CreateScopeWork, EditScopeWork, ListScopeWork } from "./scopeWork";
 export {
     OneScopeWorkForEdit,
     OneScopeWorkForEditQuick,
 } from "./scopeWorkForHome";
 export { SimpleOrder } from "./simpleOrder";
-export { StorageDescriptionShort } from "./storage";
+export { AddNameInStorage, StorageDescriptionShort } from "./storage";
+export { CreateTransportCompany } from "./transportCompany";
 export { FormUnit } from "./units";
 export { ListUsers, OneUserForm } from "./users";

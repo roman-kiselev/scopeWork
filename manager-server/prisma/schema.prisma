@@ -33,6 +33,7 @@ model Providers {
 
 model TransportCompanyToProvider {
   id                 Int              @id @unique @default(autoincrement())
+  default            Boolean          @default(false)
   transportCompanyId Int
   providersId        Int
   providers          Providers        @relation(fields: [providersId], references: [id])

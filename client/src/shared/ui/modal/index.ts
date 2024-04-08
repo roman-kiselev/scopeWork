@@ -1,3 +1,4 @@
+import EmptyModal from "./EmptyModal";
 import ModalDownloadScopework from "./ModalDownloadScopework";
 
-export { ModalDownloadScopework };
+export { EmptyModal, ModalDownloadScopework };
