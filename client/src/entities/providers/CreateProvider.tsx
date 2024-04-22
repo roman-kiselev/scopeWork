@@ -8,7 +8,7 @@ const { Option } = Select;
 interface IForm {
     name: string;
     address: string;
-    transportCompany: number[];
+    transportCompanyId: number[];
     transportCompanyDefault: number;
 }
 
@@ -27,7 +27,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
     const [form] = useForm<IForm>();
     const dataForm: IForm = useWatch([], form);
     useEffect(() => {
-        const selectedData = form.getFieldValue("transportCompany");
+        const selectedData = form.getFieldValue("transportCompanyId");
         let dataForDefault = [];
         if (selectedData) {
             for (let i = 0; i < selectedData.length; i++) {
@@ -57,6 +57,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
     }
     const handleCreate = () => {
         console.log(dataForm);
+        createProvider(dataForm);
     };
 
     return (
@@ -91,7 +92,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
                     <Row>
                         <Col style={{ width: "70%" }}>
                             <Form.Item
-                                name="transportCompany"
+                                name="transportCompanyId"
                                 label="Выбор транспортной компании"
                             >
                                 <Select
@@ -112,7 +113,10 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
                     </Row>
 
                     {stateSelect.length > 0 && (
-                        <Form.Item name="defaultTk" label="ТК по умолчанию">
+                        <Form.Item
+                            name="transportCompanyDefault"
+                            label="ТК по умолчанию"
+                        >
                             <Select placeholder="Выберите ТК по умолчанию">
                                 {stateSelect.map((item) => (
                                     <Option key={item.id} value={item.id}>

@@ -50,11 +50,7 @@ const Routing = () => {
                     path="orders/*"
                     element={
                         <SuspenseLoadCheckR
-                            roles={[
-                                RoleString.USER,
-                                RoleString.ADMIN,
-                                RoleString.MASTER,
-                            ]}
+                            roles={[RoleString.ADMIN, RoleString.MASTER]}
                         >
                             <OrdersRouter />
                         </SuspenseLoadCheckR>
@@ -69,6 +65,7 @@ const Routing = () => {
                                 RoleString.MASTER,
                                 RoleString.ADMIN,
                                 RoleString.MANAGER,
+                                RoleString.DRIVER,
                             ]}
                         >
                             <StorageRouter />

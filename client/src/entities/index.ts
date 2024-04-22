@@ -28,7 +28,11 @@ export {
     OneScopeWorkForEditQuick,
 } from "./scopeWorkForHome";
 export { SimpleOrder } from "./simpleOrder";
-export { AddNameInStorage, StorageDescriptionShort } from "./storage";
+export {
+    AddNameInStorage,
+    OrderReceipt,
+    StorageDescriptionShort,
+} from "./storage";
 export { CreateTransportCompany } from "./transportCompany";
 export { FormUnit } from "./units";
 export { ListUsers, OneUserForm } from "./users";

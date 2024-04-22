@@ -6,7 +6,7 @@ import { mainManagerApi } from "../main";
 
 export const transportCompanyApi = mainManagerApi.injectEndpoints({
     endpoints: (builder) => ({
-        getAll: builder.query<ITransportCompany[] | [], void>({
+        getAllTk: builder.query<ITransportCompany[] | [], void>({
             query: () => ({
                 url: "/transport-company",
                 method: "GET",

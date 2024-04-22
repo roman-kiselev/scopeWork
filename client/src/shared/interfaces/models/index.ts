@@ -77,6 +77,12 @@ export type {
 } from "./transportCompany";
 
 export type {
+    IDataOrderReceipt,
+    IEditRowByName,
+    IOrderReceipt,
+    IOrderSlice,
+} from "./orders";
+export type {
     ICreateProviderDto,
     ICreateProviderWithTkDto,
     IProvider,

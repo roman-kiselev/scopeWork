@@ -33,7 +33,7 @@ const LeftMenu = () => {
         getItem(
             <Link to="/orders">Заказы</Link>,
             "orders",
-            [RoleString.USER, RoleString.MASTER, RoleString.ADMIN],
+            [RoleString.MASTER, RoleString.ADMIN],
             rolesState,
             <AppstoreAddOutlined />
         ),
@@ -49,7 +49,12 @@ const LeftMenu = () => {
         getItem(
             <Link to="/storage">Склад</Link>,
             "storage",
-            [RoleString.MANAGER, RoleString.MASTER, RoleString.ADMIN],
+            [
+                RoleString.MANAGER,
+                RoleString.MASTER,
+                RoleString.ADMIN,
+                RoleString.DRIVER,
+            ],
             rolesState,
             <BankOutlined />
         ),

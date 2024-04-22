@@ -11,6 +11,12 @@ type T0<T> = T extends IStorageAndUsersAndObjects
 
 export const storageApi = mainManagerApi.injectEndpoints({
     endpoints: (builder) => ({
+        getAllStorage: builder.query<IStorageAndUsersAndObjects[], void>({
+            query: () => ({
+                url: "/storage",
+                method: "GET",
+            }),
+        }),
         createStorage: builder.mutation<any, ICreateStorageDto>({
             query: (data) => ({
                 url: "/storage",
@@ -32,13 +38,6 @@ export const storageApi = mainManagerApi.injectEndpoints({
         getOneById: builder.query<IStorageAndUsersAndObjects, { id: number }>({
             query: ({ id }) => ({
                 url: `storage/${id}`,
-                method: "GET",
-            }),
-        }),
-
-        getAll: builder.query<IStorageAndUsersAndObjects[], void>({
-            query: () => ({
-                url: "/storage",
                 method: "GET",
             }),
         }),

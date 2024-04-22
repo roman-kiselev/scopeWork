@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router";
 import CreateStoragePage from "./CreateStoragePage";
 import MainStoragePage from "./MainStoragePage";
-import AddNameInStoragePage from "./addNameInStorage/AddNameInStoragePage";
 import { ListStorage } from "./listStorage";
 import { OneStoragePage } from "./oneStorage";
+import { OrderReceiptPage } from "./orderReceipt";
 
 const StorageRouter = () => {
     return (
@@ -14,7 +14,7 @@ const StorageRouter = () => {
             <Route path="/listStorage/*" element={<ListStorage />} />
             <Route
                 path="/add-name-in-storage/*"
-                element={<AddNameInStoragePage />}
+                element={<OrderReceiptPage />}
             />
         </Routes>
     );

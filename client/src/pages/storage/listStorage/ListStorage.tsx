@@ -21,7 +21,8 @@ const ListStorage = () => {
         isSuccess,
         isError,
         isLoading,
-    } = storageApi.useGetAllQuery();
+    } = storageApi.useGetAllStorageQuery();
+    console.log(listStorage);
 
     const columns: TableProps<IStorageAndUsersAndObjectsForTable>["columns"] = [
         {
@@ -79,17 +80,25 @@ const ListStorage = () => {
             ),
         },
     ];
-
-    const data = (listStorage ?? []).map((item) => {
-        return {
-            ...item,
-            key: item.idStorage.toString(),
-        };
-    });
-
     if (isLoading) {
         return <Spin />;
     }
+    // const data = (listStorage ?? []).map((item) => {
+    //     return {
+    //         ...item,
+    //         key: item.idStorage.toString(),
+    //     };
+    // });
+
+    const data =
+        listStorage && listStorage !== undefined
+            ? listStorage.map((item) => {
+                  return {
+                      key: item.idStorage.toString(),
+                      ...item,
+                  };
+              })
+            : [];
 
     return (
         <Row>

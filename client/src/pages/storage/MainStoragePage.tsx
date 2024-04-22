@@ -59,7 +59,7 @@ const MainStoragePage = () => {
                 <Col>
                     <Card
                         size="small"
-                        title="Пополнение"
+                        title="Поступления"
                         extra={<Link to="add-name-in-storage">Перейти</Link>}
                         style={{ width: 300 }}
                     >

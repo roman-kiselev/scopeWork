@@ -61,5 +61,12 @@ export const nameWorkApi = mainApi.injectEndpoints({
                 body: data,
             }),
         }),
+
+        findNameWork: builder.query<any, { text: string }>({
+            query: ({ text }) => ({
+                url: `/name-work/findByName/?text=${text}`,
+                method: "GET",
+            }),
+        }),
     }),
 });

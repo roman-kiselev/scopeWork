@@ -7,6 +7,6 @@ export interface IStorageAndUsersAndObjects {
     idStorage: number;
     name: string;
     address: string;
-    users: IUserWitoutTypeWork[];
-    objects: IObjectShort[];
+    users: IUserWitoutTypeWork[] | [];
+    objects: IObjectShort[] | [];
 }

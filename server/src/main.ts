@@ -51,10 +51,20 @@ async function bootstrap() {
     name: 'dev',
     description: 'Разработчик',
   };
+  const roleManagerDto: CreateRoleDto = {
+    name: 'manager',
+    description: 'Менеджер',
+  };
+  const roleDriverDto: CreateRoleDto = {
+    name: 'driver',
+    description: 'Водитель',
+  };
   await rolesService.createRole(roleDto);
   await rolesService.createRole(roleUserDto);
   await rolesService.createRole(roleMasterDto);
   await rolesService.createRole(roleDevDto);
+  await rolesService.createRole(roleManagerDto);
+  await rolesService.createRole(roleDriverDto);
   const authService = app.get(AuthService);
   // await typeWorkService.createTypeWork({
   //   name: 'АСКУЭ',

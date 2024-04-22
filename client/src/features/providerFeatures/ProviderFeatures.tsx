@@ -15,7 +15,7 @@ const ProviderFeatures = () => {
         isError: isErrorTransportCompany,
         isLoading: isLoadingTransportCompany,
         refetch: refetchTransportCompany,
-    } = transportCompanyApi.useGetAllQuery();
+    } = transportCompanyApi.useGetAllTkQuery();
 
     const [
         createTransportCompany,
@@ -34,6 +34,7 @@ const ProviderFeatures = () => {
         setStateModal(false);
     };
     const handleFinish = () => {
+        console.log(dataFormTk);
         createTransportCompany(dataFormTk);
     };
     if (isSuccessCreateTk) {
