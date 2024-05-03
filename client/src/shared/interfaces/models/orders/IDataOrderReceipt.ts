@@ -1,11 +1,11 @@
-import { INameWorkCreateResponse } from "../nameWork";
+import { INameWork } from "../nameWork";
 import { IProvider } from "../providers";
 
 export interface IDataOrderReceipt {
     key: string;
-    index: string;
+    index: number;
     id: number;
-    name: INameWorkCreateResponse | null;
+    name: INameWork | null;
     provider: IProvider | null;
     quantity: string;
     price: string;

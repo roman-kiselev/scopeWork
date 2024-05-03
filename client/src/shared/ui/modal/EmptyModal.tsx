@@ -6,6 +6,7 @@ interface EmptyModalProps {
     open: boolean;
     handleCancel: () => void;
     title: string;
+    isSpace?: boolean;
 }
 
 const EmptyModal: React.FC<EmptyModalProps> = ({
@@ -13,6 +14,7 @@ const EmptyModal: React.FC<EmptyModalProps> = ({
     open,
     handleCancel,
     title,
+    isSpace = true,
 }) => {
     return (
         <Modal
@@ -21,8 +23,9 @@ const EmptyModal: React.FC<EmptyModalProps> = ({
             onOk={() => {}}
             onCancel={handleCancel}
             footer={<></>}
+            width={"80%"}
         >
-            <Space>{children}</Space>
+            {isSpace ? <Space>{children}</Space> : children}
         </Modal>
     );
 };

@@ -29,6 +29,7 @@ model Providers {
   address                    String
   TransportCompanyToProvider TransportCompanyToProvider[]
   transportCompany           TransportCompany[]           @relation("ProvidersToTransportCompany")
+  OrderReceiptName           OrderReceiptName[]
 }
 
 model TransportCompanyToProvider {
@@ -54,6 +55,7 @@ model Storage {
   address       String
   ObjectStorage ObjectStorage[]
   UserStorage   UserStorage[]
+  OrderReceipt  OrderReceipt[]
 }
 
 model ObjectStorage {
@@ -68,4 +70,26 @@ model UserStorage {
   userId    Int
   storageId Int
   storage   Storage @relation(fields: [storageId], references: [id])
+}
+
+model OrderReceipt {
+  id               Int                @id @unique @default(autoincrement())
+  state            Boolean            @default(false)
+  userCreateId     Int
+  storageId        Int
+  storage          Storage            @relation(fields: [storageId], references: [id])
+  OrderReceiptName OrderReceiptName[]
+}
+
+model OrderReceiptName {
+  id             BigInt       @id @unique @default(autoincrement())
+  index          Int
+  nameWorkId     Int
+  name           String
+  quantity       Float
+  price          Float
+  orderReceiptId Int
+  orderReceipts  OrderReceipt @relation(fields: [orderReceiptId], references: [id])
+  providerId     Int
+  provider       Providers    @relation(fields: [providerId], references: [id])
 }

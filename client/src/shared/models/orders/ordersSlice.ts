@@ -3,16 +3,18 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
     IDataOrderReceipt,
     IEditRowByName,
-    INameWorkCreateResponse,
+    INameWork,
     IOrderSlice,
     IProvider,
 } from "src/shared/interfaces/models";
 
 const initialState: IOrderSlice = {
     orderReceipt: {
-        data: [],
         numberOrder: 0,
-        name: "",
+        storage: null,
+        itemIndex: 0,
+        data: [],
+        stateOrder: false,
         total: 0,
         isLoading: false,
         isError: false,
@@ -30,13 +32,20 @@ export const ordersSlice = createSlice({
             state.isLoading = true;
             const row = {
                 key: (state.orderReceipt.data.length + 1).toString(),
-                index: (state.orderReceipt.data.length + 1).toString(),
+                index: state.orderReceipt.itemIndex + 1,
                 id: 0,
                 name: null,
                 provider: null,
-                quantity: "",
-                price: "",
+                quantity: "1",
+                price: "0",
             } as IDataOrderReceipt;
+            state.orderReceipt.itemIndex += 1;
+            const data = state.orderReceipt.data.map((item, index) => {
+                return {
+                    ...item,
+                    key: (index + 1).toString(),
+                };
+            });
             state.orderReceipt.data = [...state.orderReceipt.data, row];
             if (state.orderReceipt.data.length > 0) {
                 state.orderReceipt.isLoading = false;
@@ -48,7 +57,7 @@ export const ordersSlice = createSlice({
             action: PayloadAction<IEditRowByName<IDataOrderReceipt>>
         ) => {
             let { nameField, value, key } = action.payload;
-            console.log(nameField, value, key);
+
             const findedIndex = orderReceipt.data.findIndex(
                 (item) => item.key === key
             );
@@ -57,7 +66,7 @@ export const ordersSlice = createSlice({
                 case "name":
                     if (findedIndex !== -1) {
                         orderReceipt.data[findedIndex].name =
-                            value as INameWorkCreateResponse;
+                            value as INameWork;
                     }
                     break;
                 case "provider":
@@ -83,9 +92,12 @@ export const ordersSlice = createSlice({
         },
         deleteRow: (state, action: PayloadAction<string>) => {
             const key = action.payload;
-            state.orderReceipt.data = state.orderReceipt.data.filter(
+            const filterData = state.orderReceipt.data.filter(
                 (item) => item.key !== key
             );
+            state.orderReceipt.data = filterData.map((item, index) => {
+                return { ...item, key: (index + 1).toString() };
+            });
         },
     },
 });

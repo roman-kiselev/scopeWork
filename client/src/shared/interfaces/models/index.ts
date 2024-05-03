@@ -11,6 +11,7 @@ export type {
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
     ICreateNameWorkForList,
+    INameWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
     INameWorkWithNameList,

@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from "src/shared/hooks";
 import { IDataOrderReceipt } from "src/shared/interfaces/models";
 import { addNewRow, deleteRow } from "src/shared/models";
 import { EmptyModal } from "src/shared/ui";
+import ModalFindName from "../modal/ModalFindName";
 import CellName from "./row/CellName";
 import CellPrice from "./row/CellPrice";
 import CellProvider from "./row/CellProvider";
@@ -15,12 +16,17 @@ const FormTableName = () => {
     const dispatch = useAppDispatch();
     const {
         data,
-        name,
         total,
         numberOrder,
         isLoading: isLoadingData,
     } = useAppSelector((store) => store.orders.orderReceipt);
     const [stateModal, setStateModal] = useState<boolean>(false);
+    const [cellKey, setCellKey] = useState<string>("");
+    const handleViewModal = (key: string) => {
+        setCellKey(key);
+        setStateModal(true);
+    };
+
     const { isLoading: isLoadingOrders } = useAppSelector(
         (store) => store.orders
     );
@@ -47,8 +53,8 @@ const FormTableName = () => {
     const columns: TableProps<IDataOrderReceipt>["columns"] = [
         {
             title: "№",
-            dataIndex: "index",
-            key: "index",
+            dataIndex: "key",
+            key: "key",
             render: (text) => <a>{text}</a>,
             width: "5%",
         },
@@ -60,7 +66,8 @@ const FormTableName = () => {
                 <CellName
                     key={render.key}
                     cellKey={render.key}
-                    handleViewModal={() => setStateModal(true)}
+                    dataName={render.name}
+                    handleViewModal={() => handleViewModal(render.key)}
                 />
             ),
         },
@@ -128,13 +135,17 @@ const FormTableName = () => {
 
     return (
         <Row style={{ width: "100%" }}>
-            <Row>
+            <Row style={{ width: "100%" }}>
                 <EmptyModal
                     handleCancel={() => setStateModal(false)}
                     open={stateModal}
                     title="Поиск"
+                    isSpace={false}
                 >
-                    fdf
+                    <ModalFindName
+                        cellKey={cellKey}
+                        handleCancel={() => setStateModal(false)}
+                    />
                 </EmptyModal>
             </Row>
             <Button

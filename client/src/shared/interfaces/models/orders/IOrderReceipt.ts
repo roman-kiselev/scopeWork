@@ -1,9 +1,12 @@
+import { IStorage } from "../storage";
 import { IDataOrderReceipt } from "./IDataOrderReceipt";
 
 export interface IOrderReceipt {
+    itemIndex: number;
+    stateOrder: boolean;
     numberOrder: number;
-    name: string;
     data: IDataOrderReceipt[] | [];
+    storage: IStorage | null;
     total: number;
     isLoading: boolean;
     isError: boolean;
