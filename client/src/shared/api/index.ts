@@ -3,6 +3,7 @@ export { listNameWorkApi } from "./listNameWork";
 export { mainApi, mainManagerApi, objectMainApi } from "./main";
 export { nameWorkApi } from "./nameWork";
 export { objectsApi } from "./objects";
+export { orderReceiptApi } from "./orderReceipt";
 export { providerApi } from "./provider";
 export { roleApi } from "./roles";
 export { scopeWorkApi } from "./scopeWork";

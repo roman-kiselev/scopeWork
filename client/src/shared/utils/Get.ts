@@ -31,3 +31,7 @@ export const getDateWithTime = (createDate: Date) => {
         dateTo: `${dateDay}.${dateMonthFrom}.${year} 23:59:59`,
     };
 };
+
+export function getItem<T>(data: T[], id: number, field: keyof T) {
+    return data.find((item: T) => item[field] === id);
+}

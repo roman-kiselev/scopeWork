@@ -1,5 +1,5 @@
 import { HomeOutlined } from "@ant-design/icons";
-import { Breadcrumb, Card, Col, Row } from "antd";
+import { Breadcrumb, Card, Col, Divider, Row, Space } from "antd";
 import { Link } from "react-router-dom";
 
 const MainStoragePage = () => {
@@ -60,7 +60,13 @@ const MainStoragePage = () => {
                     <Card
                         size="small"
                         title="Поступления"
-                        extra={<Link to="add-name-in-storage">Перейти</Link>}
+                        extra={
+                            <Space>
+                                <Link to="add-name-in-storage">Создать</Link>
+                                <Divider type="vertical" />
+                                <Link to="list-name-in-storage">Список</Link>
+                            </Space>
+                        }
                         style={{ width: 300 }}
                     >
                         <p>Добавить на склад</p>

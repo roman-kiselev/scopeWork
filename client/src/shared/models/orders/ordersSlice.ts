@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { orderReceiptApi } from "src/shared/api";
 
 import {
     IDataOrderReceipt,
@@ -6,7 +7,9 @@ import {
     INameWork,
     IOrderSlice,
     IProvider,
+    IStorage,
 } from "src/shared/interfaces/models";
+import CreateOrderReceipt from "./CreateOrderReceipt";
 
 const initialState: IOrderSlice = {
     orderReceipt: {
@@ -99,8 +102,27 @@ export const ordersSlice = createSlice({
                 return { ...item, key: (index + 1).toString() };
             });
         },
+
+        setStorage: (state, action: PayloadAction<IStorage>) => {
+            state.orderReceipt.storage = action.payload;
+        },
+    },
+    extraReducers: (builder) => {
+        builder.addMatcher(
+            orderReceiptApi.endpoints.createOrderReceipt.matchPending,
+            CreateOrderReceipt.pending
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.createOrderReceipt.matchFulfilled,
+            CreateOrderReceipt.fulfilled
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.createOrderReceipt.matchRejected,
+            CreateOrderReceipt.rejected
+        );
     },
 });
 
 export const ordersReducer = ordersSlice.reducer;
-export const { addNewRow, editRow, deleteRow } = ordersSlice.actions;
+export const { addNewRow, editRow, deleteRow, setStorage } =
+    ordersSlice.actions;

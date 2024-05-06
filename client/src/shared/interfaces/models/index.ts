@@ -14,6 +14,7 @@ export type {
     INameWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
+    INameWorkShort,
     INameWorkWithNameList,
 } from "./nameWork";
 export type {
@@ -89,3 +90,10 @@ export type {
     IProvider,
     IProviderWithTk,
 } from "./providers";
+
+export type {
+    ICreateOrderReceiptDto,
+    IOrderReceiptResult,
+} from "./order-receipt";
+
+export type { IOrderReceiptCreateName } from "./order-receipt-name";

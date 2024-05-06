@@ -3,13 +3,13 @@ import { Button, Col, Row, Space, Typography } from "antd";
 import React, { useState } from "react";
 import { nameWorkApi } from "src/shared/api";
 import { useAppDispatch, useAppSelector } from "src/shared/hooks";
-import { INameWork } from "src/shared/interfaces";
+import { INameWorkShort } from "src/shared/interfaces";
 import { editRow } from "src/shared/models";
 
 interface ICellNameProps {
     cellKey: string;
     handleViewModal: () => void;
-    dataName: INameWork | null;
+    dataName: INameWorkShort | null;
 }
 
 const mockVal = (str: string, repeat = 1) => ({

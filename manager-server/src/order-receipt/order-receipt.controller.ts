@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CreateOrderReceiptDto } from './dto/create-order-receipt.dto';
 import { OrderReceiptService } from './order-receipt.service';
 
@@ -6,8 +6,14 @@ import { OrderReceiptService } from './order-receipt.service';
 export class OrderReceiptController {
     constructor(public orderReceiptService: OrderReceiptService) {}
 
+    @Get()
+    async getAll() {
+        return this.orderReceiptService.getAll();
+    }
+
     @Post()
     async create(@Body() dto: CreateOrderReceiptDto) {
-        return await this.orderReceiptService.create(dto);
+        console.log(dto);
+        return this.orderReceiptService.create(dto);
     }
 }

@@ -55,7 +55,7 @@ const FormTableName = () => {
             title: "№",
             dataIndex: "key",
             key: "key",
-            render: (text) => <a>{text}</a>,
+            render: (text) => <p>{text}</p>,
             width: "5%",
         },
         {
@@ -95,26 +95,6 @@ const FormTableName = () => {
             width: "12%",
             render: (text) => <CellPrice />,
         },
-        // {
-        //     title: "Tags",
-        //     key: "tags",
-        //     dataIndex: "tags",
-        //     render: (_, { tags }) => (
-        //         <>
-        //             {tags.map((tag) => {
-        //                 let color = tag.length > 5 ? "geekblue" : "green";
-        //                 if (tag === "loser") {
-        //                     color = "volcano";
-        //                 }
-        //                 return (
-        //                     <Tag color={color} key={tag}>
-        //                         {tag.toUpperCase()}
-        //                     </Tag>
-        //                 );
-        //             })}
-        //         </>
-        //     ),
-        // },
         {
             title: "Action",
             key: "action",

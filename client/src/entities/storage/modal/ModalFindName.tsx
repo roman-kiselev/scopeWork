@@ -2,7 +2,7 @@ import { Button, Divider, Input, Row, Table, TableProps } from "antd";
 import { useState } from "react";
 import { nameWorkApi } from "src/shared/api";
 import { useAppDispatch, useAppSelector } from "src/shared/hooks";
-import { INameWork } from "src/shared/interfaces";
+import { INameWork, INameWorkShort } from "src/shared/interfaces";
 import { editRow } from "src/shared/models";
 
 interface IModalFindNameProps {
@@ -38,13 +38,9 @@ const ModalFindName: React.FC<IModalFindNameProps> = ({
     };
 
     const handleClick = (data: INameWorkForTable) => {
-        const dataName: INameWork = {
+        const dataName: INameWorkShort = {
             id: data.id,
             name: data.name,
-            unitId: data.unitId,
-            createdAt: data.createdAt,
-            deletedAt: data.deletedAt,
-            updatedAt: data.updatedAt,
         };
         dispatch(editRow({ key: cellKey, nameField: "name", value: dataName }));
         handleCancel();
