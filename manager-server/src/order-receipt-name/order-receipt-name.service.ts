@@ -8,9 +8,10 @@ export class OrderReceiptNameService {
 
     async createOne(dto: CreateOrderReceiptNameDto) {
         try {
+            console.log(dto);
             const data = await this.clientDatabase.orderReceiptName.create({
                 data: {
-                    index: dto.index,
+                    indexPosition: dto.index,
                     nameWorkId: dto.nameWorkId,
                     name: dto.name,
                     quantity: dto.quantity,
@@ -19,9 +20,12 @@ export class OrderReceiptNameService {
                     providerId: dto.providerId,
                 },
             });
+            console.log(`This data ${data}`);
+            console.log(data);
 
             return data;
         } catch (e) {
+            console.log(e);
             if (e instanceof HttpException) {
                 throw e;
             }

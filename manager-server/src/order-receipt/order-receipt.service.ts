@@ -1,11 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { OrderReceiptNameService } from 'src/order-receipt-name/order-receipt-name.service';
 import { CreateOrderReceiptDto } from './dto/create-order-receipt.dto';
 import OrderReceiptCreate from './helpers/OrderReceiptCreate';
 
 @Injectable()
 export class OrderReceiptService {
-    constructor(private clientDatabase: DatabaseService) {}
+    constructor(
+        private clientDatabase: DatabaseService,
+        public orderReceiptName: OrderReceiptNameService,
+    ) {}
 
     async create(dto: CreateOrderReceiptDto) {
         try {
@@ -16,6 +20,7 @@ export class OrderReceiptService {
                         id: newDto.id,
                     },
                 });
+
             console.log(findedOrder);
             if (newDto.id === 0 || findedOrder === null) {
                 const data = await this.clientDatabase.orderReceipt.create({
@@ -26,7 +31,11 @@ export class OrderReceiptService {
                     },
                 });
                 // console.log(newDto);
-                // console.log(data);
+                console.log(data);
+                const dataCreateName = await this.orderReceiptName.createOne({
+                    ...newDto.names[0],
+                    orderReceiptId: data.id,
+                });
 
                 // Получаем id
                 // Присваиваем имена
@@ -46,11 +55,32 @@ export class OrderReceiptService {
         }
     }
 
-    async getOne(dto: any) {}
+    async getOne(id: string) {
+        try {
+            const data = await this.clientDatabase.orderReceipt.findUnique({
+                where: {
+                    id: Number(id),
+                },
+                include: { storage: true },
+            });
+
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
 
     async getAll() {
         try {
-            const data = await this.clientDatabase.orderReceipt.findMany();
+            const data = await this.clientDatabase.orderReceipt.findMany({
+                include: { storage: true },
+            });
             return data;
         } catch (e) {
             if (e instanceof HttpException) {

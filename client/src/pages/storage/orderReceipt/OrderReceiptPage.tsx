@@ -1,7 +1,18 @@
-import { OrderReceipt } from "src/entities";
+import { useParams } from "react-router";
+import { CreateOrderReceipt, UpdateOrderReceipt } from "src/entities";
 
 const OrderReceiptPage = () => {
-    return <OrderReceipt />;
+    const { id } = useParams();
+
+    return (
+        <>
+            {id !== undefined ? (
+                <UpdateOrderReceipt id={id} />
+            ) : (
+                <CreateOrderReceipt />
+            )}
+        </>
+    );
 };
 
 export default OrderReceiptPage;

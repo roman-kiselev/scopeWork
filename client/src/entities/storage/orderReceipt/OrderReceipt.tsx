@@ -1,101 +1,77 @@
-import { Button, Col, Divider, Row, Select, Space, Spin } from "antd";
-import { orderReceiptApi, storageApi } from "src/shared/api";
-import { useAppDispatch, useAppSelector } from "src/shared/hooks";
-import {
-    ICreateOrderReceiptDto,
-    IOrderReceipt,
-    IOrderReceiptCreateName,
-    IStorage,
-} from "src/shared/interfaces";
-import { setStorage } from "src/shared/models";
-import { getItem } from "src/shared/utils";
+import { Button, Col, Divider, Row, Select, Space } from "antd";
+import React from "react";
+import { useAppSelector } from "src/shared/hooks";
 import FormTableName from "../form/FormTableName";
 
-const prepareData = (
-    data: IOrderReceipt,
-    userId: number
-): ICreateOrderReceiptDto => {
-    // const names = data.data.map((item) => {
-    //     return {
-    //         id: item.id,
-    //         index: item.index,
-    //         nameWorkId: item.name.id ? item.name.id : 0,
-    //         name: item.name ? item.name.name : "",
-    //     } as IOrderReceiptCreateName;
-    // });
-    const names: IOrderReceiptCreateName[] = [];
+// const prepareData = (
+//     data: IOrderReceipt,
+//     userId: number
+// ): ICreateOrderReceiptDto => {
+//     // const names = data.data.map((item) => {
+//     //     return {
+//     //         id: item.id,
+//     //         index: item.index,
+//     //         nameWorkId: item.name.id ? item.name.id : 0,
+//     //         name: item.name ? item.name.name : "",
+//     //     } as IOrderReceiptCreateName;
+//     // });
+//     const names: IOrderReceiptCreateName[] = [];
 
-    data.data.forEach((item) => {
-        if (item.name) {
-            names.push({
-                id: item.id,
-                index: item.index,
-                nameWorkId: item.name.id ? item.name.id : 0,
-                name: item.name ? item.name.name : "",
-                quantity: Number(item.quantity),
-                price: Number(item.price),
-                orderReceiptId: item.id,
-                providerId: item.provider ? item.provider.id : 0,
-            } as IOrderReceiptCreateName);
-        }
-    });
+//     data.data.forEach((item) => {
+//         if (item.name) {
+//             names.push({
+//                 id: item.id,
+//                 index: item.index,
+//                 nameWorkId: item.name.id ? item.name.id : 0,
+//                 name: item.name ? item.name.name : "",
+//                 quantity: Number(item.quantity),
+//                 price: Number(item.price),
+//                 orderReceiptId: item.id,
+//                 providerId: item.provider ? item.provider.id : 0,
+//             } as IOrderReceiptCreateName);
+//         }
+//     });
 
-    const finishData: ICreateOrderReceiptDto = {
-        id: data.numberOrder,
-        storageId: data.storage?.id ?? 0,
-        userCreateId: userId,
-        orderReceiptNames: JSON.stringify(names),
-    };
+//     const finishData: ICreateOrderReceiptDto = {
+//         id: data.numberOrder,
+//         storageId: data.storage?.id ?? 0,
+//         userCreateId: userId,
+//         orderReceiptNames: JSON.stringify(names),
+//     };
 
-    return finishData;
-};
+//     return finishData;
+// };
 
-const OrderReceipt = () => {
-    const dispatch = useAppDispatch();
-    const { id: userId } = useAppSelector((store) => store.auth);
-    const { data: listStorage, isLoading: isLoadingStorage } =
-        storageApi.useGetAllShortQuery();
-    const [createOrderReceipt, { isLoading: isLoadingCreateOrderReceipt }] =
-        orderReceiptApi.useCreateOrderReceiptMutation();
+interface IOrderReceiptProps {
+    handleChangeSelect: (value: number) => void;
+    dataForSelect: any[];
+    handleSave: () => void;
+    defaultValue?: number;
+}
 
-    const { orderReceipt } = useAppSelector((store) => store.orders);
-    if (isLoadingStorage) {
-        return <Spin />;
-    }
-
-    const handleSave = () => {
-        if (userId) {
-            const dto = prepareData(orderReceipt, userId);
-            createOrderReceipt(dto);
-        }
-    };
-
-    const handleChangeSelect = (value: number) => {
-        if (listStorage) {
-            const item = getItem<IStorage>(listStorage, value, "id");
-            if (item) {
-                dispatch(setStorage(item));
-            }
-        }
-    };
-
-    const dataForSelect =
-        listStorage && listStorage !== undefined
-            ? listStorage.map((item) => {
-                  return {
-                      value: item.id,
-                      label: `${item.name} (${item.address})`,
-                  };
-              })
-            : [];
+const OrderReceipt: React.FC<IOrderReceiptProps> = ({
+    dataForSelect,
+    handleChangeSelect,
+    handleSave,
+    defaultValue = 0,
+}) => {
+    const { numberOrder } = useAppSelector(
+        (store) => store.orders.orderReceipt
+    );
+    dataForSelect = [{ value: 0, label: "Выбор склада" }, ...dataForSelect];
 
     return (
         <Row style={{ margin: 10, flexDirection: "column" }}>
-            <h3 style={{ margin: 10 }}>Пополнение склада</h3>
+            <h3 style={{ margin: 10 }}>
+                {numberOrder === 0
+                    ? "Создание заказа"
+                    : `Заказ №${numberOrder}`}
+            </h3>
             <Row>
                 <Space>
                     <Col style={{ width: 300 }}>
                         <Select
+                            defaultValue={defaultValue}
                             style={{ width: "100%" }}
                             onChange={handleChangeSelect}
                             options={dataForSelect}

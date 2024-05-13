@@ -1,3 +1,5 @@
+import CreateOrderReceipt from "./CreateOrderReceipt";
 import OrderReceipt from "./OrderReceipt";
+import UpdateOrderReceipt from "./UpdateOrderReceipt";
 
-export { OrderReceipt };
+export { CreateOrderReceipt, OrderReceipt, UpdateOrderReceipt };

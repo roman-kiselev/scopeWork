@@ -1,9 +1,13 @@
 import { Input, Row } from "antd";
 
-const CellPrice = () => {
+interface ICellPriceProps {
+    price: string;
+}
+
+const CellPrice: React.FC<ICellPriceProps> = ({ price }) => {
     return (
         <Row>
-            <Input />
+            <Input value={price} />
         </Row>
     );
 };

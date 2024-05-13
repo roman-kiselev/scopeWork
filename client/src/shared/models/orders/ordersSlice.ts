@@ -10,6 +10,7 @@ import {
     IStorage,
 } from "src/shared/interfaces/models";
 import CreateOrderReceipt from "./CreateOrderReceipt";
+import GetOneOrderReceipt from "./GetOneOrderReceipt";
 
 const initialState: IOrderSlice = {
     orderReceipt: {
@@ -40,7 +41,7 @@ export const ordersSlice = createSlice({
                 name: null,
                 provider: null,
                 quantity: "1",
-                price: "0",
+                price: "1",
             } as IDataOrderReceipt;
             state.orderReceipt.itemIndex += 1;
             const data = state.orderReceipt.data.map((item, index) => {
@@ -106,23 +107,38 @@ export const ordersSlice = createSlice({
         setStorage: (state, action: PayloadAction<IStorage>) => {
             state.orderReceipt.storage = action.payload;
         },
+
+        resetOrderReceipt: () => initialState,
     },
     extraReducers: (builder) => {
         builder.addMatcher(
             orderReceiptApi.endpoints.createOrderReceipt.matchPending,
-            CreateOrderReceipt.pending
+            new CreateOrderReceipt().pending
         );
         builder.addMatcher(
             orderReceiptApi.endpoints.createOrderReceipt.matchFulfilled,
-            CreateOrderReceipt.fulfilled
+            new CreateOrderReceipt().fulfilled
         );
         builder.addMatcher(
             orderReceiptApi.endpoints.createOrderReceipt.matchRejected,
-            CreateOrderReceipt.rejected
+            new CreateOrderReceipt().rejected
+        );
+        // Получение одного
+        builder.addMatcher(
+            orderReceiptApi.endpoints.getOneOrderReceipt.matchPending,
+            new GetOneOrderReceipt().pending
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.getOneOrderReceipt.matchFulfilled,
+            new GetOneOrderReceipt().fulfilled
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.getOneOrderReceipt.matchRejected,
+            new GetOneOrderReceipt().rejected
         );
     },
 });
 
 export const ordersReducer = ordersSlice.reducer;
-export const { addNewRow, editRow, deleteRow, setStorage } =
+export const { addNewRow, editRow, deleteRow, setStorage, resetOrderReceipt } =
     ordersSlice.actions;

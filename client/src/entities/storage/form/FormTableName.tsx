@@ -18,8 +18,10 @@ const FormTableName = () => {
         data,
         total,
         numberOrder,
+
         isLoading: isLoadingData,
     } = useAppSelector((store) => store.orders.orderReceipt);
+
     const [stateModal, setStateModal] = useState<boolean>(false);
     const [cellKey, setCellKey] = useState<string>("");
     const handleViewModal = (key: string) => {
@@ -86,14 +88,16 @@ const FormTableName = () => {
             dataIndex: "quantity",
             key: "quantity",
             width: "12%",
-            render: (text) => <CellQuantity />,
+            render: (text, render) => (
+                <CellQuantity quantity={render.quantity} />
+            ),
         },
         {
             title: "Цена",
             dataIndex: "price",
             key: "price",
             width: "12%",
-            render: (text) => <CellPrice />,
+            render: (text, render) => <CellPrice price={render.price} />,
         },
         {
             title: "Action",

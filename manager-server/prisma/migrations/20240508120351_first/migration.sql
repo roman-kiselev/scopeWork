@@ -30,6 +30,7 @@ CREATE TABLE "Providers" (
 -- CreateTable
 CREATE TABLE "TransportCompanyToProvider" (
     "id" SERIAL NOT NULL,
+    "default" BOOLEAN NOT NULL DEFAULT false,
     "transportCompanyId" INTEGER NOT NULL,
     "providersId" INTEGER NOT NULL,
 
@@ -75,6 +76,30 @@ CREATE TABLE "UserStorage" (
 );
 
 -- CreateTable
+CREATE TABLE "OrderReceipt" (
+    "id" SERIAL NOT NULL,
+    "state" BOOLEAN NOT NULL DEFAULT false,
+    "userCreateId" INTEGER NOT NULL,
+    "storageId" INTEGER NOT NULL,
+
+    CONSTRAINT "OrderReceipt_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "OrderReceiptName" (
+    "id" SERIAL NOT NULL,
+    "indexPosition" INTEGER NOT NULL,
+    "nameWorkId" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "quantity" DOUBLE PRECISION NOT NULL,
+    "price" DOUBLE PRECISION NOT NULL,
+    "orderReceiptId" INTEGER NOT NULL DEFAULT 0,
+    "providerId" INTEGER NOT NULL DEFAULT 0,
+
+    CONSTRAINT "OrderReceiptName_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "_ProvidersToTransportCompany" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -111,6 +136,12 @@ CREATE UNIQUE INDEX "ObjectStorage_id_key" ON "ObjectStorage"("id");
 CREATE UNIQUE INDEX "UserStorage_id_key" ON "UserStorage"("id");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "OrderReceipt_id_key" ON "OrderReceipt"("id");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OrderReceiptName_id_key" ON "OrderReceiptName"("id");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_ProvidersToTransportCompany_AB_unique" ON "_ProvidersToTransportCompany"("A", "B");
 
 -- CreateIndex
@@ -127,6 +158,15 @@ ALTER TABLE "ObjectStorage" ADD CONSTRAINT "ObjectStorage_storageId_fkey" FOREIG
 
 -- AddForeignKey
 ALTER TABLE "UserStorage" ADD CONSTRAINT "UserStorage_storageId_fkey" FOREIGN KEY ("storageId") REFERENCES "Storage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderReceipt" ADD CONSTRAINT "OrderReceipt_storageId_fkey" FOREIGN KEY ("storageId") REFERENCES "Storage"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderReceiptName" ADD CONSTRAINT "OrderReceiptName_orderReceiptId_fkey" FOREIGN KEY ("orderReceiptId") REFERENCES "OrderReceipt"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "OrderReceiptName" ADD CONSTRAINT "OrderReceiptName_providerId_fkey" FOREIGN KEY ("providerId") REFERENCES "Providers"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_ProvidersToTransportCompany" ADD CONSTRAINT "_ProvidersToTransportCompany_A_fkey" FOREIGN KEY ("A") REFERENCES "Providers"("id") ON DELETE CASCADE ON UPDATE CASCADE;

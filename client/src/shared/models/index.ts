@@ -28,6 +28,7 @@ export {
     editRow,
     ordersReducer,
     ordersSlice,
+    resetOrderReceipt,
     setStorage,
 } from "./orders";
 export {

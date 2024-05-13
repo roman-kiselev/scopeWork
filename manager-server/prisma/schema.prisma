@@ -82,14 +82,14 @@ model OrderReceipt {
 }
 
 model OrderReceiptName {
-  id             BigInt       @id @unique @default(autoincrement())
-  index          Int
+  id             Int           @id @unique @default(autoincrement())
+  indexPosition  Int
   nameWorkId     Int
   name           String
   quantity       Float
   price          Float
-  orderReceiptId Int
-  orderReceipts  OrderReceipt @relation(fields: [orderReceiptId], references: [id])
-  providerId     Int
-  provider       Providers    @relation(fields: [providerId], references: [id])
+  orderReceiptId Int?          @default(0)
+  orderReceipts  OrderReceipt? @relation(fields: [orderReceiptId], references: [id])
+  providerId     Int?           @default(0)
+  provider       Providers?     @relation(fields: [providerId], references: [id])
 }

@@ -4,8 +4,9 @@ import { OrderReceiptNameController } from './order-receipt-name.controller';
 import { OrderReceiptNameService } from './order-receipt-name.service';
 
 @Module({
-  controllers: [OrderReceiptNameController],
-  providers: [OrderReceiptNameService],
-  imports: [DatabaseModule],
+    controllers: [OrderReceiptNameController],
+    providers: [OrderReceiptNameService],
+    imports: [DatabaseModule],
+    exports: [OrderReceiptNameService],
 })
 export class OrderReceiptNameModule {}

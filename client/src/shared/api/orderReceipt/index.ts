@@ -6,6 +6,13 @@ import { mainManagerApi } from "../main";
 
 export const orderReceiptApi = mainManagerApi.injectEndpoints({
     endpoints: (builder) => ({
+        getOneOrderReceipt: builder.query<IOrderReceiptResult, string>({
+            query: (id) => ({
+                url: `/order-receipt/${id}`,
+                method: "GET",
+            }),
+        }),
+
         createOrderReceipt: builder.mutation<any, ICreateOrderReceiptDto>({
             query: (data) => ({
                 url: "/order-receipt",
@@ -14,10 +21,18 @@ export const orderReceiptApi = mainManagerApi.injectEndpoints({
             }),
         }),
 
-        getAllOrderReceipt: builder.query<IOrderReceiptResult, void>({
+        getAllOrderReceipt: builder.query<IOrderReceiptResult[], void>({
             query: () => ({
                 url: "/order-receipt",
                 method: "GET",
+            }),
+        }),
+
+        updateOrderReceipt: builder.mutation<any, ICreateOrderReceiptDto>({
+            query: (data) => ({
+                url: "/order-receipt",
+                method: "PUT",
+                body: data,
             }),
         }),
     }),

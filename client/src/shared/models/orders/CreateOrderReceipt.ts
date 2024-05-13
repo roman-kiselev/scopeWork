@@ -19,13 +19,14 @@ class CreateOrderReceipt
         state.orderReceipt.isSuccess = true;
         const {
             id,
-            storageId,
             userCreateId,
             orderReceiptNames,
+            storage,
             state: orderState,
         } = action.payload;
         state.orderReceipt.numberOrder = id;
         state.orderReceipt.stateOrder = orderState;
+        state.orderReceipt.storage = storage;
     };
     rejected: CaseReducer<IOrderSlice> = (state) => {
         state.orderReceipt.isError = true;
@@ -34,4 +35,4 @@ class CreateOrderReceipt
     };
 }
 
-export default new CreateOrderReceipt();
+export default CreateOrderReceipt;

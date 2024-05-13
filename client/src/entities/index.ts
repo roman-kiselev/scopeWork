@@ -30,8 +30,10 @@ export {
 export { SimpleOrder } from "./simpleOrder";
 export {
     AddNameInStorage,
+    CreateOrderReceipt,
     OrderReceipt,
     StorageDescriptionShort,
+    UpdateOrderReceipt,
 } from "./storage";
 export { CreateTransportCompany } from "./transportCompany";
 export { FormUnit } from "./units";

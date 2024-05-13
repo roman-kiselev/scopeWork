@@ -4,5 +4,6 @@ export {
     editRow,
     ordersReducer,
     ordersSlice,
+    resetOrderReceipt,
     setStorage,
 } from "./ordersSlice";

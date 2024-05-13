@@ -63,7 +63,10 @@ const MainStoragePage = () => {
                         extra={
                             <Space>
                                 <Link to="add-name-in-storage">Создать</Link>
-                                <Divider type="vertical" />
+                                <Divider
+                                    type="vertical"
+                                    style={{ color: "black" }}
+                                />
                                 <Link to="list-name-in-storage">Список</Link>
                             </Space>
                         }

@@ -18,7 +18,6 @@ const ListOrderReceipt = () => {
     // и отображаем здесь в таблице
     const { data: allList, isLoading: isLoadingGetAll } =
         orderReceiptApi.useGetAllOrderReceiptQuery();
-    console.log(allList);
 
     const columns: TableProps<DataType>["columns"] = [
         {
@@ -58,6 +57,20 @@ const ListOrderReceipt = () => {
     ];
 
     const data = [] as DataType[];
+
+    if (allList) {
+        allList.forEach((item, index) => {
+            data.push({
+                key: item.id.toString(),
+                index: index + 1,
+                id: item.id.toString(),
+                numberList: item.id,
+                nameStorage: item.storage.name,
+                status: item.state,
+                amount: 0,
+            });
+        });
+    }
 
     return (
         <Row

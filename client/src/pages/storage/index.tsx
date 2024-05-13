@@ -23,7 +23,7 @@ const StorageRouter = () => {
             />
             <Route
                 path="/list-name-in-storage/:id/*"
-                element={<p>Один список</p>}
+                element={<OrderReceiptPage />}
             />
         </Routes>
     );
