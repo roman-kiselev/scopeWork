@@ -89,7 +89,7 @@ const FormTableName = () => {
             key: "quantity",
             width: "12%",
             render: (text, render) => (
-                <CellQuantity quantity={render.quantity} />
+                <CellQuantity quantity={render.quantity} keyCell={render.key} />
             ),
         },
         {
@@ -97,7 +97,9 @@ const FormTableName = () => {
             dataIndex: "price",
             key: "price",
             width: "12%",
-            render: (text, render) => <CellPrice price={render.price} />,
+            render: (text, render) => (
+                <CellPrice price={render.price} keyCell={render.key} />
+            ),
         },
         {
             title: "Action",
