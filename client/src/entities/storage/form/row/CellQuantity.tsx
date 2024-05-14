@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "src/shared/hooks";
 import { editRow } from "src/shared/models";
 
 interface ICellQuantityProps {
-    quantity: string;
+    quantity: number;
     keyCell: string;
 }
 
@@ -25,6 +25,7 @@ const CellQuantity: React.FC<ICellQuantityProps> = ({ quantity, keyCell }) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleShangeInput(e.target.value)
                 }
+                type="number"
             />
         </Row>
     );

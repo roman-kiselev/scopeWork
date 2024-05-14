@@ -3,7 +3,7 @@ import { useAppDispatch } from "src/shared/hooks";
 import { editRow } from "src/shared/models";
 
 interface ICellPriceProps {
-    price: string;
+    price: number;
     keyCell: string;
 }
 
@@ -21,6 +21,10 @@ const CellPrice: React.FC<ICellPriceProps> = ({ price, keyCell }) => {
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleShangeInput(e.target.value)
                 }
+                type="number"
+                step="0.01"
+                min="0"
+                lang="en-US"
             />
         </Row>
     );

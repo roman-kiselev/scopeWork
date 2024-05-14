@@ -1,6 +1,10 @@
 import { CaseReducer } from "@reduxjs/toolkit";
 import { CreateHandler, IDataError } from "src/shared/interfaces/api";
-import { IOrderReceiptResult, IOrderSlice } from "src/shared/interfaces/models";
+import {
+    IDataOrderReceipt,
+    IOrderReceiptResult,
+    IOrderSlice,
+} from "src/shared/interfaces/models";
 
 class CreateOrderReceipt
     implements CreateHandler<IOrderSlice, IOrderReceiptResult, IDataError>
@@ -15,7 +19,6 @@ class CreateOrderReceipt
         { payload: IOrderReceiptResult; type: string }
     > = (state, action) => {
         state.orderReceipt.isError = false;
-        state.orderReceipt.isLoading = false;
         state.orderReceipt.isSuccess = true;
         const {
             id,
@@ -24,9 +27,26 @@ class CreateOrderReceipt
             storage,
             state: orderState,
         } = action.payload;
+
+        const data = orderReceiptNames.map((item, index) => {
+            return {
+                key: (index + 1).toString(),
+                id: item.id,
+                index: item.index,
+                name: {
+                    id: item.nameWorkId,
+                    name: item.name,
+                },
+                price: item.price,
+                provider: item.provider,
+                quantity: item.quantity,
+            } as IDataOrderReceipt;
+        });
         state.orderReceipt.numberOrder = id;
         state.orderReceipt.stateOrder = orderState;
         state.orderReceipt.storage = storage;
+        state.orderReceipt.data = data;
+        state.orderReceipt.isLoading = false;
     };
     rejected: CaseReducer<IOrderSlice> = (state) => {
         state.orderReceipt.isError = true;

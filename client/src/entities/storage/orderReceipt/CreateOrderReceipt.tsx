@@ -1,6 +1,6 @@
 import { Spin } from "antd";
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { orderReceiptApi, storageApi } from "src/shared/api";
 import { useAppDispatch, useAppSelector } from "src/shared/hooks";
 import {
@@ -45,6 +45,7 @@ const prepareData = (
 };
 
 const CreateOrderReceipt = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     useEffect(() => {
         dispatch(resetOrderReceipt());
@@ -54,8 +55,20 @@ const CreateOrderReceipt = () => {
     const { id: userId } = useAppSelector((store) => store.auth);
     const { data: listStorage, isLoading: isLoadingStorage } =
         storageApi.useGetAllShortQuery();
-    const [createOrderReceipt, { isLoading: isLoadingCreateOrderReceipt }] =
-        orderReceiptApi.useCreateOrderReceiptMutation();
+    const [
+        createOrderReceipt,
+        {
+            isLoading: isLoadingCreateOrderReceipt,
+            isSuccess: isSuccessCreate,
+            data: dataCreate,
+        },
+    ] = orderReceiptApi.useCreateOrderReceiptMutation();
+
+    // useEffect(() => {
+    //     if (dataCreate) {
+    //         redirect(`storage/list-name-in-storage/${dataCreate.id}`);
+    //     }
+    // }, [isSuccessCreate]);
 
     const { orderReceipt } = useAppSelector((store) => store.orders);
 
@@ -63,11 +76,16 @@ const CreateOrderReceipt = () => {
         return <Spin />;
     }
 
-    const handleSave = () => {
+    const handleSave = async () => {
         if (userId) {
             const dto = prepareData(orderReceipt, userId);
             console.log(dto);
-            createOrderReceipt(dto);
+            const data = await createOrderReceipt(dto);
+            if (data && dataCreate) {
+                navigate(`/storage/list-name-in-storage/${dataCreate.id}`, {
+                    replace: true,
+                });
+            }
         }
     };
 

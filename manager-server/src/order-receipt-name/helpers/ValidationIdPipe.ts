@@ -33,6 +33,8 @@ export class ValidationIdPipe
                         address: 'Пусто',
                     },
                 });
+
+                console.log(data);
                 return data.id;
             }
         } catch (e) {

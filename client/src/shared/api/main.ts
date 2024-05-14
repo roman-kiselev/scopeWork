@@ -59,7 +59,7 @@ export const mainApi = createApi({
 export const mainManagerApi = createApi({
     reducerPath: "mainManager",
     tagTypes: ["MainManager"],
-    baseQuery: baseQueryManagerWithRetry,
+    baseQuery: baseManagerQuery,
     refetchOnMountOrArgChange: true,
     endpoints: () => ({}),
 });

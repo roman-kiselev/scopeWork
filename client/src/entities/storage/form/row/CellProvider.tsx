@@ -4,9 +4,14 @@ import { IProvider } from "src/shared/interfaces";
 interface ICellProviderProps {
     cellKey: string;
     providers: IProvider[] | undefined;
+    defaultProvider?: IProvider | null;
 }
 
-const CellProvider: React.FC<ICellProviderProps> = ({ cellKey, providers }) => {
+const CellProvider: React.FC<ICellProviderProps> = ({
+    cellKey,
+    providers,
+    defaultProvider,
+}) => {
     const optionsProviders =
         providers && providers !== undefined
             ? providers.map((item) => {
@@ -48,6 +53,7 @@ const CellProvider: React.FC<ICellProviderProps> = ({ cellKey, providers }) => {
                 onSearch={onSearch}
                 filterOption={filterOption}
                 options={optionsProviders}
+                defaultValue={defaultProvider ? defaultProvider.name : "Пусто"}
             />
         </Row>
     );

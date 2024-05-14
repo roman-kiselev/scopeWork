@@ -96,4 +96,7 @@ export type {
     IOrderReceiptResult,
 } from "./order-receipt";
 
-export type { IOrderReceiptCreateName } from "./order-receipt-name";
+export type {
+    IOrderReceiptCreateName,
+    IOrderReceiptGetResponse,
+} from "./order-receipt-name";

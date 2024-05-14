@@ -7,6 +7,6 @@ export interface IDataOrderReceipt {
     id: number;
     name: INameWorkShort | null;
     provider: IProvider | null;
-    quantity: string;
-    price: string;
+    quantity: number;
+    price: number;
 }

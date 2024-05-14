@@ -8,10 +8,9 @@ export class OrderReceiptNameService {
 
     async createOne(dto: CreateOrderReceiptNameDto) {
         try {
-            console.log(dto);
             const data = await this.clientDatabase.orderReceiptName.create({
                 data: {
-                    indexPosition: dto.index,
+                    index: dto.index,
                     nameWorkId: dto.nameWorkId,
                     name: dto.name,
                     quantity: dto.quantity,
@@ -20,9 +19,30 @@ export class OrderReceiptNameService {
                     providerId: dto.providerId,
                 },
             });
-            console.log(`This data ${data}`);
-            console.log(data);
 
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    async createList(dto: CreateOrderReceiptNameDto[]) {
+        try {
+            // console.log(dto);
+            // const data = await this.clientDatabase.orderReceiptName.createMany({
+            //     data: dto,
+            // });
+            const data = [];
+            for (const item of dto) {
+                data.push(await this.createOne(item));
+            }
+            console.log(data);
             return data;
         } catch (e) {
             console.log(e);
@@ -38,7 +58,29 @@ export class OrderReceiptNameService {
 
     async getOne(dto: any) {}
 
-    async getAll(dto: any) {}
+    async getAllByOrderId(orderId: number) {
+        try {
+            const data = await this.clientDatabase.orderReceiptName.findMany({
+                where: {
+                    orderReceiptId: orderId,
+                },
+                include: {
+                    provider: true,
+                },
+            });
+
+            return data;
+        } catch (e) {
+            console.log(e);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
 
     async update(dto: any) {}
 

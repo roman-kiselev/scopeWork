@@ -13,7 +13,10 @@ export const orderReceiptApi = mainManagerApi.injectEndpoints({
             }),
         }),
 
-        createOrderReceipt: builder.mutation<any, ICreateOrderReceiptDto>({
+        createOrderReceipt: builder.mutation<
+            IOrderReceiptResult,
+            ICreateOrderReceiptDto
+        >({
             query: (data) => ({
                 url: "/order-receipt",
                 method: "POST",

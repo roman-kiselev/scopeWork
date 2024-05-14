@@ -107,6 +107,9 @@ GET {{host}}/auth/check HTTP/1.1
 Authorization: Bearer {{token}}
 
 
+### Get
+GET {{host}}/order-receipt HTTP/1.1
+
 ### order-receipt-name
 
 POST {{hostJob}}/order-receipt-name
@@ -122,3 +125,6 @@ Content-Type: application/json; charset=utf-8
   "orderReceiptId": 4,
   "providerId": 1
 }
+
+### Get
+GET {{host}}/order-receipt-name/11 HTTP/1.1

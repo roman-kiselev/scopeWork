@@ -40,8 +40,8 @@ export const ordersSlice = createSlice({
                 id: 0,
                 name: null,
                 provider: null,
-                quantity: "1",
-                price: "1",
+                quantity: 1,
+                price: 1,
             } as IDataOrderReceipt;
             state.orderReceipt.itemIndex += 1;
             const data = state.orderReceipt.data.map((item, index) => {
@@ -82,12 +82,12 @@ export const ordersSlice = createSlice({
                 case "quantity":
                     if (findedIndex !== -1) {
                         orderReceipt.data[findedIndex].quantity =
-                            value as string;
+                            value as number;
                     }
                     break;
                 case "price":
                     if (findedIndex !== -1) {
-                        orderReceipt.data[findedIndex].price = value as string;
+                        orderReceipt.data[findedIndex].price = value as number;
                     }
                     break;
                 default:

@@ -13,15 +13,32 @@ export class OrderReceiptService {
 
     async create(dto: CreateOrderReceiptDto) {
         try {
-            const newDto = new OrderReceiptCreate(dto).getFinishDto();
+            const result = new OrderReceiptCreate(dto);
+            const newDto = result.getFinishDto();
+
             const findedOrder =
-                await this.clientDatabase.orderReceipt.findFirst({
+                await this.clientDatabase.orderReceipt.findUnique({
                     where: {
                         id: newDto.id,
                     },
                 });
 
-            console.log(findedOrder);
+            const findedEmpty = await this.clientDatabase.providers.findUnique({
+                where: {
+                    name: 'Пусто',
+                },
+            });
+            let emptyId = findedEmpty ? findedEmpty.id : 0;
+            if (!findedEmpty) {
+                const data = await this.clientDatabase.providers.create({
+                    data: {
+                        name: 'Пусто',
+                        address: 'Пусто',
+                    },
+                });
+                emptyId = data.id;
+            }
+
             if (newDto.id === 0 || findedOrder === null) {
                 const data = await this.clientDatabase.orderReceipt.create({
                     data: {
@@ -30,20 +47,24 @@ export class OrderReceiptService {
                         storageId: newDto.storageId,
                     },
                 });
-                // console.log(newDto);
-                console.log(data);
-                const dataCreateName = await this.orderReceiptName.createOne({
-                    ...newDto.names[0],
+
+                const dataFinish = result.setOrderIdAndProvider({
                     orderReceiptId: data.id,
+                    providerId: emptyId,
                 });
 
-                // Получаем id
-                // Присваиваем имена
+                const dataCreateName =
+                    await this.orderReceiptName.createList(dataFinish);
 
-                return data;
+                const dataForResponse = await this.getOne(data.id.toString());
+                return dataForResponse;
             }
 
-            return findedOrder;
+            const dataForResponse = await this.getOne(
+                findedOrder.id.toString(),
+            );
+
+            return dataForResponse;
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;
@@ -63,8 +84,12 @@ export class OrderReceiptService {
                 },
                 include: { storage: true },
             });
+            const names = await this.orderReceiptName.getAllByOrderId(data.id);
 
-            return data;
+            return {
+                ...data,
+                orderReceiptNames: names,
+            };
         } catch (e) {
             if (e instanceof HttpException) {
                 throw e;

@@ -78,7 +78,11 @@ const FormTableName = () => {
             dataIndex: "provider",
             key: "provider",
             render: (text, render) => (
-                <CellProvider cellKey={render.key} providers={providers} />
+                <CellProvider
+                    cellKey={render.key}
+                    providers={providers}
+                    defaultProvider={render.provider}
+                />
             ),
             width: "20%",
             align: "center",
