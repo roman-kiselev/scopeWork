@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CreateOrderReceiptDto } from './dto/create-order-receipt.dto';
+import { EditOrderWorkStateDto } from './dto/edit-order-work-state.dto';
 import { OrderReceiptService } from './order-receipt.service';
 
 @Controller('order-receipt')
@@ -20,5 +21,15 @@ export class OrderReceiptController {
     async create(@Body() dto: CreateOrderReceiptDto) {
         // console.log(dto);
         return this.orderReceiptService.create(dto);
+    }
+
+    @Post('/edit-state')
+    editState(@Body() dto: EditOrderWorkStateDto) {
+        return this.orderReceiptService.addToWork(dto);
+    }
+
+    @Post('/update')
+    updateOrderReceipt(@Body() dto: CreateOrderReceiptDto) {
+        return this.orderReceiptService.update(dto);
     }
 }

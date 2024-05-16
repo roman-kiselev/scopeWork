@@ -59,30 +59,27 @@ export class OrderReceiptNameService {
     async getOne(dto: any) {}
 
     async getAllByOrderId(orderId: number) {
-        try {
-            const data = await this.clientDatabase.orderReceiptName.findMany({
-                where: {
-                    orderReceiptId: orderId,
-                },
-                include: {
-                    provider: true,
-                },
-            });
+        const data = await this.clientDatabase.orderReceiptName.findMany({
+            where: {
+                orderReceiptId: orderId,
+            },
+            include: {
+                provider: true,
+            },
+        });
 
-            return data;
-        } catch (e) {
-            console.log(e);
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return data;
     }
 
-    async update(dto: any) {}
+    async updateList(dto: CreateOrderReceiptNameDto[]) {
+        const data = await this.clientDatabase.orderReceiptName.findMany({
+            where: {
+                orderReceiptId: dto[0].orderReceiptId,
+            },
+        });
+
+        return data;
+    }
 
     async delete(dto: any) {}
 }

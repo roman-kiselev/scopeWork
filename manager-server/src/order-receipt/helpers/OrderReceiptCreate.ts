@@ -12,7 +12,7 @@ class OrderReceiptCreate extends OrderReceipt<CreateOrderReceiptDto> {
         this.maxIndex = 0;
     }
 
-    private getNames(): IOrderReceiptCreateName[] {
+    public getNames(): IOrderReceiptCreateName[] {
         return JSON.parse(this.getDto().orderReceiptNames);
     }
 

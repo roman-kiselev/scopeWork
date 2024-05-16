@@ -1,6 +1,6 @@
 import { Spin } from "antd";
 import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { orderReceiptApi, storageApi } from "src/shared/api";
 import { useAppDispatch, useAppSelector } from "src/shared/hooks";
 import {
@@ -47,43 +47,43 @@ const prepareData = (
 const CreateOrderReceipt = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
+    const { numberOrder } = useAppSelector(
+        (store) => store.orders.orderReceipt
+    );
     useEffect(() => {
         dispatch(resetOrderReceipt());
     }, []);
-    const { id } = useParams();
+
+    // useEffect(() => {
+    //     if (numberOrder !== 0) {
+    //         navigate(`/storage/list-name-in-storage/${numberOrder}`, {
+    //             replace: false,
+    //         });
+    //     }
+    // }, []);
 
     const { id: userId } = useAppSelector((store) => store.auth);
     const { data: listStorage, isLoading: isLoadingStorage } =
         storageApi.useGetAllShortQuery();
-    const [
-        createOrderReceipt,
-        {
-            isLoading: isLoadingCreateOrderReceipt,
-            isSuccess: isSuccessCreate,
-            data: dataCreate,
-        },
-    ] = orderReceiptApi.useCreateOrderReceiptMutation();
-
-    // useEffect(() => {
-    //     if (dataCreate) {
-    //         redirect(`storage/list-name-in-storage/${dataCreate.id}`);
-    //     }
-    // }, [isSuccessCreate]);
+    const [createOrderReceipt, { isLoading: isLoadingCreateOrderReceipt }] =
+        orderReceiptApi.useCreateOrderReceiptMutation();
 
     const { orderReceipt } = useAppSelector((store) => store.orders);
 
-    if (isLoadingStorage) {
+    if (isLoadingStorage || isLoadingCreateOrderReceipt) {
         return <Spin />;
     }
 
     const handleSave = async () => {
         if (userId) {
             const dto = prepareData(orderReceipt, userId);
-            console.log(dto);
-            const data = await createOrderReceipt(dto);
-            if (data && dataCreate) {
-                navigate(`/storage/list-name-in-storage/${dataCreate.id}`, {
-                    replace: true,
+            const createData = await dispatch(
+                orderReceiptApi.endpoints.createOrderReceipt.initiate(dto)
+            ).unwrap();
+
+            if (createData) {
+                navigate(`/storage/list-name-in-storage/${createData.id}`, {
+                    replace: false,
                 });
             }
         }

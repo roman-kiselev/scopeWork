@@ -1,5 +1,7 @@
 import { Row, Select } from "antd";
+import { useAppDispatch } from "src/shared/hooks";
 import { IProvider } from "src/shared/interfaces";
+import { editRow } from "src/shared/models";
 
 interface ICellProviderProps {
     cellKey: string;
@@ -12,6 +14,7 @@ const CellProvider: React.FC<ICellProviderProps> = ({
     providers,
     defaultProvider,
 }) => {
+    const dispatch = useAppDispatch();
     const optionsProviders =
         providers && providers !== undefined
             ? providers.map((item) => {
@@ -24,7 +27,20 @@ const CellProvider: React.FC<ICellProviderProps> = ({
             : [];
 
     const onChange = (value: string) => {
-        console.log(`selected ${value}`);
+        if (providers) {
+            const findedItem = providers?.find(
+                (item) => item.id === Number(value)
+            );
+            if (findedItem) {
+                dispatch(
+                    editRow({
+                        key: cellKey,
+                        nameField: "provider",
+                        value: findedItem,
+                    })
+                );
+            }
+        }
     };
 
     const onSearch = (value: string) => {
