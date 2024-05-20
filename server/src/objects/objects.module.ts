@@ -3,6 +3,7 @@ import { forwardRef } from '@nestjs/common/utils';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
+import { RedisModule } from 'src/redis/redis.module';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
@@ -30,6 +31,7 @@ import { ObjectsService } from './objects.service';
       TableAddingData,
       ListNameWork,
     ]),
+    RedisModule,
   ],
   exports: [ObjectsService],
 })

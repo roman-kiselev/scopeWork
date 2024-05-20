@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op, Sequelize } from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
+import { RedisService } from 'src/redis/redis.service';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
@@ -27,6 +28,7 @@ export class ObjectsService {
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
     private typeWorkService: TypeWorkService,
+    private redisService: RedisService,
   ) {}
 
   async checkByNameObject(name: string) {
@@ -501,6 +503,10 @@ export class ObjectsService {
 
   private async getFullDataForObject(idObject: number) {
     try {
+      const dataRedis = await this.redisService.get(`oneObject:${idObject}`);
+      if (dataRedis) {
+        return JSON.parse(dataRedis);
+      }
       const { scopeWorks } = await this.getOneObject(idObject);
       const { pinnedUser, notAssignedUser } = await this.getUsersByObjectId(
         idObject,
@@ -566,6 +572,13 @@ export class ObjectsService {
           ...dataOneScopeWork,
         });
       }
+
+      await this.redisService.set(
+        `oneObject:${idObject}`,
+        JSON.stringify(data),
+        300,
+      );
+      // await this.redisService.expire(`oneObject:${idObject}`, 3600);
 
       return data;
     } catch (e) {
