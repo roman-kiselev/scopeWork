@@ -193,6 +193,12 @@ export class ObjectsService {
       const scopeWork = await this.scopeWorkRepository.findByPk(idScopeWork, {
         include: { all: true },
       });
+      const tableAddingDataSort = await this.tableAddingDataRepository.findAll({
+        where: {
+          scopeWorkId: idScopeWork,
+        },
+        order: [['createdAt', 'ASC']],
+      });
 
       const { listNameWork, tableAddingData } = scopeWork;
       let arrNames = [];
@@ -211,7 +217,7 @@ export class ObjectsService {
       const countTableAddingData = tableAddingData
         .map((item) => item.quntity)
         .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-
+      const percent = ((countTableAddingData / mainCount) * 100).toFixed(1);
       return {
         id: scopeWork.id,
         deletedAt: scopeWork.deletedAt,
@@ -220,7 +226,9 @@ export class ObjectsService {
         createdAt: scopeWork.createdAt,
         mainCount,
         countTableAddingData,
-        percentAll: ((countTableAddingData / mainCount) * 100).toFixed(1),
+        percentAll: percent,
+        finishDate:
+          Number(percent) >= 100 ? tableAddingDataSort[0].createdAt : null,
       };
     } catch (e) {
       if (e instanceof HttpException) {
