@@ -33,8 +33,8 @@ export const orderReceiptApi = mainManagerApi.injectEndpoints({
 
         updateOrderReceipt: builder.mutation<any, ICreateOrderReceiptDto>({
             query: (data) => ({
-                url: "/order-receipt",
-                method: "PUT",
+                url: "/order-receipt/update",
+                method: "POST",
                 body: data,
             }),
         }),

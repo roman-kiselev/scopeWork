@@ -106,6 +106,7 @@ export class OrderReceiptService {
         try {
             const data = await this.clientDatabase.orderReceipt.findMany({
                 include: { storage: true },
+                orderBy: { id: 'asc' },
             });
             return data;
         } catch (e) {
@@ -172,7 +173,7 @@ export class OrderReceiptService {
 
         return {
             ...data,
-            orderReceiptNames: dataNames,
+            orderReceiptNames: dto.orderReceiptNames,
         };
     }
 

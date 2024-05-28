@@ -6,6 +6,38 @@ import { CreateOrderReceiptNameDto } from './dto/create-order-receipt-name.dto';
 export class OrderReceiptNameService {
     constructor(private clientDatabase: DatabaseService) {}
 
+    private findForUpdate(
+        oldArr: CreateOrderReceiptNameDto[],
+        newArr: CreateOrderReceiptNameDto[],
+    ) {
+        const modifiedObjects: CreateOrderReceiptNameDto[] = [];
+
+        oldArr.forEach((obj1) => {
+            const obj2 = newArr.find((o) => o.id === obj1.id);
+            if (obj2 && JSON.stringify(obj1) !== JSON.stringify(obj2)) {
+                modifiedObjects.push(obj2);
+            }
+        });
+
+        return modifiedObjects;
+    }
+
+    private findForDelete(
+        oldArr: CreateOrderReceiptNameDto[],
+        newArr: CreateOrderReceiptNameDto[],
+    ) {
+        const deletedObjects: CreateOrderReceiptNameDto[] = [];
+
+        oldArr.forEach((obj1) => {
+            const obj2 = newArr.find((o) => o.id === obj1.id);
+            if (!obj2) {
+                deletedObjects.push(obj1);
+            }
+        });
+
+        return deletedObjects;
+    }
+
     async createOne(dto: CreateOrderReceiptNameDto) {
         try {
             const data = await this.clientDatabase.orderReceiptName.create({
@@ -72,13 +104,20 @@ export class OrderReceiptNameService {
     }
 
     async updateList(dto: CreateOrderReceiptNameDto[]) {
-        const data = await this.clientDatabase.orderReceiptName.findMany({
-            where: {
-                orderReceiptId: dto[0].orderReceiptId,
+        const dataForAdd = dto.filter((item) => item.id === 0);
+        const dataCurrent = await this.clientDatabase.orderReceiptName.findMany(
+            {
+                where: {
+                    orderReceiptId: dto[0].orderReceiptId,
+                },
             },
-        });
+        );
+        const dataForUpdate = this.findForUpdate(dataCurrent, dto);
+        console.log(dataForAdd);
+        console.log(dataForUpdate);
+        console.log(dataCurrent);
 
-        return data;
+        // return data;
     }
 
     async delete(dto: any) {}

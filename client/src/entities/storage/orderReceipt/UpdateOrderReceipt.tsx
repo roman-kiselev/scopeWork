@@ -53,6 +53,8 @@ const UpdateOrderReceipt: React.FC<IUpdateOrderReceiptProps> = ({ id }) => {
     const { data: order, isLoading: isLoadingOrder } =
         orderReceiptApi.useGetOneOrderReceiptQuery(id);
 
+    const [updateOrder, { data: dataUpdate }] =
+        orderReceiptApi.useUpdateOrderReceiptMutation();
     const { data: listStorage, isLoading: isLoadingStorage } =
         storageApi.useGetAllShortQuery();
 
@@ -82,6 +84,7 @@ const UpdateOrderReceipt: React.FC<IUpdateOrderReceiptProps> = ({ id }) => {
     const handleSave = () => {
         if (userId) {
             const dto = prepareData(orderReceipt, userId);
+            updateOrder(dto);
             console.log(dto);
         }
     };
