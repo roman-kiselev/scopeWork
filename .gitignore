@@ -1,5 +1,6 @@
 client/node_modules
 iam/node_modules
+iam/developmentHome.env
 iam/.env
 server/node_modules
 manager-server/node_modules
