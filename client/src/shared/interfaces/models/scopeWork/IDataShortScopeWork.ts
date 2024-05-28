@@ -7,4 +7,5 @@ export interface IDataShortScopeWork {
     mainCount: number;
     countTableAddingData: number;
     percentAll: string;
+    finishDate: Date;
 }

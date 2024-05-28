@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Op, Sequelize } from 'sequelize';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
+import { RedisService } from 'src/redis/redis.service';
 import { ScopeWork } from 'src/scope-work/scope-work.model';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
@@ -27,6 +28,7 @@ export class ObjectsService {
     @InjectModel(ListNameWork)
     private listNameWorkRepository: typeof ListNameWork,
     private typeWorkService: TypeWorkService,
+    private redisService: RedisService,
   ) {}
 
   async checkByNameObject(name: string) {
@@ -206,6 +208,12 @@ export class ObjectsService {
       const scopeWork = await this.scopeWorkRepository.findByPk(idScopeWork, {
         include: { all: true },
       });
+      const tableAddingDataSort = await this.tableAddingDataRepository.findAll({
+        where: {
+          scopeWorkId: idScopeWork,
+        },
+        order: [['createdAt', 'ASC']],
+      });
 
       const { listNameWork, tableAddingData } = scopeWork;
       let arrNames = [];
@@ -224,7 +232,7 @@ export class ObjectsService {
       const countTableAddingData = tableAddingData
         .map((item) => item.quntity)
         .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-
+      const percent = ((countTableAddingData / mainCount) * 100).toFixed(1);
       return {
         id: scopeWork.id,
         deletedAt: scopeWork.deletedAt,
@@ -233,7 +241,9 @@ export class ObjectsService {
         createdAt: scopeWork.createdAt,
         mainCount,
         countTableAddingData,
-        percentAll: ((countTableAddingData / mainCount) * 100).toFixed(1),
+        percentAll: percent,
+        finishDate:
+          Number(percent) >= 100 ? tableAddingDataSort[0].createdAt : null,
       };
     } catch (e) {
       if (e instanceof HttpException) {
@@ -532,6 +542,10 @@ export class ObjectsService {
 
   private async getFullDataForObject(idObject: number) {
     try {
+      const dataRedis = await this.redisService.get(`oneObject:${idObject}`);
+      if (dataRedis) {
+        return JSON.parse(dataRedis);
+      }
       const { scopeWorks } = await this.getOneObject(idObject);
       const { pinnedUser, notAssignedUser } = await this.getUsersByObjectId(
         idObject,
@@ -597,6 +611,13 @@ export class ObjectsService {
           ...dataOneScopeWork,
         });
       }
+
+      await this.redisService.set(
+        `oneObject:${idObject}`,
+        JSON.stringify(data),
+        300,
+      );
+      // await this.redisService.expire(`oneObject:${idObject}`, 3600);
 
       return data;
     } catch (e) {

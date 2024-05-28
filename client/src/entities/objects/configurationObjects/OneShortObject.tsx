@@ -16,6 +16,18 @@ const getCurrentDay = (createdAt: string) => {
     return differenceInDays.toFixed();
 };
 
+const getFinishDate = (createdAt: string, finishDate: string) => {
+    const finish = new Date(finishDate);
+    const dateCreate = new Date(createdAt);
+    // Вычисляем разницу в миллисекундах
+    const differenceInMilliseconds = finish.getTime() - dateCreate.getTime();
+
+    // Переводим разницу в днях
+    const differenceInDays = differenceInMilliseconds / (1000 * 60 * 60 * 24);
+
+    return differenceInDays.toFixed();
+};
+
 const OneShortObject: React.FC<IOneObjectDataShort> = ({
     id,
     address,
@@ -103,10 +115,21 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
                                 alignItems: "center",
                             }}
                             groupSeparator=""
-                            title="В работе(дней)"
-                            value={`${getCurrentDay(
-                                scopeWork.createdAt.toString()
-                            )}`}
+                            title={
+                                scopeWork.finishDate !== null
+                                    ? "Выполнено за: "
+                                    : "В работе(дней)"
+                            }
+                            value={
+                                scopeWork.finishDate !== null
+                                    ? `${getFinishDate(
+                                          scopeWork.createdAt.toString(),
+                                          scopeWork.finishDate.toString()
+                                      )}`
+                                    : `${getCurrentDay(
+                                          scopeWork.createdAt.toString()
+                                      )}`
+                            }
                         />
                         {scopeWork.countTableAddingData >
                         scopeWork.mainCount ? (
