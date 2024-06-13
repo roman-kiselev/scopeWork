@@ -84,8 +84,10 @@ const UpdateOrderReceipt: React.FC<IUpdateOrderReceiptProps> = ({ id }) => {
     const handleSave = () => {
         if (userId) {
             const dto = prepareData(orderReceipt, userId);
-            updateOrder(dto);
-            console.log(dto);
+            updateOrder({
+                id: +id,
+                dto: dto,
+            });
         }
     };
 

@@ -31,6 +31,7 @@ export { SimpleOrder } from "./simpleOrder";
 export {
     AddNameInStorage,
     CreateOrderReceipt,
+    ListOrderReceipt,
     OrderReceipt,
     StorageDescriptionShort,
     UpdateOrderReceipt,

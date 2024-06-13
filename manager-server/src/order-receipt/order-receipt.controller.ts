@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CreateOrderReceiptDto } from './dto/create-order-receipt.dto';
 import { EditOrderWorkStateDto } from './dto/edit-order-work-state.dto';
 import { OrderReceiptService } from './order-receipt.service';
@@ -12,6 +12,10 @@ export class OrderReceiptController {
         return this.orderReceiptService.getAll();
     }
 
+    @Get('/active')
+    async getAllActive() {
+        return this.orderReceiptService.getAllActive();
+    }
     @Get(':id')
     async getOne(@Param('id') id: string) {
         return this.orderReceiptService.getOne(id);
@@ -23,13 +27,16 @@ export class OrderReceiptController {
         return this.orderReceiptService.create(dto);
     }
 
-    @Post('/edit-state')
-    editState(@Body() dto: EditOrderWorkStateDto) {
-        return this.orderReceiptService.addToWork(dto);
+    @Patch('/edit-state/:id')
+    editState(@Param('id') id: string, @Body() dto: EditOrderWorkStateDto) {
+        return this.orderReceiptService.addToWork(+id, dto);
     }
 
-    @Post('/update')
-    updateOrderReceipt(@Body() dto: CreateOrderReceiptDto) {
-        return this.orderReceiptService.update(dto);
+    @Patch('/update/:id')
+    updateOrderReceipt(
+        @Param('id') id: string,
+        @Body() dto: CreateOrderReceiptDto,
+    ) {
+        return this.orderReceiptService.update(+id, dto);
     }
 }

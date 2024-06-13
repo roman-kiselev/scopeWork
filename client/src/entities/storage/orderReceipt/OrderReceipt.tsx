@@ -1,6 +1,9 @@
 import { Button, Col, Divider, Row, Select, Space } from "antd";
 import React from "react";
-import { useAppSelector } from "src/shared/hooks";
+import { useParams } from "react-router";
+import { orderReceiptApi } from "src/shared/api";
+import { useAppDispatch, useAppSelector } from "src/shared/hooks";
+import { IRole } from "src/shared/interfaces";
 import FormTableName from "../form/FormTableName";
 
 interface IOrderReceiptProps {
@@ -16,9 +19,31 @@ const OrderReceipt: React.FC<IOrderReceiptProps> = ({
     handleSave,
     defaultValue = 0,
 }) => {
+    const dispatch = useAppDispatch();
+    const { id: orderId } = useParams();
+    const { id: userId, roles } = useAppSelector((store) => store.auth);
+    const { stateOrder } = useAppSelector((store) => store.orders.orderReceipt);
     const { numberOrder } = useAppSelector(
         (store) => store.orders.orderReceipt
     );
+    const [changeStatus, { isLoading: isLoadingChange }] =
+        orderReceiptApi.useUpdateStateWorkMutation();
+
+    const handleClickForChangeStatus = (
+        orderId: number,
+        userId: number,
+        roles: IRole[]
+    ) => {
+        changeStatus({
+            id: +orderId,
+            dto: {
+                state: !stateOrder,
+                userId: userId ?? 0,
+                userRoles: roles.map((item) => item.name),
+            },
+        });
+    };
+
     dataForSelect = [{ value: 0, label: "Выбор склада" }, ...dataForSelect];
 
     return (
@@ -44,13 +69,25 @@ const OrderReceipt: React.FC<IOrderReceiptProps> = ({
                         </Button>
                     </Col>
                     <Col>
-                        {numberOrder !== 0 && (
+                        {numberOrder !== 0 &&
+                        orderId &&
+                        userId &&
+                        roles.length > 0 ? (
                             <Button
                                 type="primary"
                                 style={{ backgroundColor: "#2bb673" }}
+                                onClick={() =>
+                                    handleClickForChangeStatus(
+                                        +orderId,
+                                        userId,
+                                        roles
+                                    )
+                                }
                             >
-                                В работу
+                                {stateOrder ? "Отменить" : "В работу"}
                             </Button>
+                        ) : (
+                            <></>
                         )}
                     </Col>
                 </Space>

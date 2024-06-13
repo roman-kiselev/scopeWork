@@ -6,9 +6,14 @@ import { editRow } from "src/shared/models";
 interface ICellQuantityProps {
     quantity: number;
     keyCell: string;
+    disabled?: boolean;
 }
 
-const CellQuantity: React.FC<ICellQuantityProps> = ({ quantity, keyCell }) => {
+const CellQuantity: React.FC<ICellQuantityProps> = ({
+    quantity,
+    keyCell,
+    disabled = false,
+}) => {
     const dispatch = useAppDispatch();
     const { data } = useAppSelector((store) => store.orders.orderReceipt);
 
@@ -21,6 +26,7 @@ const CellQuantity: React.FC<ICellQuantityProps> = ({ quantity, keyCell }) => {
     return (
         <Row>
             <Input
+                disabled={disabled}
                 value={quantity}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                     handleShangeInput(e.target.value)

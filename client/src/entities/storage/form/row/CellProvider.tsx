@@ -7,12 +7,14 @@ interface ICellProviderProps {
     cellKey: string;
     providers: IProvider[] | undefined;
     defaultProvider?: IProvider | null;
+    disabled?: boolean;
 }
 
 const CellProvider: React.FC<ICellProviderProps> = ({
     cellKey,
     providers,
     defaultProvider,
+    disabled = false,
 }) => {
     const dispatch = useAppDispatch();
     const optionsProviders =
@@ -61,6 +63,7 @@ const CellProvider: React.FC<ICellProviderProps> = ({
                 options={optionsProviders}
             /> */}
             <Select
+                disabled={disabled}
                 showSearch
                 placeholder="Выбор"
                 style={{ width: "100%", margin: "0 auto" }}

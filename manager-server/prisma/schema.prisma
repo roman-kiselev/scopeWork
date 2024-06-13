@@ -50,12 +50,13 @@ model Stage {
 }
 
 model Storage {
-  id            Int             @id @unique @default(autoincrement())
-  name          String
-  address       String
-  ObjectStorage ObjectStorage[]
-  UserStorage   UserStorage[]
-  OrderReceipt  OrderReceipt[]
+  id              Int               @id @unique @default(autoincrement())
+  name            String
+  address         String
+  ObjectStorage   ObjectStorage[]
+  UserStorage     UserStorage[]
+  OrderReceipt    OrderReceipt[]
+  StorageQuantity StorageQuantity[]
 }
 
 model ObjectStorage {
@@ -81,15 +82,42 @@ model OrderReceipt {
   OrderReceiptName OrderReceiptName[]
 }
 
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
 model OrderReceiptName {
-  id             Int           @id @unique @default(autoincrement())
-  index          Int
-  nameWorkId     Int
-  name           String
-  quantity       Float
-  price          Float
-  orderReceiptId Int?          @default(0)
-  orderReceipts  OrderReceipt? @relation(fields: [orderReceiptId], references: [id])
-  providerId     Int?          @default(0)
-  provider       Providers?    @relation(fields: [providerId], references: [id])
+  id                                Int                                 @id @unique @default(autoincrement())
+  index                             Int
+  nameWorkId                        Int
+  name                              String
+  quantity                          Float
+  price                             Float
+  status                            Status
+  rowId                             Int                                 @default(0)
+  orderReceiptId                    Int?                                @default(0)
+  orderReceipts                     OrderReceipt?                       @relation(fields: [orderReceiptId], references: [id])
+  providerId                        Int?                                @default(0)
+  provider                          Providers?                          @relation(fields: [providerId], references: [id])
+  StorageQuantityToOrderReceiptName StorageQuantityToOrderReceiptName[]
+}
+
+model StorageQuantity {
+  id                                Int                                 @id @unique @default(autoincrement())
+  name                              String
+  nameWorkId                        Int
+  quantity                          Float
+  storageId                         Int
+  storage                           Storage                             @relation(fields: [storageId], references: [id])
+  StorageQuantityToOrderReceiptName StorageQuantityToOrderReceiptName[]
+}
+
+model StorageQuantityToOrderReceiptName {
+  id                 Int              @id @unique @default(autoincrement())
+  orderReceiptNameId Int
+  orderReceiptName   OrderReceiptName @relation(fields: [orderReceiptNameId], references: [id])
+  storageQuantityId  Int
+  storageQuantity    StorageQuantity  @relation(fields: [storageQuantityId], references: [id])
 }

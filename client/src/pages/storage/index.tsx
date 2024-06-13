@@ -3,8 +3,7 @@ import CreateStoragePage from "./CreateStoragePage";
 import MainStoragePage from "./MainStoragePage";
 import { ListStorage } from "./listStorage";
 import { OneStoragePage } from "./oneStorage";
-import { OrderReceiptPage } from "./orderReceipt";
-import ListOrderReceipt from "./orderReceipt/ListOrderReceipt";
+import { ListOrderReceiptPage, OrderReceiptPage } from "./orderReceipt";
 
 const StorageRouter = () => {
     return (
@@ -19,7 +18,7 @@ const StorageRouter = () => {
             />
             <Route
                 path="/list-name-in-storage/*"
-                element={<ListOrderReceipt />}
+                element={<ListOrderReceiptPage />}
             />
             <Route
                 path="/list-name-in-storage/:id/*"

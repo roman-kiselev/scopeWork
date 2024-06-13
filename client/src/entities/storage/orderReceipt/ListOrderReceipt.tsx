@@ -1,6 +1,7 @@
 import { Row, Table, TableProps, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { orderReceiptApi } from "src/shared/api";
+import { useAppSelector } from "src/shared/hooks";
+import { IOrderReceiptResult } from "src/shared/interfaces";
 
 interface DataType {
     key: string;
@@ -11,13 +12,15 @@ interface DataType {
     status: boolean;
     amount: number;
 }
-// Adopted/Not accepted/ Partially accepted/
 
-const ListOrderReceipt = () => {
-    // Получем все списки
-    // и отображаем здесь в таблице
-    const { data: allList, isLoading: isLoadingGetAll } =
-        orderReceiptApi.useGetAllOrderReceiptQuery();
+interface IListOrderReceiptProps {
+    allList: IOrderReceiptResult[];
+}
+
+const ListOrderReceipt: React.FC<IListOrderReceiptProps> = ({ allList }) => {
+    const roles = useAppSelector((store) => store.auth.roles).map(
+        (item) => item.name
+    );
 
     const columns: TableProps<DataType>["columns"] = [
         {
@@ -38,12 +41,14 @@ const ListOrderReceipt = () => {
             key: "nameStorage",
             render: (_, { nameStorage }) => <p>{nameStorage}</p>,
         },
-        {
-            title: "Сумма",
-            dataIndex: "amount",
-            key: "amount",
-            render: (_, { amount }) => <p>{amount}</p>,
-        },
+
+        // {
+        //     title: "Сумма",
+        //     dataIndex: "amount",
+        //     key: "amount",
+        //     render: (_, { amount }) => <p>{amount}</p>,
+        // },
+
         {
             title: "Действие",
             dataIndex: "action",
@@ -71,7 +76,6 @@ const ListOrderReceipt = () => {
             });
         });
     }
-
     return (
         <Row
             style={{ width: "100%", display: "flex", flexDirection: "column" }}

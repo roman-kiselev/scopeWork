@@ -8,8 +8,9 @@ import { editRow } from "src/shared/models";
 
 interface ICellNameProps {
     cellKey: string;
-    handleViewModal: () => void;
+    handleViewModal?: () => void;
     dataName: INameWorkShort | null;
+    disabled?: boolean;
 }
 
 const mockVal = (str: string, repeat = 1) => ({
@@ -20,6 +21,7 @@ const CellName: React.FC<ICellNameProps> = ({
     cellKey,
     handleViewModal,
     dataName,
+    disabled = false,
 }) => {
     const dispatch = useAppDispatch();
     const { data } = useAppSelector((store) => store.orders.orderReceipt);
@@ -110,7 +112,7 @@ const CellName: React.FC<ICellNameProps> = ({
                     )}
                 </Col>
                 <Col>
-                    <Button onClick={handleViewModal}>
+                    <Button disabled={disabled} onClick={handleViewModal}>
                         <SettingOutlined />
                     </Button>
                 </Col>

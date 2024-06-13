@@ -28,20 +28,22 @@ class CreateOrderReceipt
             state: orderState,
         } = action.payload;
 
-        const data = orderReceiptNames.map((item, index) => {
-            return {
-                key: (index + 1).toString(),
-                id: item.id,
-                index: item.index,
-                name: {
-                    id: item.nameWorkId,
-                    name: item.name,
-                },
-                price: item.price,
-                provider: item.provider,
-                quantity: item.quantity,
-            } as IDataOrderReceipt;
-        });
+        const data = orderReceiptNames
+            .sort((a, b) => a.index - b.index)
+            .map((item, index) => {
+                return {
+                    key: (index + 1).toString(),
+                    id: item.id,
+                    index: item.index,
+                    name: {
+                        id: item.nameWorkId,
+                        name: item.name,
+                    },
+                    price: item.price,
+                    provider: item.provider,
+                    quantity: item.quantity,
+                } as IDataOrderReceipt;
+            });
         state.orderReceipt.numberOrder = id;
         state.orderReceipt.stateOrder = orderState;
         state.orderReceipt.storage = storage;

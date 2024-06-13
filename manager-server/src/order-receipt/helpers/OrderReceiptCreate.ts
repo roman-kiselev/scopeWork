@@ -16,6 +16,14 @@ class OrderReceiptCreate extends OrderReceipt<CreateOrderReceiptDto> {
         return JSON.parse(this.getDto().orderReceiptNames);
     }
 
+    // public getNamesWithOrderIdAndProvider(
+    //     providerId: number,
+    // ): IOrderReceiptCreateName[] {
+    //     const arr = this.setOrderIdAndProvider(providerId, );
+
+    //     return  arr;
+    // }
+
     private setMaxIndex() {
         const names = this.getNames();
         let max = 0;

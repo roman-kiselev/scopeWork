@@ -92,7 +92,9 @@ export type {
 } from "./providers";
 
 export type {
+    IChangeStatusOrder,
     ICreateOrderReceiptDto,
+    IOrderReceiptForStorage,
     IOrderReceiptResult,
 } from "./order-receipt";
 

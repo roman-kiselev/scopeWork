@@ -9,6 +9,7 @@ import {
     IProvider,
     IStorage,
 } from "src/shared/interfaces/models";
+import ChangeStatusOrder from "./ChangeStatusOrder";
 import CreateOrderReceipt from "./CreateOrderReceipt";
 import GetOneOrderReceipt from "./GetOneOrderReceipt";
 
@@ -32,6 +33,7 @@ export const ordersSlice = createSlice({
     initialState,
     reducers: {
         addNewRow: (state) => {
+            state.orderReceipt.itemIndex = state.orderReceipt.data.length;
             state.orderReceipt.isLoading = true;
             state.isLoading = true;
             const row = {
@@ -135,6 +137,20 @@ export const ordersSlice = createSlice({
         builder.addMatcher(
             orderReceiptApi.endpoints.getOneOrderReceipt.matchRejected,
             new GetOneOrderReceipt().rejected
+        );
+        // Изменение статуса
+
+        builder.addMatcher(
+            orderReceiptApi.endpoints.updateStateWork.matchPending,
+            new ChangeStatusOrder().pending
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.updateStateWork.matchFulfilled,
+            new ChangeStatusOrder().fulfilled
+        );
+        builder.addMatcher(
+            orderReceiptApi.endpoints.updateStateWork.matchRejected,
+            new ChangeStatusOrder().rejected
         );
     },
 });

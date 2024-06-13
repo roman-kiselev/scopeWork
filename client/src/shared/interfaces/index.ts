@@ -8,6 +8,7 @@ export type {
 } from "./api";
 export type {
     IAuthSlice,
+    IChangeStatusOrder,
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
     ICreateNameWorkForList,
@@ -49,6 +50,8 @@ export type {
     IOneScopeWorkWithData,
     IOrderReceipt,
     IOrderReceiptCreateName,
+    IOrderReceiptForStorage,
+    IOrderReceiptGetResponse,
     IOrderReceiptResult,
     IOrderSlice,
     IProvider,

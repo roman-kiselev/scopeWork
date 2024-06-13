@@ -9,6 +9,9 @@ import ScopeWorkAddData from "./scopeWork/ScopeWorkAddData";
 const LoginPage = lazy(() => import("./auth/LoginPage"));
 const RegisterPage = lazy(() => import("./auth/RegisterPage"));
 const HomePage = lazy(() => import("./home/HomePage"));
+const HomePageWarehousemanRoutes = lazy(
+    () => import("./home/HomePageWarehousemanRoutes")
+);
 const LayoutPage = lazy(() => import("./home/LayoutPage"));
 const ObjectsRoutes = lazy(() => import("./objects/index"));
 const AdminRoutes = lazy(() => import("./admin/index"));
@@ -30,6 +33,7 @@ const Routing = () => {
                 }
             >
                 <Route index element={<HomePage />} />
+
                 <Route path="/:id" element={<ScopeWorkAddData />} />
                 {/* <Route
                     path="objects/*"
@@ -45,6 +49,15 @@ const Routing = () => {
                         </SuspenseLoadCheckR>
                     }
                 /> */}
+
+                <Route
+                    path="/warehouseman/*"
+                    element={
+                        <SuspenseLoadCheckR roles={[RoleString.WAREHOUSEMAN]}>
+                            <HomePageWarehousemanRoutes />
+                        </SuspenseLoadCheckR>
+                    }
+                />
 
                 <Route
                     path="orders/*"

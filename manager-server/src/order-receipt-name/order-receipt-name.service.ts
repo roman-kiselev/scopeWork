@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateOrderReceiptNameDto } from './dto/create-order-receipt-name.dto';
+import { Status } from './enums/status.enum';
 
 @Injectable()
 export class OrderReceiptNameService {
@@ -49,14 +50,18 @@ export class OrderReceiptNameService {
                     price: dto.price,
                     orderReceiptId: dto.orderReceiptId,
                     providerId: dto.providerId,
+                    status: Status.PENDING,
+                    rowId: dto.rowId ?? 0,
                 },
             });
 
             return data;
         } catch (e) {
+            console.log(e);
             if (e instanceof HttpException) {
                 throw e;
             }
+
             throw new HttpException(
                 'Ошибка сервера',
                 HttpStatus.INTERNAL_SERVER_ERROR,
@@ -66,16 +71,13 @@ export class OrderReceiptNameService {
 
     async createList(dto: CreateOrderReceiptNameDto[]) {
         try {
-            // console.log(dto);
-            // const data = await this.clientDatabase.orderReceiptName.createMany({
-            //     data: dto,
-            // });
-            const data = [];
-            for (const item of dto) {
-                data.push(await this.createOne(item));
-            }
-            console.log(data);
-            return data;
+            const finishData = await Promise.all(
+                dto.map(async (item) => {
+                    await this.createOne(item);
+                }),
+            );
+
+            return finishData;
         } catch (e) {
             console.log(e);
             if (e instanceof HttpException) {
@@ -88,7 +90,93 @@ export class OrderReceiptNameService {
         }
     }
 
-    async getOne(dto: any) {}
+    async updateOneItem(dto: CreateOrderReceiptNameDto) {
+        const data = await this.clientDatabase.orderReceiptName.update({
+            where: {
+                id: dto.id,
+            },
+            data: {
+                index: dto.index,
+                nameWorkId: dto.nameWorkId,
+                name: dto.name,
+                quantity: dto.quantity,
+                price: dto.price,
+                orderReceiptId: dto.orderReceiptId,
+                providerId: dto.providerId,
+            },
+        });
+    }
+
+    async clearOrder(id: number) {
+        const data = await this.clientDatabase.orderReceiptName.findMany({
+            where: {
+                orderReceiptId: id,
+            },
+        });
+
+        const dataForDel = data.map((item) => item.id);
+
+        if (dataForDel.length > 0) {
+            const dataFinish = Promise.all(
+                dataForDel.map(async (itemId) => {
+                    await this.clientDatabase.orderReceiptName.delete({
+                        where: {
+                            id: itemId,
+                        },
+                    });
+                }),
+            );
+
+            return HttpStatus.OK;
+        }
+        return HttpStatus.OK;
+    }
+
+    async updateCurrentList(dto: CreateOrderReceiptNameDto[]) {
+        try {
+            const finishData = Promise.all(
+                dto.map(async (item) => {
+                    await this.updateOneItem(item);
+                }),
+            );
+
+            return finishData;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    async deleteItemsInCurrentList(dto: CreateOrderReceiptNameDto[]) {
+        try {
+            const dataForDel = dto.map((item) => item.id);
+
+            const finishData = Promise.all(
+                dataForDel.map(async (id) => {
+                    await this.clientDatabase.orderReceiptName.delete({
+                        where: {
+                            id,
+                        },
+                    });
+                }),
+            );
+
+            return finishData;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
 
     async getAllByOrderId(orderId: number) {
         const data = await this.clientDatabase.orderReceiptName.findMany({
@@ -104,7 +192,6 @@ export class OrderReceiptNameService {
     }
 
     async updateList(dto: CreateOrderReceiptNameDto[]) {
-        const dataForAdd = dto.filter((item) => item.id === 0);
         const dataCurrent = await this.clientDatabase.orderReceiptName.findMany(
             {
                 where: {
@@ -112,13 +199,24 @@ export class OrderReceiptNameService {
                 },
             },
         );
+        const dataForAdd = dto.filter((item) => item.id === 0);
         const dataForUpdate = this.findForUpdate(dataCurrent, dto);
-        console.log(dataForAdd);
-        console.log(dataForUpdate);
-        console.log(dataCurrent);
+        const dataForDelete = this.findForDelete(dataCurrent, dto);
+        console.log(dataForDelete);
+        const addPromise = this.createList(dataForAdd);
+        const updatePromise = this.updateCurrentList(dataForUpdate);
+        const delPromise = this.deleteItemsInCurrentList(dataForDelete);
 
-        // return data;
+        const [add, update, del] = await Promise.allSettled([
+            addPromise,
+            updatePromise,
+            delPromise,
+        ]);
+
+        return this.clientDatabase.orderReceiptName.findMany({
+            where: {
+                orderReceiptId: dto[0].orderReceiptId,
+            },
+        });
     }
-
-    async delete(dto: any) {}
 }

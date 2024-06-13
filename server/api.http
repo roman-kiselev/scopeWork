@@ -18,7 +18,8 @@ GET {{host}}/roles HTTP/1.1
 GET {{host}}/roles/user/3 HTTP/1.1
 
 
-
+### Получения ролей одного пользователя
+POST {{host}}/roles/ HTTP/1.1
 
 
 
