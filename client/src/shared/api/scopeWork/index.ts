@@ -6,6 +6,7 @@ import {
     ICreateScopeWork,
     IEditScopeWork,
     IListData,
+    IResScopeWorkByUserAndObject,
     IScopeWork,
     IScopeWorkWithData,
 } from "../../interfaces/models";
@@ -75,6 +76,16 @@ export const scopeWorkApi = mainApi.injectEndpoints({
         >({
             query: ({ id }) => ({
                 url: `/scope-work/quickWithoutGroup/${id}`,
+                method: "GET",
+            }),
+        }),
+
+        getScopeWorkByUserAndObject: builder.query<
+            IResScopeWorkByUserAndObject[],
+            { userId: string; objectId: string }
+        >({
+            query: ({ userId, objectId }) => ({
+                url: `/scope-work/getSw/?user=${userId}&object=${objectId}`,
                 method: "GET",
             }),
         }),

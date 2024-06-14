@@ -36,6 +36,15 @@ export class NameWorkController {
     return this.nameWorkService.getAllData();
   }
 
+  @ApiOperation({ summary: 'Поиск по имени' })
+  @ApiResponse({ status: HttpStatus.OK, type: [NameWork] })
+  @ApiResponse({ type: HttpException })
+  @Get('/findByName')
+  findByName(@Query('text') text: string) {
+    console.log(text);
+    return this.nameWorkService.findNameWorksByName(text);
+  }
+
   @ApiOperation({ summary: 'Получить по типу' })
   @ApiResponse({ status: HttpStatus.OK, type: [NameWork] })
   @ApiResponse({ type: HttpException })

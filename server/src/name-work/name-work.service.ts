@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { DatabaseService } from 'src/database/database.service';
 import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
 import { TypeWork } from 'src/type-work/type-work.model';
 import { CreateUniteDto } from 'src/unit/dto/unit.dto';
@@ -20,6 +21,7 @@ export class NameWorkService {
     private nameWorkTypeWorkRepository: typeof NameWorkTypeWork,
     @InjectModel(Unit) private unitRepository: typeof Unit,
     private unitService: UnitService,
+    private databaseService: DatabaseService,
   ) {}
 
   async checkOneByName(name: string) {
@@ -619,6 +621,33 @@ export class NameWorkService {
       );
 
       return arrNames;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async findNameWorksByName(text: string) {
+    try {
+      const query = `
+      SELECT * FROM scopework.name_work
+      WHERE name LIKE :textForFind
+      ORDER BY CASE WHEN name LIKE :textStart THEN 0 ELSE 1 END, name
+      LIMIT 10;
+      `;
+      const textArr = text.split(' ');
+      const replacements = {
+        textForFind: `%${textArr.join('%')}%`,
+        textStart: `${textArr.join('%')}%`,
+      };
+      const result = await this.databaseService.executeQuery(
+        query,
+        replacements,
+      );
+
+      return result;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;

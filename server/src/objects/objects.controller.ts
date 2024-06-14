@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { Param } from '@nestjs/common/decorators';
 import { Body } from '@nestjs/common/decorators/http';
+import { EventPattern } from '@nestjs/microservices';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../auth/roles-auth.decorator';
 import { RolesGuard } from '../auth/roles.guard';
@@ -33,6 +34,14 @@ export class ObjectsController {
   @Get('/shortData')
   async getAllDataShort() {
     return this.objectsService.getListObjectWithShortData();
+  }
+
+  @ApiOperation({ summary: 'Получение всех объектов(без зависимостей)' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Objects] })
+  @ApiResponse({ type: HttpException })
+  @Get('/shortAllObjects')
+  async getAllShortData() {
+    return this.objectsService.getShortAllObjects();
   }
 
   @ApiOperation({ summary: 'Получение одного объекта' })
@@ -79,5 +88,11 @@ export class ObjectsController {
       idObject: id,
       idTypeWork: idTypeWork,
     });
+  }
+
+  @EventPattern('getObjectById')
+  async eventGetObjectById(id: string) {
+    const user = await this.objectsService.getOneObjectShort(+id);
+    return JSON.stringify(user);
   }
 }

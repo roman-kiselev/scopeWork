@@ -19,24 +19,7 @@ const FormLoginFeatures = () => {
     const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
-    // useEffect(() => {
-    //     if (isAuth) {
-    //         navigate(location.state?.from || "/", { replace: true });
-    //     }
-    // }, []);
 
-    // Извлечение токена при загрузке страницы
-    // const storedToken = localStorage.getItem("token");
-    // if (storedToken && isSuccessCheck) {
-    //     navigate(location.state?.from || "/", { replace: true });
-    // }
-    // useEffect(() => {
-    //     if (isSuccessCheck && token !== null) {
-    //         navigate(location.state?.from || "/", { replace: true });
-    //     }
-    // }, [isSuccessCheck, navigate]);
-    //const dataRes = useQuery("checkQuery", () => authApi.useCheckQuery().data);
-    //const dataRes = authApi.useCheckQuery().data;
     const [login, { isSuccess, isLoading: isLoadingLogin }] =
         authApi.useLoginMutation();
     const onFinish = async () => {

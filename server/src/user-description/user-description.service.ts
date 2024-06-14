@@ -55,4 +55,17 @@ export class UserDescriptionService {
       throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  async getAll() {
+    try {
+      const userDescription = await this.userDescriptionRepository.findAll();
+
+      return userDescription;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 }

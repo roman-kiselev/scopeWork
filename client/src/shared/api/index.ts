@@ -1,26 +1,16 @@
-import { authApi } from "./auth";
-import { listNameWorkApi } from "./listNameWork";
-import { mainApi, objectMainApi } from "./main";
-import { nameWorkApi } from "./nameWork";
-import { objectsApi } from "./objects";
-import { roleApi } from "./roles";
-import { scopeWorkApi } from "./scopeWork";
-import { tableAddingDataApi } from "./tableAddingData";
-import { typeWorkApi } from "./typeWork";
-import { unitsApi } from "./units";
-import { userApi } from "./users";
-
-export {
-    authApi,
-    listNameWorkApi,
-    mainApi,
-    nameWorkApi,
-    objectMainApi,
-    objectsApi,
-    roleApi,
-    scopeWorkApi,
-    tableAddingDataApi,
-    typeWorkApi,
-    unitsApi,
-    userApi,
-};
+export { authApi } from "./auth";
+export { listNameWorkApi } from "./listNameWork";
+export { mainApi, mainManagerApi, objectMainApi } from "./main";
+export { nameWorkApi } from "./nameWork";
+export { objectsApi } from "./objects";
+export { orderReceiptApi } from "./orderReceipt";
+export { providerApi } from "./provider";
+export { roleApi } from "./roles";
+export { scopeWorkApi } from "./scopeWork";
+export { storageApi } from "./storage";
+export { tableAddingDataApi } from "./tableAddingData";
+export { transportCompanyApi } from "./transportCompany";
+export { typeWorkApi } from "./typeWork";
+export { unitsApi } from "./units";
+export { userDescriptionApi } from "./userDescription";
+export { userApi } from "./users";

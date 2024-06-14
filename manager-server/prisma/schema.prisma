@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Order {
+  id        Int       @id @unique @default(autoincrement())
+  userId    Int
+  toUserId  Int
+  createdAt DateTime?
+  updatedAt DateTime?
+}
+
+model TransportCompany {
+  id                         Int                          @id @unique @default(autoincrement())
+  name                       String                       @unique
+  address                    String
+  TransportCompanyToProvider TransportCompanyToProvider[]
+  providers                  Providers[]                  @relation("ProvidersToTransportCompany")
+}
+
+model Providers {
+  id                         Int                          @id @unique @default(autoincrement())
+  name                       String                       @unique
+  address                    String
+  TransportCompanyToProvider TransportCompanyToProvider[]
+  transportCompany           TransportCompany[]           @relation("ProvidersToTransportCompany")
+  OrderReceiptName           OrderReceiptName[]
+}
+
+model TransportCompanyToProvider {
+  id                 Int              @id @unique @default(autoincrement())
+  default            Boolean          @default(false)
+  transportCompanyId Int
+  providersId        Int
+  providers          Providers        @relation(fields: [providersId], references: [id])
+  transportCompany   TransportCompany @relation(fields: [transportCompanyId], references: [id])
+}
+
+model Stage {
+  id        Int      @id @unique @default(autoincrement())
+  name      String
+  status    String
+  createdAt DateTime
+  updatedAt DateTime
+}
+
+model Storage {
+  id              Int               @id @unique @default(autoincrement())
+  name            String
+  address         String
+  ObjectStorage   ObjectStorage[]
+  UserStorage     UserStorage[]
+  OrderReceipt    OrderReceipt[]
+  StorageQuantity StorageQuantity[]
+}
+
+model ObjectStorage {
+  id        Int     @id @unique @default(autoincrement())
+  objectId  Int
+  storageId Int
+  storage   Storage @relation(fields: [storageId], references: [id])
+}
+
+model UserStorage {
+  id        Int     @id @unique @default(autoincrement())
+  userId    Int
+  storageId Int
+  storage   Storage @relation(fields: [storageId], references: [id])
+}
+
+model OrderReceipt {
+  id               Int                @id @unique @default(autoincrement())
+  state            Boolean            @default(false)
+  userCreateId     Int
+  storageId        Int
+  storage          Storage            @relation(fields: [storageId], references: [id])
+  OrderReceiptName OrderReceiptName[]
+}
+
+enum Status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+}
+
+model OrderReceiptName {
+  id                                Int                                 @id @unique @default(autoincrement())
+  index                             Int
+  nameWorkId                        Int
+  name                              String
+  quantity                          Float
+  price                             Float
+  status                            Status
+  rowId                             Int                                 @default(0)
+  orderReceiptId                    Int?                                @default(0)
+  orderReceipts                     OrderReceipt?                       @relation(fields: [orderReceiptId], references: [id])
+  providerId                        Int?                                @default(0)
+  provider                          Providers?                          @relation(fields: [providerId], references: [id])
+  StorageQuantityToOrderReceiptName StorageQuantityToOrderReceiptName[]
+}
+
+model StorageQuantity {
+  id                                Int                                 @id @unique @default(autoincrement())
+  name                              String
+  nameWorkId                        Int
+  quantity                          Float
+  storageId                         Int
+  storage                           Storage                             @relation(fields: [storageId], references: [id])
+  StorageQuantityToOrderReceiptName StorageQuantityToOrderReceiptName[]
+}
+
+model StorageQuantityToOrderReceiptName {
+  id                 Int              @id @unique @default(autoincrement())
+  orderReceiptNameId Int
+  orderReceiptName   OrderReceiptName @relation(fields: [orderReceiptNameId], references: [id])
+  storageQuantityId  Int
+  storageQuantity    StorageQuantity  @relation(fields: [storageQuantityId], references: [id])
+}

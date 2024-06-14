@@ -9,9 +9,15 @@ import ScopeWorkAddData from "./scopeWork/ScopeWorkAddData";
 const LoginPage = lazy(() => import("./auth/LoginPage"));
 const RegisterPage = lazy(() => import("./auth/RegisterPage"));
 const HomePage = lazy(() => import("./home/HomePage"));
+const HomePageWarehousemanRoutes = lazy(
+    () => import("./home/HomePageWarehousemanRoutes")
+);
 const LayoutPage = lazy(() => import("./home/LayoutPage"));
 const ObjectsRoutes = lazy(() => import("./objects/index"));
 const AdminRoutes = lazy(() => import("./admin/index"));
+const OrdersRouter = lazy(() => import("./orders/index"));
+const StorageRouter = lazy(() => import("./storage/index"));
+const ProvidersRouter = lazy(() => import("./providers/index"));
 
 const Routing = () => {
     return (
@@ -27,6 +33,7 @@ const Routing = () => {
                 }
             >
                 <Route index element={<HomePage />} />
+
                 <Route path="/:id" element={<ScopeWorkAddData />} />
                 {/* <Route
                     path="objects/*"
@@ -44,16 +51,51 @@ const Routing = () => {
                 /> */}
 
                 <Route
-                    path="objects/*"
+                    path="/warehouseman/*"
+                    element={
+                        <SuspenseLoadCheckR roles={[RoleString.WAREHOUSEMAN]}>
+                            <HomePageWarehousemanRoutes />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+
+                <Route
+                    path="orders/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[RoleString.ADMIN, RoleString.MASTER]}
+                        >
+                            <OrdersRouter />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+
+                <Route
+                    path="storage/*"
                     element={
                         <SuspenseLoadCheckR
                             roles={[
-                                RoleString.USER,
+                                RoleString.MASTER,
                                 RoleString.ADMIN,
-                                RoleString.DEV,
+                                RoleString.MANAGER,
+                                RoleString.DRIVER,
                             ]}
                         >
-                            <h3>В разработке</h3>
+                            <StorageRouter />
+                        </SuspenseLoadCheckR>
+                    }
+                />
+                <Route
+                    path="providers/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[
+                                RoleString.MASTER,
+                                RoleString.ADMIN,
+                                RoleString.MANAGER,
+                            ]}
+                        >
+                            <ProvidersRouter />
                         </SuspenseLoadCheckR>
                     }
                 />

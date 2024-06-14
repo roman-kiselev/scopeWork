@@ -2,6 +2,7 @@ import {
     ICreateNameWorkAttr,
     ICreateNameWorkExcel,
     ICreateNameWorkForList,
+    INameWork,
     INameWorkAndUnit,
     INameWorkCreateResponse,
     INameWorkFromExcel,
@@ -59,6 +60,13 @@ export const nameWorkApi = mainApi.injectEndpoints({
                 url: "/name-work/createExcel",
                 method: "POST",
                 body: data,
+            }),
+        }),
+
+        findNameWork: builder.query<INameWork[], { text: string }>({
+            query: ({ text }) => ({
+                url: `/name-work/findByName/?text=${text}`,
+                method: "GET",
             }),
         }),
     }),

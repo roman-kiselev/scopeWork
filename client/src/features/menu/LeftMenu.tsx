@@ -1,11 +1,13 @@
 import {
     AppstoreAddOutlined,
+    BankOutlined,
     BuildOutlined,
     ContainerOutlined,
     DeploymentUnitOutlined,
     FileAddOutlined,
     HomeOutlined,
     PlusCircleOutlined,
+    ProfileOutlined,
     ToolOutlined,
     UnorderedListOutlined,
     UserAddOutlined,
@@ -28,13 +30,34 @@ const LeftMenu = () => {
             rolesState,
             <HomeOutlined />
         ),
-        // getItem(
-        //     <Link to="/objects">Объекты</Link>,
-        //     "objects",
-        //     [RoleString.USER, RoleString.ADMIN],
-        //     rolesState,
-        //     <BuildOutlined />
-        // ),
+        getItem(
+            <Link to="/orders">Заказы</Link>,
+            "orders",
+            [RoleString.MASTER, RoleString.ADMIN],
+            rolesState,
+            <AppstoreAddOutlined />
+        ),
+        { type: "divider" },
+        getItem(
+            <Link to="/providers">Поставщики</Link>,
+            "providers",
+            [RoleString.MANAGER, RoleString.ADMIN],
+            rolesState,
+            <ProfileOutlined />
+        ),
+        { type: "divider" },
+        getItem(
+            <Link to="/storage">Склад</Link>,
+            "storage",
+            [
+                RoleString.MANAGER,
+                RoleString.MASTER,
+                RoleString.ADMIN,
+                RoleString.DRIVER,
+            ],
+            rolesState,
+            <BankOutlined />
+        ),
 
         { type: "divider" },
         getItem(

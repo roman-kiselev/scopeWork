@@ -1,17 +1,17 @@
-import { authReducer, logout } from "./auth";
-import {
+export { authReducer, logout } from "./auth";
+export {
     dataOneUserReducer,
     dataOneUserSlice,
     editOneQuntity,
     getDataByTabName,
 } from "./dataOneUser";
-import {
+export {
     nameWorkReducer,
     nameWorkSlice,
     resetSelectedData,
     setDataSelect,
 } from "./nameWork";
-import {
+export {
     editList,
     getSelectedTypeWork,
     nameWorkListReducer,
@@ -21,8 +21,17 @@ import {
     setNameAndDescription,
     setSelectedTypeWork,
 } from "./nameWorkList";
-import { objectReducer, objectSlice } from "./objects";
-import {
+export { objectReducer, objectSlice } from "./objects";
+export {
+    addNewRow,
+    deleteRow,
+    editRow,
+    ordersReducer,
+    ordersSlice,
+    resetOrderReceipt,
+    setStorage,
+} from "./orders";
+export {
     addList,
     addNameListForEdit,
     addObject,
@@ -36,48 +45,6 @@ import {
     scopeWorkSlice,
     selectedTypeWorkIdInScopeWork,
 } from "./scopeWork";
-import { typeWorkReducer, typeWorkSlice } from "./typeWork/typeWorkSlice";
-import { unitReducer, unitSlice } from "./units";
-import { GetAllUsers, usersReducer, usersSlice } from "./users";
-
-export {
-    GetAllUsers,
-    addList,
-    addNameListForEdit,
-    addObject,
-    addTypeWork,
-    addUsers,
-    authReducer,
-    dataOneUserReducer,
-    dataOneUserSlice,
-    delForCreate,
-    delForEdit,
-    editList,
-    editOneQuntity,
-    editUsers,
-    getDataByTabName,
-    getSelectedTypeWork,
-    logout,
-    nameWorkListReducer,
-    nameWorkListSlice,
-    nameWorkReducer,
-    nameWorkSlice,
-    objectReducer,
-    objectSlice,
-    pushData,
-    resetForOneItem,
-    resetScopeWorkData,
-    resetSelectedData,
-    scopeWorkReducer,
-    scopeWorkSlice,
-    selectedTypeWorkIdInScopeWork,
-    setDataSelect,
-    setNameAndDescription,
-    setSelectedTypeWork,
-    typeWorkReducer,
-    typeWorkSlice,
-    unitReducer,
-    unitSlice,
-    usersReducer,
-    usersSlice,
-};
+export { typeWorkReducer, typeWorkSlice } from "./typeWork/typeWorkSlice";
+export { unitReducer, unitSlice } from "./units";
+export { GetAllUsers, usersReducer, usersSlice } from "./users";

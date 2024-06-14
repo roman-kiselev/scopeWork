@@ -16,6 +16,7 @@ import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
 import { IResQuickOneScopeWorkById } from './interfaces/IResQuickOneScopeWorkById';
+import { IResScopeWorkByUserAndObject } from './interfaces/IResScopeWorkByUserAndObject';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { ResHistoryTimeline } from './interfaces/ResHistoryTimeline';
 import { UserScopeWork } from './user-scope-work.model';
@@ -272,6 +273,53 @@ export class ScopeWorkService {
         { include: { all: true } },
       );
       return dataScopeWork;
+    } catch (e) {
+      if (e instanceof HttpException) {
+        throw e;
+      }
+      throw new HttpException(
+        'Ошибка сервера',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  // Получение списка работ по id пользователя и объекта
+  async getScopeWorkByUserIdAndObjectId(dto: {
+    userId: string;
+    objectId: string;
+  }) {
+    try {
+      const query = `
+      SELECT 
+      sw.id AS id,
+      sw.typeWorkId AS typeWorkId,
+      tw.name AS nameTypeWork,
+      sw.objectId AS objectId,
+      so.name AS name,
+      swu.userId AS userId,
+      swu.scopeWorkId AS scopeWorkId
+  FROM
+      \`scopework\`.scope_work sw
+          INNER JOIN
+      \`scopework\`.\`user-scope-work\` swu ON swu.scopeWorkId = sw.id
+          INNER JOIN
+      \`scopework\`.\`type_work\` tw ON tw.id = sw.typeWorkId
+          INNER JOIN
+      \`scopework\`.objects so ON so.id = sw.objectId
+  WHERE
+      objectId = :objectId AND swu.userId = :userId;
+      `;
+
+      const replacements = {
+        userId: dto.userId,
+        objectId: dto.objectId,
+      };
+
+      const data: IResScopeWorkByUserAndObject[] =
+        await this.databaseService.executeQuery(query, replacements);
+
+      return data;
     } catch (e) {
       if (e instanceof HttpException) {
         throw e;
