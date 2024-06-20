@@ -1,4 +1,5 @@
 import {
+    IAddRowInOrderReceipt,
     IChangeStatusOrder,
     ICreateOrderReceiptDto,
     IOrderReceiptForStorage,
@@ -57,6 +58,17 @@ export const orderReceiptApi = mainManagerApi.injectEndpoints({
         >({
             query: (data) => ({
                 url: `/order-receipt/edit-state/${data.id}`,
+                method: "PATCH",
+                body: data.dto,
+            }),
+        }),
+
+        addChildrenRow: builder.mutation<
+            IOrderReceiptForStorage,
+            { id: number; dto: IAddRowInOrderReceipt }
+        >({
+            query: (data) => ({
+                url: `/order-receipt/add-row/${data.id}`,
                 method: "PATCH",
                 body: data.dto,
             }),

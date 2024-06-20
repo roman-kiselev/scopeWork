@@ -49,6 +49,8 @@ const FormTableName = () => {
             provider: item.provider,
             quantity: item.quantity,
             price: item.price,
+            status: item.status,
+            rowId: item.rowId,
         };
     });
 
@@ -105,6 +107,20 @@ const FormTableName = () => {
                 <CellPrice price={render.price} keyCell={render.key} />
             ),
         },
+        // {
+        //     title: "Статус",
+        //     dataIndex: "status",
+        //     key: "status",
+        //     width: "12%",
+        //     render: (text, render) => <p>{render.status}</p>,
+        // },
+        // {
+        //     title: "ID",
+        //     dataIndex: "rowId",
+        //     key: "rowId",
+        //     width: "12%",
+        //     render: (text, render) => <p>{render.rowId}</p>,
+        // },
         {
             title: "Action",
             key: "action",

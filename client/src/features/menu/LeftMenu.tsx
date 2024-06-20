@@ -54,6 +54,7 @@ const LeftMenu = () => {
                 RoleString.MASTER,
                 RoleString.ADMIN,
                 RoleString.DRIVER,
+                RoleString.WAREHOUSEMAN,
             ],
             rolesState,
             <BankOutlined />

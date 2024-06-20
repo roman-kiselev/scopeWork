@@ -1,8 +1,14 @@
 import { HomeOutlined } from "@ant-design/icons";
-import { Breadcrumb, Card, Col, Divider, Row, Space } from "antd";
+import { Breadcrumb, Row } from "antd";
 import { Link } from "react-router-dom";
+import { RoleString } from "src/shared/config";
+import { useAppSelector } from "src/shared/hooks";
+import { CardAccess } from "src/shared/ui";
 
 const MainStoragePage = () => {
+    const { roles } = useAppSelector((store) => store.auth);
+    const myRoles = roles.map((role) => role.name);
+
     return (
         <Row
             style={{
@@ -36,45 +42,55 @@ const MainStoragePage = () => {
             </Row>
 
             <Row>
-                <Col>
-                    <Card
-                        size="small"
-                        title="Создать"
-                        extra={<Link to="create">Перейти</Link>}
-                        style={{ width: 300 }}
-                    >
-                        <p>Создание склада</p>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card
-                        size="small"
-                        title="Общий список"
-                        extra={<Link to="listStorage">Перейти</Link>}
-                        style={{ width: 300 }}
-                    >
-                        <p>Склады</p>
-                    </Card>
-                </Col>
-                <Col>
-                    <Card
-                        size="small"
-                        title="Поступления"
-                        extra={
-                            <Space>
-                                <Link to="add-name-in-storage">Создать</Link>
-                                <Divider
-                                    type="vertical"
-                                    style={{ color: "black" }}
-                                />
-                                <Link to="list-name-in-storage">Список</Link>
-                            </Space>
-                        }
-                        style={{ width: 300 }}
-                    >
-                        <p>Добавить на склад</p>
-                    </Card>
-                </Col>
+                <CardAccess
+                    titleCard="Создать"
+                    description="Создание склада"
+                    dataRoles={myRoles}
+                    accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
+                    links={[
+                        {
+                            title: "Перейти",
+                            to: "create",
+                            accessRoles: [RoleString.ADMIN, RoleString.MANAGER],
+                        },
+                    ]}
+                />
+
+                <CardAccess
+                    titleCard="Общий список"
+                    description="Склады"
+                    dataRoles={myRoles}
+                    accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
+                    links={[
+                        {
+                            title: "Перейти",
+                            to: "listStorage",
+                            accessRoles: [RoleString.ADMIN, RoleString.MANAGER],
+                        },
+                    ]}
+                />
+                <CardAccess
+                    titleCard="Поступления"
+                    description="Добавить на склад"
+                    dataRoles={myRoles}
+                    accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
+                    links={[
+                        {
+                            title: "Создать",
+                            to: "add-name-in-storage",
+                            accessRoles: [RoleString.ADMIN, RoleString.MANAGER],
+                        },
+                        {
+                            title: "Список",
+                            to: "list-name-in-storage",
+                            accessRoles: [
+                                RoleString.ADMIN,
+                                RoleString.MANAGER,
+                                RoleString.WAREHOUSEMAN,
+                            ],
+                        },
+                    ]}
+                />
             </Row>
         </Row>
     );

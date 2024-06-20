@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { orderReceiptApi } from "src/shared/api";
+import { orderReceiptApi, orderReceiptNameApi } from "src/shared/api";
 
 import {
     IDataOrderReceipt,
@@ -9,6 +9,7 @@ import {
     IProvider,
     IStorage,
 } from "src/shared/interfaces/models";
+import AcceptRow from "./AcceptRow";
 import ChangeStatusOrder from "./ChangeStatusOrder";
 import CreateOrderReceipt from "./CreateOrderReceipt";
 import GetOneOrderReceipt from "./GetOneOrderReceipt";
@@ -151,6 +152,20 @@ export const ordersSlice = createSlice({
         builder.addMatcher(
             orderReceiptApi.endpoints.updateStateWork.matchRejected,
             new ChangeStatusOrder().rejected
+        );
+
+        // принимаем строку
+        builder.addMatcher(
+            orderReceiptNameApi.endpoints.acceptRow.matchPending,
+            new AcceptRow().pending
+        );
+        builder.addMatcher(
+            orderReceiptNameApi.endpoints.acceptRow.matchFulfilled,
+            new AcceptRow().fulfilled
+        );
+        builder.addMatcher(
+            orderReceiptNameApi.endpoints.acceptRow.matchRejected,
+            new AcceptRow().rejected
         );
     },
 });
