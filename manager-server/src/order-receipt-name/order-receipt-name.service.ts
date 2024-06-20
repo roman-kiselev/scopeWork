@@ -247,13 +247,58 @@ export class OrderReceiptNameService {
             throw new NotFoundException('Строка не найдена');
         }
 
+        const findRow = await this.clientDatabase.storageQuantity.findMany({
+            where: {
+                nameWorkId: orderReceiptName.nameWorkId,
+                storageId: order.storageId,
+            },
+        });
+        if (findRow.length === 0) {
+            const storageQuantity =
+                await this.clientDatabase.storageQuantity.create({
+                    data: {
+                        name: orderReceiptName.name,
+                        quantity: orderReceiptName.quantity,
+                        nameWorkId: orderReceiptName.nameWorkId,
+                        storageId: order.storageId,
+                    },
+                });
+
+            if (storageQuantity) {
+                const storageQuantityToOrderReceiptName =
+                    await this.clientDatabase.storageQuantityToOrderReceiptName.create(
+                        {
+                            data: {
+                                orderReceiptNameId: orderReceiptName.id,
+                                storageQuantityId: storageQuantity.id,
+                            },
+                        },
+                    );
+                if (storageQuantityToOrderReceiptName) {
+                    await this.clientDatabase.orderReceiptName.update({
+                        where: {
+                            id: orderReceiptName.id,
+                        },
+                        data: {
+                            status: 'COMPLETED',
+                        },
+                    });
+                }
+            }
+
+            return this.clientDatabase.orderReceiptName.findUnique({
+                where: {
+                    id,
+                },
+            });
+        }
         const storageQuantity =
-            await this.clientDatabase.storageQuantity.create({
+            await this.clientDatabase.storageQuantity.update({
+                where: {
+                    id: findRow[0].id,
+                },
                 data: {
-                    name: orderReceiptName.name,
-                    quantity: orderReceiptName.quantity,
-                    nameWorkId: orderReceiptName.nameWorkId,
-                    storageId: order.storageId,
+                    quantity: findRow[0].quantity + orderReceiptName.quantity,
                 },
             });
 
