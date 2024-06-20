@@ -1,5 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { AcceptRowDto } from './dto/accept-row.dto';
 import { CreateOrderReceiptNameDto } from './dto/create-order-receipt-name.dto';
 import { Status } from './enums/status.enum';
 
@@ -216,6 +222,66 @@ export class OrderReceiptNameService {
         return this.clientDatabase.orderReceiptName.findMany({
             where: {
                 orderReceiptId: dto[0].orderReceiptId,
+            },
+        });
+    }
+
+    async acceptRow(id: number, dto: AcceptRowDto) {
+        const orderPromise = this.clientDatabase.orderReceipt.findUnique({
+            where: {
+                id: dto.orderId,
+            },
+        });
+        const orderReceiptNamePromise =
+            this.clientDatabase.orderReceiptName.findUnique({
+                where: {
+                    id,
+                },
+            });
+        const [order, orderReceiptName] = await Promise.all([
+            orderPromise,
+            orderReceiptNamePromise,
+        ]);
+
+        if (!order || !orderReceiptName) {
+            throw new NotFoundException('Строка не найдена');
+        }
+
+        const storageQuantity =
+            await this.clientDatabase.storageQuantity.create({
+                data: {
+                    name: orderReceiptName.name,
+                    quantity: orderReceiptName.quantity,
+                    nameWorkId: orderReceiptName.nameWorkId,
+                    storageId: order.storageId,
+                },
+            });
+
+        if (storageQuantity) {
+            const storageQuantityToOrderReceiptName =
+                await this.clientDatabase.storageQuantityToOrderReceiptName.create(
+                    {
+                        data: {
+                            orderReceiptNameId: orderReceiptName.id,
+                            storageQuantityId: storageQuantity.id,
+                        },
+                    },
+                );
+            if (storageQuantityToOrderReceiptName) {
+                await this.clientDatabase.orderReceiptName.update({
+                    where: {
+                        id: orderReceiptName.id,
+                    },
+                    data: {
+                        status: 'COMPLETED',
+                    },
+                });
+            }
+        }
+
+        return this.clientDatabase.orderReceiptName.findUnique({
+            where: {
+                id,
             },
         });
     }

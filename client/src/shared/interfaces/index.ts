@@ -7,6 +7,7 @@ export type {
     IUserResponseToken,
 } from "./api";
 export type {
+    IAddRowInOrderReceipt,
     IAuthSlice,
     IChangeStatusOrder,
     ICreateNameWorkAttr,

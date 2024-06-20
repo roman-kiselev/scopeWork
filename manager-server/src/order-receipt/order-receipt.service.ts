@@ -214,6 +214,8 @@ export class OrderReceiptService {
         };
     }
 
+    async addRowAndUpdate(id: number) {}
+
     async getAllActive() {
         return this.clientDatabase.orderReceipt.findMany({
             where: {

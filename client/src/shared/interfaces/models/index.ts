@@ -79,6 +79,7 @@ export type {
 } from "./transportCompany";
 
 export type {
+    IAddRowInOrderReceipt,
     IDataOrderReceipt,
     IEditRowByName,
     IOrderReceipt,
@@ -99,6 +100,7 @@ export type {
 } from "./order-receipt";
 
 export type {
+    IAcceptRowDto,
     IOrderReceiptCreateName,
     IOrderReceiptGetResponse,
 } from "./order-receipt-name";

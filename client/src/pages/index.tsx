@@ -79,6 +79,7 @@ const Routing = () => {
                                 RoleString.ADMIN,
                                 RoleString.MANAGER,
                                 RoleString.DRIVER,
+                                RoleString.WAREHOUSEMAN,
                             ]}
                         >
                             <StorageRouter />

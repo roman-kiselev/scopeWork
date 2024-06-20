@@ -42,6 +42,8 @@ class CreateOrderReceipt
                     price: item.price,
                     provider: item.provider,
                     quantity: item.quantity,
+                    status: item.status,
+                    rowId: item.rowId,
                 } as IDataOrderReceipt;
             });
         state.orderReceipt.numberOrder = id;
