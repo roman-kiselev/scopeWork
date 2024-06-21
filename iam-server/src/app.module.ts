@@ -1,17 +1,41 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Redis } from 'ioredis';
 import * as Joi from 'joi';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
+import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
+import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
 import { IamModule } from './iam/iam.module';
+import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { RolesModule } from './roles/roles.module';
+import { ThrottlerBehindProxyGuard } from './throttler/throttler-behind-proxy.guard';
 import { UserDescriptionModule } from './user-description/user-description.module';
 
 type DBName = 'postgres';
 @Module({
+    providers: [
+        {
+            provide: APP_PIPE,
+            useClass: ValidationPipe,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: ValidationExceptionFilter,
+        },
+        {
+            provide: APP_FILTER,
+            useClass: HttpExceptionFilter,
+        },
+
+        {
+            provide: APP_GUARD,
+            useClass: ThrottlerBehindProxyGuard,
+        },
+    ],
     imports: [
         ConfigModule.forRoot({
             validationSchema: Joi.object({
@@ -67,6 +91,9 @@ type DBName = 'postgres';
         OrganizationsModule,
     ],
     controllers: [],
-    providers: [],
 })
-export class AppModule {}
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer.apply(LoggerMiddleware).forRoutes('*');
+    }
+}
