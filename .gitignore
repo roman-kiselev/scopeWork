@@ -1,7 +1,10 @@
 client/node_modules
 server/node_modules
-iam/dist
-iam/node_modules
+iam-server/dist
+iam-server/node_modules
+iam-server/developmentJob.env
+iam-server/productionJob.env
+
 manager-server/node_modules
 manager-server/dist
 client/.env
