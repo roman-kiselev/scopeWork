@@ -6,12 +6,9 @@ import { useAppSelector } from "../../hooks";
 const MultiSelectRoles = () => {
     const { data: allRoles, isLoading: isLoadingRoles } =
         roleApi.useGetAllRolesQuery();
-    const [changeRole, { data }] = userApi.useAddRolesForUserMutation();
-    const {
-        oneUserWithDescription,
-        isLoading: isLoadingStore,
-        isError,
-    } = useAppSelector((store) => store.users);
+    const [changeRole] = userApi.useAddRolesForUserMutation();
+    const { oneUserWithDescription, isLoading: isLoadingStore } =
+        useAppSelector((store) => store.users);
 
     const options: SelectProps["options"] = allRoles?.map((role) => ({
         value: role.name,

@@ -14,6 +14,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { RolesModule } from './roles/roles.module';
 import { ThrottlerBehindProxyGuard } from './throttler/throttler-behind-proxy.guard';
 import { UserDescriptionModule } from './user-description/user-description.module';
+import { UsersModule } from './users/users.module';
 
 type DBName = 'postgres';
 @Module({
@@ -30,7 +31,6 @@ type DBName = 'postgres';
             provide: APP_FILTER,
             useClass: HttpExceptionFilter,
         },
-
         {
             provide: APP_GUARD,
             useClass: ThrottlerBehindProxyGuard,
@@ -89,6 +89,7 @@ type DBName = 'postgres';
         UserDescriptionModule,
         RolesModule,
         OrganizationsModule,
+        UsersModule,
     ],
     controllers: [],
 })
