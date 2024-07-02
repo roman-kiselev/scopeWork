@@ -25,6 +25,18 @@ const baseManagerQuery = fetchBaseQuery({
     },
 });
 
+const baseIamQuery = fetchBaseQuery({
+    baseUrl: process.env.REACT_APP_URL_API_IAM,
+    prepareHeaders: (headers, { getState }) => {
+        const token =
+            (getState() as RootState).auth.token ||
+            localStorage.getItem("token");
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+    },
+});
+
 const baseQueryPlusPath = (path: string) => {
     const baseQuery = fetchBaseQuery({
         baseUrl: process.env.REACT_APP_URL_API + path,
@@ -43,10 +55,10 @@ const baseQueryPlusPath = (path: string) => {
 
 const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 });
 const baseQueryManagerWithRetry = retry(baseManagerQuery, { maxRetries: 1 });
-
 const baseQueryWithRetryObject = retry(baseQueryPlusPath("/objects"), {
     maxRetries: 1,
 });
+const baseQueryIamWithRetry = retry(baseIamQuery, { maxRetries: 1 });
 
 export const mainApi = createApi({
     reducerPath: "main",
@@ -68,6 +80,14 @@ export const objectMainApi = createApi({
     reducerPath: "objectsMain",
     tagTypes: ["Objects"],
     baseQuery: baseQueryWithRetryObject,
+    refetchOnMountOrArgChange: true,
+    endpoints: () => ({}),
+});
+
+export const objectIamApi = createApi({
+    reducerPath: "iam",
+    tagTypes: ["Iam"],
+    baseQuery: baseQueryIamWithRetry,
     refetchOnMountOrArgChange: true,
     endpoints: () => ({}),
 });

@@ -1,24 +1,5 @@
 import { Row, Select, SelectProps } from "antd";
 
-const options: SelectProps["options"] = [
-    {
-        label: "Иванов И.И.",
-        value: "1",
-    },
-    {
-        label: "Петров П.В.",
-        value: "2",
-    },
-    {
-        label: "Сидоров П.В.",
-        value: "3",
-    },
-    {
-        label: "Шишкин П.В.",
-        value: "4",
-    },
-];
-
 interface SelectUserProps {
     handleChange: (arr: string[]) => void;
     defaultValue: string[] | null | undefined;
