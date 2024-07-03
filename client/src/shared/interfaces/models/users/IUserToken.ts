@@ -1,8 +1,9 @@
-import { IRole } from "../roles";
+import { RoleString } from "src/shared/config";
 
 export interface IUserToken {
-    id: number;
+    sub: number;
     email: string;
     banned: boolean;
-    roles: IRole[];
+    organizationId: number;
+    roles: RoleString[];
 }

@@ -1,6 +1,6 @@
 export { authApi } from "./auth";
 export { listNameWorkApi } from "./listNameWork";
-export { mainApi, mainManagerApi, objectMainApi } from "./main";
+export { iamApi, mainApi, mainManagerApi, objectMainApi } from "./main";
 export { nameWorkApi } from "./nameWork";
 export { objectsApi } from "./objects";
 export { orderReceiptApi } from "./orderReceipt";

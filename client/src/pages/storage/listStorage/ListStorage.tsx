@@ -16,12 +16,7 @@ interface IStorageAndUsersAndObjectsForTable
         IStorageAndUsersAndObjects {}
 
 const ListStorage = () => {
-    const {
-        data: listStorage,
-        isSuccess,
-        isError,
-        isLoading,
-    } = storageApi.useGetAllStorageQuery();
+    const { data: listStorage, isLoading } = storageApi.useGetAllStorageQuery();
     console.log(listStorage);
 
     const columns: TableProps<IStorageAndUsersAndObjectsForTable>["columns"] = [
@@ -29,13 +24,13 @@ const ListStorage = () => {
             title: "Наименование",
             dataIndex: "name",
             key: "name",
-            render: (_, { name }) => <a>{name}</a>,
+            render: (_, { name }) => <p>{name}</p>,
         },
         {
             title: "Адрес",
             dataIndex: "address",
             key: "address",
-            render: (_, { address }) => <a>{address}</a>,
+            render: (_, { address }) => <p>{address}</p>,
         },
         {
             title: "Закреплён",

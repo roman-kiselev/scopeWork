@@ -3,8 +3,10 @@ import {
     configureStore,
     createListenerMiddleware,
 } from "@reduxjs/toolkit";
+import Cookies from "universal-cookie";
 import {
     authApi,
+    iamApi,
     mainApi,
     mainManagerApi,
     objectMainApi,
@@ -26,9 +28,21 @@ const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
     matcher: authApi.endpoints.login.matchFulfilled,
     effect: (action, listenerApi) => {
+        console.log(action.payload);
         listenerApi.cancelActiveListeners();
-        if (action.payload.token) {
-            localStorage.setItem("token", action.payload.token);
+        if (action.payload.accessToken && action.payload.refreshToken) {
+            localStorage.setItem("token", action.payload.accessToken);
+            const cookie = new Cookies();
+            cookie.set("refreshToken", action.payload.refreshToken);
+        }
+    },
+});
+listenerMiddleware.startListening({
+    matcher: authApi.endpoints.refresh.matchFulfilled,
+    effect: (action, listenerApi) => {
+        listenerApi.cancelActiveListeners();
+        if (action.payload.accessToken) {
+            localStorage.setItem("token", action.payload.accessToken);
         }
     },
 });
@@ -47,6 +61,7 @@ const rootReducer = combineReducers({
     [mainApi.reducerPath]: mainApi.reducer,
     [objectMainApi.reducerPath]: objectMainApi.reducer,
     [mainManagerApi.reducerPath]: mainManagerApi.reducer,
+    [iamApi.reducerPath]: iamApi.reducer,
 });
 
 const store = configureStore({
@@ -56,7 +71,8 @@ const store = configureStore({
             .concat(
                 mainApi.middleware,
                 objectMainApi.middleware,
-                mainManagerApi.middleware
+                mainManagerApi.middleware,
+                iamApi.middleware
             )
             .prepend(listenerMiddleware.middleware);
     },

@@ -1,6 +1,6 @@
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Redis } from 'ioredis';
@@ -12,7 +12,6 @@ import { IamModule } from './iam/iam.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { RolesModule } from './roles/roles.module';
-import { ThrottlerBehindProxyGuard } from './throttler/throttler-behind-proxy.guard';
 import { UserDescriptionModule } from './user-description/user-description.module';
 import { UsersModule } from './users/users.module';
 
@@ -31,10 +30,10 @@ type DBName = 'postgres';
             provide: APP_FILTER,
             useClass: HttpExceptionFilter,
         },
-        {
-            provide: APP_GUARD,
-            useClass: ThrottlerBehindProxyGuard,
-        },
+        // {
+        //     provide: APP_GUARD,
+        //     useClass: ThrottlerBehindProxyGuard,
+        // },
     ],
     imports: [
         ConfigModule.forRoot({

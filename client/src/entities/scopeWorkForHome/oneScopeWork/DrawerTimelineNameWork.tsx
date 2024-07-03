@@ -3,7 +3,7 @@ import { Button, Drawer, Space, Spin, Timeline } from "antd";
 import { tableAddingDataApi } from "src/shared/api";
 import { RoleString } from "src/shared/config";
 import { useAppSelector } from "src/shared/hooks";
-import { IRole, IUnit } from "src/shared/interfaces";
+import { IUnit } from "src/shared/interfaces";
 import { IDataGetHistoryForNameWorkId } from "src/shared/interfaces/api";
 import { checkRole, getDate, getUnit } from "src/shared/utils";
 
@@ -14,7 +14,7 @@ interface IDrawerTimelineNameWork {
     dataTimeline: IDataGetHistoryForNameWorkId[];
     dataUnit: IUnit[];
     unitId: number;
-    roles: IRole[];
+    roles: string[];
     nameListId: number;
     nameWorkId: number;
     scopeWorkId: number;

@@ -1,6 +1,5 @@
 import { Alert, Button, Card, Form, Row, Typography } from "antd";
 import React from "react";
-import { Link as LinkDom } from "react-router-dom";
 import {
     IDataError,
     IInputFormItemProps,
@@ -84,10 +83,10 @@ const FormLogin: React.FC<IFormLoginProps> = ({
                             />
                         </Row>
                     )}
-                    <Row>
+                    {/* <Row>
                         <Text>Нет аккаунта??</Text>
                         <LinkDom to={"/register"}>Зарегистрироваться</LinkDom>
-                    </Row>
+                    </Row> */}
                     <Row style={{ marginTop: 10 }}>
                         <Button type="primary" htmlType="submit">
                             Вход

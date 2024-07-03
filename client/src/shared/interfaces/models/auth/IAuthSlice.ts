@@ -1,10 +1,11 @@
+import { RoleString } from "src/shared/config";
 import { IDataError } from "../../api";
-import { IRole } from "../roles";
 
 export interface IAuthSlice {
-    roles: IRole[];
+    roles: RoleString[];
     banned: boolean;
     email: string;
+    organizationId: number;
     id: number | null;
     isAuth: boolean;
     isLoading: boolean;

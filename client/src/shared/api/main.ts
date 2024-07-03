@@ -84,7 +84,7 @@ export const objectMainApi = createApi({
     endpoints: () => ({}),
 });
 
-export const objectIamApi = createApi({
+export const iamApi = createApi({
     reducerPath: "iam",
     tagTypes: ["Iam"],
     baseQuery: baseQueryIamWithRetry,

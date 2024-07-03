@@ -1,3 +1,4 @@
 export interface IUserResponseToken {
-    token: string;
+    accessToken: string;
+    refreshToken: string;
 }

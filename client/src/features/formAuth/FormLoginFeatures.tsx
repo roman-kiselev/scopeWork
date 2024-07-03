@@ -1,4 +1,5 @@
 import { Form, Spin } from "antd";
+import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { FormLogin } from "../../entities";
 import { LayoutAuth } from "../../entities/layoutAuth";
@@ -11,11 +12,19 @@ const FormLoginFeatures = () => {
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
 
-    const {
-        isSuccess: isSuccessCheck,
-        isLoading: isLoadingCheck,
-        data: dataCheck,
-    } = authApi.useCheckQuery();
+    const [
+        refreshToken,
+        {
+            isSuccess: isSuccessCheck,
+            isLoading: isLoadingCheck,
+            data: dataCheck,
+        },
+    ] = authApi.useRefreshMutation();
+
+    useEffect(() => {
+        refreshToken();
+    }, []);
+
     const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
@@ -28,6 +37,9 @@ const FormLoginFeatures = () => {
     };
     if (isLoading || isLoadingCheck || isLoadingLogin) {
         return <Spin />;
+    }
+    if (isSuccessCheck) {
+        navigate(location.state?.from || "/", { replace: true });
     }
     return (
         <LayoutAuth>

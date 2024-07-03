@@ -18,9 +18,7 @@ interface IListOrderReceiptProps {
 }
 
 const ListOrderReceipt: React.FC<IListOrderReceiptProps> = ({ allList }) => {
-    const roles = useAppSelector((store) => store.auth.roles).map(
-        (item) => item.name
-    );
+    const roles = useAppSelector((store) => store.auth.roles);
 
     const columns: TableProps<DataType>["columns"] = [
         {
