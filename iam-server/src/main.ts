@@ -2,11 +2,18 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import * as cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
     const PORT = process.env.PORT || 7777;
+    app.enableCors({
+        origin: 'http://localhost:3000',
+        credentials: true,
+    });
+    app.use(cookieParser());
+
     app.connectMicroservice<MicroserviceOptions>({
         transport: Transport.RMQ,
         options: {
@@ -17,6 +24,7 @@ async function bootstrap() {
             },
         },
     });
+
     const config = new DocumentBuilder()
         .setTitle('Manager')
         .setDescription('Manager Api')
@@ -34,7 +42,6 @@ async function bootstrap() {
             transform: true,
         }),
     );
-
     await app.listen(PORT);
 }
 bootstrap();

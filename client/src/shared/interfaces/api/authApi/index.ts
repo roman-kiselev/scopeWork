@@ -1,5 +1,11 @@
 import { IUserLogin } from "./IUserLogin";
-import { IUserResponseToken } from "./IUserResponseToken";
 import { IUserRegister } from "./IUserRegister";
+import { IUserRegisterWithOrganization } from "./IUserRegisterWithOrganization";
+import { IUserResponseToken } from "./IUserResponseToken";
 
-export type { IUserLogin, IUserResponseToken, IUserRegister };
+export type {
+    IUserLogin,
+    IUserRegister,
+    IUserRegisterWithOrganization,
+    IUserResponseToken,
+};

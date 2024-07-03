@@ -59,6 +59,7 @@ export class AuthenticationService {
                 {
                     email: user.email,
                     roles: user.roles.map((role) => role.name),
+                    banned: user.banned,
                     organizationId: user.organization.id,
                 },
             ),
@@ -140,6 +141,10 @@ export class AuthenticationService {
         }
 
         const result = await this.generateTokens(user);
+        // const result: {
+        //     accessToken: string;
+        //     refreshToken: string;
+        // }
 
         return result;
     }
@@ -155,11 +160,17 @@ export class AuthenticationService {
                         issuer: this.jwtConfiguration.issuer,
                     },
                 );
-            const user = await this.userService.findOneBy({ id: sub });
+            console.log(sub, refreshTokenId);
+            const user = await this.userService.findOneWithRelation(
+                { id: sub },
+                ['roles', 'organization'],
+            );
+
             const isValid = await this.refreshTokenIdsStorage.validate(
                 user.id,
                 refreshTokenId,
             );
+            console.log(isValid);
 
             if (isValid) {
                 await this.refreshTokenIdsStorage.invalidate(user.id);

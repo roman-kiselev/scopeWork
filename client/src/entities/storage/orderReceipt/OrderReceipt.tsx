@@ -2,8 +2,7 @@ import { Button, Col, Divider, Row, Select, Space } from "antd";
 import React from "react";
 import { useParams } from "react-router";
 import { orderReceiptApi } from "src/shared/api";
-import { useAppDispatch, useAppSelector } from "src/shared/hooks";
-import { IRole } from "src/shared/interfaces";
+import { useAppSelector } from "src/shared/hooks";
 import FormTableName from "../form/FormTableName";
 
 interface IOrderReceiptProps {
@@ -19,27 +18,25 @@ const OrderReceipt: React.FC<IOrderReceiptProps> = ({
     handleSave,
     defaultValue = 0,
 }) => {
-    const dispatch = useAppDispatch();
     const { id: orderId } = useParams();
     const { id: userId, roles } = useAppSelector((store) => store.auth);
     const { stateOrder } = useAppSelector((store) => store.orders.orderReceipt);
     const { numberOrder } = useAppSelector(
         (store) => store.orders.orderReceipt
     );
-    const [changeStatus, { isLoading: isLoadingChange }] =
-        orderReceiptApi.useUpdateStateWorkMutation();
+    const [changeStatus] = orderReceiptApi.useUpdateStateWorkMutation();
 
     const handleClickForChangeStatus = (
         orderId: number,
         userId: number,
-        roles: IRole[]
+        roles: string[]
     ) => {
         changeStatus({
             id: +orderId,
             dto: {
                 state: !stateOrder,
                 userId: userId ?? 0,
-                userRoles: roles.map((item) => item.name),
+                userRoles: roles,
             },
         });
     };

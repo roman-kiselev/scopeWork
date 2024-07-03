@@ -5,5 +5,7 @@ export interface ActiveUserData {
 
     roles: string[];
 
+    banned: boolean;
+
     organizationId: number;
 }

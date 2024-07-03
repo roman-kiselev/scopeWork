@@ -8,6 +8,7 @@ import {
     Res,
 } from '@nestjs/common';
 import {
+    ApiBearerAuth,
     ApiConflictResponse,
     ApiCreatedResponse,
     ApiOperation,
@@ -98,9 +99,10 @@ export class AuthenticationController {
     })
     @HttpCode(HttpStatus.OK)
     @Post('refresh-tokens')
+    @ApiBearerAuth()
     async refreshToken(@Req() req: Request, @Res() res: Response) {
         const rt = req.cookies['refreshToken'];
-
+        //console.log(rt);
         const result = await this.authenticationService.refreshTokens({
             refreshToken: rt,
         });
@@ -111,6 +113,7 @@ export class AuthenticationController {
             // secure: true, // TODO: Потребуется ли включение в production ?
         });
 
-        return res.json(result.accessToken);
+        //console.log({ accessToken: result.accessToken });
+        return res.json({ accessToken: result.accessToken });
     }
 }

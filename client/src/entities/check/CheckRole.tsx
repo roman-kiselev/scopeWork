@@ -1,17 +1,16 @@
 import { Spin } from "antd";
 import React from "react";
-import { Navigate, useLocation } from "react-router";
+import { Navigate } from "react-router";
 import { RoleString } from "../../shared/config";
-import { IRole } from "../../shared/interfaces";
 
-function findRole(roles: string[], roleState: IRole[]): boolean {
+function findRole(roles: string[], roleState: string[]): boolean {
     //const { role, roleState } = arg;
     // Пробегаеимся по roleState
     // Разрешённые роли в массиве role
     let foundMatch = false;
-    roleState.forEach((oneRole: IRole) => {
+    roleState.forEach((oneRole: string) => {
         roles.forEach((role: string) => {
-            if (role === oneRole.name) {
+            if (role === oneRole) {
                 foundMatch = true;
             }
         });
@@ -22,7 +21,7 @@ function findRole(roles: string[], roleState: IRole[]): boolean {
 interface CheckRoleProps {
     children: React.ReactNode;
     roles: RoleString[];
-    rolesState: IRole[];
+    rolesState: string[];
     isLoading?: boolean;
     location: any;
 }

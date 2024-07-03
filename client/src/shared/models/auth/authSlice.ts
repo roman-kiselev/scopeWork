@@ -6,6 +6,7 @@ import { IAuthSlice, IDataError, IUserToken } from "../../interfaces";
 const initialState: IAuthSlice = {
     banned: false,
     email: "",
+    organizationId: 0,
     id: null,
     roles: [],
     isAuth: false,
@@ -70,15 +71,15 @@ export const authSlice = createSlice({
             authApi.endpoints.login.matchFulfilled,
             (state, action) => {
                 state.isAuth = true;
-                const { token } = action.payload;
-                const user: IUserToken = jwt_decode(token);
-                state.id = user.id;
+                const { accessToken } = action.payload;
+                const user: IUserToken = jwt_decode(accessToken);
+                state.id = user.sub;
                 state.email = user.email;
                 state.banned = user.banned;
-
+                state.organizationId = user.organizationId;
                 const { roles } = user;
                 state.roles = roles;
-                state.token = token;
+                state.token = accessToken;
                 state.isLoading = false;
             }
         );
@@ -100,7 +101,7 @@ export const authSlice = createSlice({
         // End Login //
         // Start Check //
         builder.addMatcher(
-            authApi.endpoints.check.matchPending,
+            authApi.endpoints.refresh.matchPending,
             (state, action) => {
                 state.isLoading = true;
                 state.isError = false;
@@ -108,22 +109,24 @@ export const authSlice = createSlice({
             }
         );
         builder.addMatcher(
-            authApi.endpoints.check.matchFulfilled,
+            authApi.endpoints.refresh.matchFulfilled,
             (state, action) => {
                 state.isAuth = true;
-                const { token } = action.payload;
-                const user: IUserToken = jwt_decode(token);
-                state.id = user.id;
+                const { accessToken } = action.payload;
+                const user: IUserToken = jwt_decode(accessToken);
+                state.id = user.sub;
                 state.email = user.email;
                 state.banned = user.banned;
+                state.organizationId = user.organizationId;
+                //localStorage.setItem("token", accessToken);
                 const { roles } = user;
                 state.roles = roles;
-                state.token = token;
+                state.token = accessToken;
                 state.isLoading = false;
             }
         );
         builder.addMatcher(
-            authApi.endpoints.check.matchRejected,
+            authApi.endpoints.refresh.matchRejected,
             (state, action) => {
                 state.isAuth = false;
                 state.isError = true;

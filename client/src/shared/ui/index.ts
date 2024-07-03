@@ -4,7 +4,7 @@ export { CreateStorage } from "./forms";
 export {
     InputCreateNameWork,
     InputFormItem,
-    InputPasswordFormItem
+    InputPasswordFormItem,
 } from "./input";
 export { EmptyModal, ModalDownloadScopework } from "./modal";
 export {
@@ -12,6 +12,5 @@ export {
     SelectObject,
     SelectObjectWithData,
     SelectTypeWork,
-    SelectUser
+    SelectUser,
 } from "./select";
-

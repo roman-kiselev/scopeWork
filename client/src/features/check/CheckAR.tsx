@@ -1,8 +1,7 @@
-import React from "react";
-import { useLocation } from "react-router";
+import React, { useEffect } from "react";
+import { RoleString } from "src/shared/config";
 import { CheckAuth, CheckRole } from "../../entities";
 import { authApi } from "../../shared/api";
-import { RoleString } from "../../shared/config";
 import { useAppSelector } from "../../shared/hooks";
 
 interface ICheckAR {
@@ -17,7 +16,11 @@ const CheckAR: React.FC<ICheckAR> = ({ children, roles, location }) => {
         roles: rolesState,
     } = useAppSelector((state) => state.auth);
 
-    const { isSuccess, isLoading: isLoadingCheck } = authApi.useCheckQuery();
+    const [refreshToken, { isSuccess, isLoading: isLoadingCheck }] =
+        authApi.useRefreshMutation();
+    useEffect(() => {
+        refreshToken();
+    }, [refreshToken]);
     return (
         <CheckAuth
             isAuth={isAuth}

@@ -1,14 +1,13 @@
 import { MenuProps } from "antd";
-import { IRole } from "../../interfaces";
 import { RoleString } from "../RoleString";
 
-function findRole(roles: RoleString[], roleState: IRole[]): boolean {
+function findRole(roles: RoleString[], roleState: RoleString[]): boolean {
     // Пробегаеимся по roleState
     // Разрешённые роли в массиве role
     let foundMatch = false;
-    roleState.forEach((oneRole: IRole) => {
+    roleState.forEach((oneRole: string) => {
         roles.forEach((role: string) => {
-            if (role === oneRole.name) {
+            if (role === oneRole) {
                 foundMatch = true;
             }
         });
@@ -21,7 +20,7 @@ function getItem(
     label: React.ReactNode,
     key: React.Key,
     roles: RoleString[] | [],
-    roleState: IRole[] | [],
+    roleState: RoleString[] | [],
     icon?: React.ReactNode,
     children?: MenuItem[],
     type?: "group"

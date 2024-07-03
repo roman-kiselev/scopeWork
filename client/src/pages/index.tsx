@@ -33,6 +33,7 @@ const Routing = () => {
                 }
             >
                 <Route index element={<HomePage />} />
+                {/* <Route index element={<p>Hello</p>} /> */}
 
                 <Route path="/:id" element={<ScopeWorkAddData />} />
                 {/* <Route

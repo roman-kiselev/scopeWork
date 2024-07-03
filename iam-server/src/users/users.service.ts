@@ -20,14 +20,18 @@ export class UsersService {
         private rolesService: RolesService,
     ) {}
 
-    async findOneBy(criteria: Partial<User>) {
+    async findOneBy(criteria: Partial<User>, relations: string[] = []) {
         const user = await this.userRepository.findOne({ where: criteria });
         if (!user) {
             throw new NotFoundException('User not found');
         }
         return user;
     }
-    async findOneWithRelation(criteria: Partial<User>, relations: string[]) {
+
+    async findOneWithRelation(
+        criteria: Partial<User>,
+        relations: string[] = [],
+    ) {
         const user = await this.userRepository.findOne({
             where: criteria,
             relations,

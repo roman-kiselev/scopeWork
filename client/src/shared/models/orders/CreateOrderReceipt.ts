@@ -22,7 +22,6 @@ class CreateOrderReceipt
         state.orderReceipt.isSuccess = true;
         const {
             id,
-            userCreateId,
             orderReceiptNames,
             storage,
             state: orderState,
