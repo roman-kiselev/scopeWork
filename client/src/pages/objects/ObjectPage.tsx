@@ -1,7 +1,5 @@
-import { Layout, Row } from "antd";
+import { Row } from "antd";
 import { MainCard } from "../../entities";
-
-const { Header, Sider, Content, Footer } = Layout;
 
 const ObjectPage = () => {
     return (

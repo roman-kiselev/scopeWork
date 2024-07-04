@@ -104,15 +104,15 @@ export const scopeWorkSlice = createSlice({
             const { arrListId } = action.payload;
             const mainList = current(state.nameWorksSelected);
 
-            let arr: INameListWork[] = [];
-            let listNames = [];
+            const arr: INameListWork[] = [];
+            // let listNames: INameWorkWithNameList[] = [];
             for (const listId of arrListId) {
                 const findedList = mainList.find(
                     ({ id }) => id === Number(listId)
                 );
                 if (findedList) {
                     arr.push(findedList);
-                    listNames = [...findedList.nameWorks];
+                    //listNames = [...findedList.nameWorks];
                 }
             }
 

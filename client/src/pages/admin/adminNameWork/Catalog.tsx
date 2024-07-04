@@ -1,10 +1,9 @@
 import { Button, Modal, Table } from "antd";
 import type { ColumnsType, TableProps } from "antd/es/table";
 import React, { useState } from "react";
+import { INameWorkCreateResponse } from "src/shared/interfaces";
 import { EditNameWorkFeatures } from "../../../features";
-import { nameWorkApi } from "../../../shared/api";
 import { useAppSelector } from "../../../shared/hooks";
-import { INameWorkCreateResponse } from "../../../shared/interfaces";
 
 interface NameWorkWithKey {
     key: React.Key;
@@ -17,28 +16,22 @@ interface NameWorkWithKey {
     typeWorks: string[];
 }
 
-const onChange: TableProps<NameWorkWithKey>["onChange"] = (
-    pagination,
-    filters,
-    sorter,
-    extra
-) => {
+const onChange: TableProps<NameWorkWithKey>["onChange"] = () => {
     // console.log("params", pagination, filters, sorter, extra);
 };
 
 const getData = (data: INameWorkCreateResponse[]) => {
-    const d: NameWorkWithKey[] = [];
-    const newData = data.map((name) => {
+    const d: NameWorkWithKey[] = data.map((name) => {
         const { name: unitName } = name.unit;
         const { typeWorks } = name;
-        let stringTypeWork: string[] = [];
+        const stringTypeWork: string[] = [];
         if (typeWorks !== null) {
             for (let i = 0; i < typeWorks.length; i++) {
                 stringTypeWork.push(typeWorks[i].name);
             }
         }
 
-        let nameWork: NameWorkWithKey = {
+        const nameWork: NameWorkWithKey = {
             key: name.id,
             id: name.id,
             name: name.name,
@@ -50,7 +43,7 @@ const getData = (data: INameWorkCreateResponse[]) => {
             typeWorks: stringTypeWork,
         };
 
-        d.push(nameWork);
+        return nameWork;
     });
 
     return d;
@@ -92,7 +85,6 @@ const ModalEdit: React.FC<ModalEditProps> = ({
 };
 
 const Catalog = () => {
-    const { isSuccess, data, isLoading } = nameWorkApi.useGetAllNameWorkQuery();
     const { listNameWork } = useAppSelector((store) => store.nameWork);
     const dataNameWork: NameWorkWithKey[] = getData(listNameWork);
     const [selectedData, setSelectedData] = useState<NameWorkWithKey | null>(

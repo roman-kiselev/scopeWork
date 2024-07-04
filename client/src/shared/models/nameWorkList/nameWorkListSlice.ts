@@ -58,7 +58,7 @@ export const nameWorkListSlice = createSlice({
             state.oneItem.list = newData;
         },
         pushData: (state, action: PayloadAction<INameWorkAndUnit[]>) => {
-            let newData: ItemForListNameWork[] = [];
+            const newData: ItemForListNameWork[] = [];
 
             if (action.payload.length === 0) {
                 state.oneItem.list = [];

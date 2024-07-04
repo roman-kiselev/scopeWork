@@ -78,7 +78,7 @@ const EditTableForNewList: React.FC<EditTableForList> = ({ form }) => {
             const index = newData.findIndex((item) => key === item.key);
             // Если найдено
             if (index > -1) {
-                const item = newData[index];
+                //const item = newData[index];
                 const data = newData.filter((item) => item.key !== key);
 
                 // Здесь через dispatch добавляем массив

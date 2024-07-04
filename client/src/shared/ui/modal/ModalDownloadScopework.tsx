@@ -45,7 +45,7 @@ const ModalDownloadScopework: React.FC<IModalDownloadScopework> = ({
         <Modal
             open={open}
             title="Выбор временного промежутка"
-            onOk={() => {}}
+            //onOk={() => {}}
             onCancel={handleCancel}
             footer={<></>}
         >

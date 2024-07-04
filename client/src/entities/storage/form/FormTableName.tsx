@@ -14,13 +14,9 @@ import CellQuantity from "./row/CellQuantity";
 
 const FormTableName = () => {
     const dispatch = useAppDispatch();
-    const {
-        data,
-        total,
-        numberOrder,
-
-        isLoading: isLoadingData,
-    } = useAppSelector((store) => store.orders.orderReceipt);
+    const { data, isLoading: isLoadingData } = useAppSelector(
+        (store) => store.orders.orderReceipt
+    );
 
     const [stateModal, setStateModal] = useState<boolean>(false);
     const [cellKey, setCellKey] = useState<string>("");

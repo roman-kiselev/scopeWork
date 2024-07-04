@@ -20,7 +20,7 @@ const EmptyModal: React.FC<EmptyModalProps> = ({
         <Modal
             open={open}
             title={title}
-            onOk={() => {}}
+            //onOk={() => {}}
             onCancel={handleCancel}
             footer={<></>}
             width={"80%"}

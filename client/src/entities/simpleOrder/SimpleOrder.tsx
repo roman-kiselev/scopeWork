@@ -1,4 +1,4 @@
-import { Button, Card, Col, Row, SelectProps } from "antd";
+import { Button, Card, Col, Row, SelectProps, Spin } from "antd";
 import { useState } from "react";
 import { objectsApi, scopeWorkApi, userApi } from "src/shared/api";
 import { useAppDispatch, useAppSelector } from "src/shared/hooks";
@@ -8,16 +8,19 @@ const SimpleOrder = () => {
     const { id } = useAppSelector((store) => store.auth);
     const dispatch = useAppDispatch();
     const { data: dataObject } = objectsApi.useGetAllObjectShortQuery();
-    const [selectedObject, setSelectedObject] = useState<string>("");
-    const [selectedScopeWork, setSelectedScopeWork] = useState<string>("");
-    const [selectedToUser, setSelectedToUser] = useState<string>("");
-    const dataCreateOrder = {
-        userId: id,
-        objectId: selectedObject,
-        scopeWorkId: selectedScopeWork,
-    };
+    const [, setSelectedObject] = useState<string>("");
+    const [, setSelectedScopeWork] = useState<string>("");
+    const [, setSelectedToUser] = useState<string>("");
 
-    const { data: dataUser } = userApi.useGetAllUsersQuery();
+    // const dataCreateOrder = {
+    //     userId: id,
+    //     objectId: selectedObject,
+    //     scopeWorkId: selectedScopeWork,
+    // };
+
+    const { isLoading } = userApi.useGetAllUsersQuery();
+    if (isLoading) <Spin />;
+
     const [stateScopeWork, setStateScopeWork] = useState<
         SelectProps["options"]
     >([{ value: "0", label: "Выберите объём" }]);
@@ -30,7 +33,7 @@ const SimpleOrder = () => {
                   };
               })
             : [];
-    let optionFinishObject: SelectProps["options"] = [
+    const optionFinishObject: SelectProps["options"] = [
         {
             label: "Выберите объект",
             value: "0",
@@ -105,7 +108,7 @@ const SimpleOrder = () => {
                     }}
                 >
                     <SelectObject
-                        handleChange={() => {}}
+                        handleChange={() => setSelectedScopeWork}
                         options={stateScopeWork}
                         defaultValue="Выберите объём"
                         disabled={false}
@@ -119,7 +122,7 @@ const SimpleOrder = () => {
                     }}
                 >
                     <SelectObject
-                        handleChange={() => {}}
+                        handleChange={() => setSelectedToUser}
                         options={optionFinishObject}
                         defaultValue="Выберите склад"
                         disabled={false}
@@ -133,7 +136,7 @@ const SimpleOrder = () => {
                     }}
                 >
                     <SelectObject
-                        handleChange={() => {}}
+                        handleChange={() => setSelectedToUser}
                         options={optionFinishObject}
                         defaultValue="Выберите пользователя"
                         disabled={false}

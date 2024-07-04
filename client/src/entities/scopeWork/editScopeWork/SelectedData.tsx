@@ -19,17 +19,6 @@ import {
 } from "../../../shared/models";
 import { SelectObject, SelectTypeWork, SelectUser } from "../../../shared/ui";
 
-interface SelectedDataProps {
-    handleChangeTypeWork: (value: string) => void;
-    selectedValueTypeWork?: string;
-
-    handleChangeObject: (value: string) => void;
-    selectedValueObject?: string;
-
-    handleChangeUsers: (value: string) => void;
-    selectedValueUsers?: string;
-}
-
 const getOptionsObjectUsersTypeWork = (
     arrUsers: IUser[],
     arrTypeWork: ITypeWork[],
@@ -69,15 +58,11 @@ const getOptionsObjectUsersTypeWork = (
 const SelectedData = () => {
     const dispatch = useAppDispatch();
     const { id } = useParams();
-    const [editScopeWork, { isLoading: isLoadingEdit }] =
-        scopeWorkApi.useEditScopeWorkMutation();
-    const {
-        data,
-        isError,
-        isLoading: isLoadingOneScopeWork,
-    } = scopeWorkApi.useGetOneByIdScopeWorkQuery({
-        id: Number(id),
-    });
+    const [editScopeWork] = scopeWorkApi.useEditScopeWorkMutation();
+    const { isLoading: isLoadingOneScopeWork } =
+        scopeWorkApi.useGetOneByIdScopeWorkQuery({
+            id: Number(id),
+        });
     const { data: dataObject } = objectsApi.useGetAllObjectsQuery();
     const { data: dataUsers, isLoading: isLoadingUsers } =
         userApi.useGetAllUsersQuery();
@@ -108,10 +93,10 @@ const SelectedData = () => {
     const objectName = object?.name ?? "";
     const namesUser = users?.map((user) => {
         const findedUser = dataUsers?.find((item) => item.id === user.id);
-        const firstname = Array.from(
-            findedUser?.userDescription.firstname ?? ""
-        )[0];
-        const name = `${findedUser?.userDescription.lastname} ${firstname}`;
+        // const firstname = Array.from(
+        //     findedUser?.userDescription.firstname ?? ""
+        // )[0];
+        // const name = `${findedUser?.userDescription.lastname} ${firstname}`;
 
         return findedUser?.id.toString() ?? "";
     });
@@ -162,13 +147,11 @@ const SelectedData = () => {
             <SelectTypeWork
                 defaultValue={typeWorkName}
                 disabled={true}
-                handleChange={() => {}}
                 options={listTypeWorkOption}
             />
             <SelectObject
                 defaultValue={objectName}
                 disabled={true}
-                handleChange={() => {}}
                 options={listObjectOption}
             />
             <SelectUser

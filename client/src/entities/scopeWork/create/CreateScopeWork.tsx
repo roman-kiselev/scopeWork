@@ -1,5 +1,4 @@
 import { Button, Row } from "antd";
-import { useState } from "react";
 import {
     objectsApi,
     scopeWorkApi,
@@ -60,8 +59,7 @@ const getOptionsObjectUsersTypeWork = (
 
 const CreateScopeWork = () => {
     const dispatch = useAppDispatch();
-    const [createScopeWork, { data: dataScopeWork }] =
-        scopeWorkApi.useCreateMutation();
+    const [createScopeWork] = scopeWorkApi.useCreateMutation();
     const { data: dataObject } = objectsApi.useGetAllObjectsQuery();
     const { data: dataUsers } = userApi.useGetAllUsersQuery();
     const { data: dataTypeWork } = typeWorkApi.useGetAllTypeWorkQuery();
@@ -70,7 +68,7 @@ const CreateScopeWork = () => {
     const { listObject } = useAppSelector((store) => store.objects);
     const { listObjectOption, listTypeWorkOption, listUsersOption } =
         getOptionsObjectUsersTypeWork(listUsers, listTypeWork, listObject);
-    const [selectedTypeWork, setSelectedTypeWork] = useState();
+    //const [selectedTypeWork, setSelectedTypeWork] = useState();
     const handleSetTypeWork = (value: string) => {
         dispatch(selectedTypeWorkIdInScopeWork(value));
         if (dataTypeWork) {
@@ -91,8 +89,7 @@ const CreateScopeWork = () => {
     };
     // Получаем данные для создания
     const { scopeWorkData } = useAppSelector((store) => store.scopeWork);
-    const { listNameWork, namesWorkGeneral, object, typeWork, users } =
-        scopeWorkData;
+    const { listNameWork, object, typeWork, users } = scopeWorkData;
     const listIdlistNameWork = listNameWork?.map((item) => item.id);
     const objectId = object?.id;
     const typeWorkId = typeWork?.id;

@@ -1,8 +1,7 @@
 import { Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
-import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
-import { delForEdit } from "../../../shared/models";
+import { useAppSelector } from "../../../shared/hooks";
 
 interface DataType {
     index: number;
@@ -14,10 +13,10 @@ interface DataType {
 }
 
 const TableSelected = () => {
-    const dispatch = useAppDispatch();
-    const handleDel = (id: number) => {
-        dispatch(delForEdit(id));
-    };
+    // const dispatch = useAppDispatch();
+    // const handleDel = (id: number) => {
+    //     dispatch(delForEdit(id));
+    // };
     const { isLoading } = useAppSelector((store) => store.scopeWork);
     const { selectedScopeWorkById } = useAppSelector(
         (store) => store?.scopeWork
@@ -74,7 +73,7 @@ const TableSelected = () => {
     ];
 
     const data = listNameWorkFinish?.map((item, index) => {
-        const { id, name, description, nameWorks } = item;
+        const { id, name, description } = item;
 
         return {
             key: id.toString(),

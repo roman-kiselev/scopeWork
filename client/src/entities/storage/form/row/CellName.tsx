@@ -1,10 +1,7 @@
 import { SettingOutlined } from "@ant-design/icons";
 import { Button, Col, Row, Space, Typography } from "antd";
-import React, { useState } from "react";
-import { nameWorkApi } from "src/shared/api";
-import { useAppDispatch, useAppSelector } from "src/shared/hooks";
+import React from "react";
 import { INameWorkShort } from "src/shared/interfaces";
-import { editRow } from "src/shared/models";
 
 interface ICellNameProps {
     cellKey: string;
@@ -13,35 +10,29 @@ interface ICellNameProps {
     disabled?: boolean;
 }
 
-const mockVal = (str: string, repeat = 1) => ({
-    value: str.repeat(repeat),
-});
-
 const CellName: React.FC<ICellNameProps> = ({
-    cellKey,
     handleViewModal,
     dataName,
     disabled = false,
 }) => {
-    const dispatch = useAppDispatch();
-    const { data } = useAppSelector((store) => store.orders.orderReceipt);
-    const findedData = data.find((item) => item.key === cellKey);
+    //const { data } = useAppSelector((store) => store.orders.orderReceipt);
+    //const findedData = data.find((item) => item.key === cellKey);
 
-    const [nameState, setNameString] = useState<string>("");
+    // const [nameState, setNameString] = useState<string>("");
 
-    const { data: dataText } = nameWorkApi.useFindNameWorkQuery(
-        { text: nameState },
-        { refetchOnMountOrArgChange: true }
-    );
+    // const { data: dataText } = nameWorkApi.useFindNameWorkQuery(
+    //     { text: nameState },
+    //     { refetchOnMountOrArgChange: true }
+    // );
 
-    const [options, setOptions] = useState<{ id: number; value: string }[]>([]);
+    // const [options, setOptions] = useState<{ id: number; value: string }[]>([]);
 
-    const getPanelValue = (searchText: string) => (!searchText ? [] : dataText);
+    // const getPanelValue = (searchText: string) => (!searchText ? [] : dataText);
 
-    const handleEdit = (value: string) => {
-        setNameString(value);
-        dispatch(editRow({ key: cellKey, nameField: "name", value: value }));
-    };
+    // const handleEdit = (value: string) => {
+    //     setNameString(value);
+    //     dispatch(editRow({ key: cellKey, nameField: "name", value: value }));
+    // };
 
     // const onSelect = (data: string) => {
     //     console.log(data);
@@ -62,16 +53,16 @@ const CellName: React.FC<ICellNameProps> = ({
     //     }
     // };
 
-    const handleEditName = (text: string) => {
-        const data =
-            dataText && dataText !== undefined
-                ? dataText.map((item: any) => {
-                      return { id: item.id, value: item.name };
-                  })
-                : [];
-        setNameString(text);
-        setOptions(data);
-    };
+    // const handleEditName = (text: string) => {
+    //     const data =
+    //         dataText && dataText !== undefined
+    //             ? dataText.map((item: any) => {
+    //                   return { id: item.id, value: item.name };
+    //               })
+    //             : [];
+    //     setNameString(text);
+    //     setOptions(data);
+    // };
 
     // useEffect(() => {
     //     let timeoutId: any;

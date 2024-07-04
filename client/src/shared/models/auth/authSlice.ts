@@ -28,14 +28,11 @@ export const authSlice = createSlice({
     },
     // Start Register //
     extraReducers(builder) {
-        builder.addMatcher(
-            authApi.endpoints.register.matchPending,
-            (state, action) => {
-                state.isLoading = true;
-                state.isError = false;
-                state.dataError = null;
-            }
-        );
+        builder.addMatcher(authApi.endpoints.register.matchPending, (state) => {
+            state.isLoading = true;
+            state.isError = false;
+            state.dataError = null;
+        });
         builder.addMatcher(
             authApi.endpoints.register.matchFulfilled,
             (state, action) => {
@@ -59,14 +56,11 @@ export const authSlice = createSlice({
         );
         // End Register //
         // Start Login //
-        builder.addMatcher(
-            authApi.endpoints.login.matchPending,
-            (state, action) => {
-                state.isLoading = true;
-                state.isError = false;
-                state.dataError = null;
-            }
-        );
+        builder.addMatcher(authApi.endpoints.login.matchPending, (state) => {
+            state.isLoading = true;
+            state.isError = false;
+            state.dataError = null;
+        });
         builder.addMatcher(
             authApi.endpoints.login.matchFulfilled,
             (state, action) => {
@@ -100,14 +94,11 @@ export const authSlice = createSlice({
         );
         // End Login //
         // Start Check //
-        builder.addMatcher(
-            authApi.endpoints.refresh.matchPending,
-            (state, action) => {
-                state.isLoading = true;
-                state.isError = false;
-                state.dataError = null;
-            }
-        );
+        builder.addMatcher(authApi.endpoints.refresh.matchPending, (state) => {
+            state.isLoading = true;
+            state.isError = false;
+            state.dataError = null;
+        });
         builder.addMatcher(
             authApi.endpoints.refresh.matchFulfilled,
             (state, action) => {

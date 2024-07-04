@@ -7,7 +7,6 @@ import { CardAccess } from "src/shared/ui";
 
 const MainStoragePage = () => {
     const { roles } = useAppSelector((store) => store.auth);
-    const myRoles = roles.map((role) => role.name);
 
     return (
         <Row
@@ -45,7 +44,7 @@ const MainStoragePage = () => {
                 <CardAccess
                     titleCard="Создать"
                     description="Создание склада"
-                    dataRoles={myRoles}
+                    dataRoles={roles}
                     accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
                     links={[
                         {
@@ -59,7 +58,7 @@ const MainStoragePage = () => {
                 <CardAccess
                     titleCard="Общий список"
                     description="Склады"
-                    dataRoles={myRoles}
+                    dataRoles={roles}
                     accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
                     links={[
                         {
@@ -72,7 +71,7 @@ const MainStoragePage = () => {
                 <CardAccess
                     titleCard="Поступления"
                     description="Добавить на склад"
-                    dataRoles={myRoles}
+                    dataRoles={roles}
                     accessRoles={[RoleString.ADMIN, RoleString.MANAGER]}
                     links={[
                         {

@@ -7,7 +7,7 @@ import {
 } from "../../shared/interfaces";
 import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
 
-const { Link, Text } = Typography;
+const { Text } = Typography;
 
 const propsEmail: IInputFormItemProps = {
     input: {

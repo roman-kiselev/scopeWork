@@ -15,12 +15,7 @@ class EditQuntity
         IDataOneUserSlice,
         { payload: ITableAddingData; type: string }
     > = (state, action) => {
-        const {
-            id,
-            quntity: quntityEdit,
-            nameListId,
-            nameWorkId,
-        } = action.payload;
+        const { nameListId, nameWorkId } = action.payload;
         // Ищем по id и прибавляем значение
         const arr = current(state.listByScopeWorkId);
         const newArr = arr.map((item) => {

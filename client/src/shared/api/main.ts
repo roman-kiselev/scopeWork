@@ -54,7 +54,7 @@ const baseQueryPlusPath = (path: string) => {
 };
 
 const baseQueryWithRetry = retry(baseQuery, { maxRetries: 1 });
-const baseQueryManagerWithRetry = retry(baseManagerQuery, { maxRetries: 1 });
+// const baseQueryManagerWithRetry = retry(baseManagerQuery, { maxRetries: 1 });
 const baseQueryWithRetryObject = retry(baseQueryPlusPath("/objects"), {
     maxRetries: 1,
 });

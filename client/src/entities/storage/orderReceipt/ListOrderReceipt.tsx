@@ -1,6 +1,5 @@
 import { Row, Table, TableProps, Typography } from "antd";
 import { Link } from "react-router-dom";
-import { useAppSelector } from "src/shared/hooks";
 import { IOrderReceiptResult } from "src/shared/interfaces";
 
 interface DataType {
@@ -18,7 +17,7 @@ interface IListOrderReceiptProps {
 }
 
 const ListOrderReceipt: React.FC<IListOrderReceiptProps> = ({ allList }) => {
-    const roles = useAppSelector((store) => store.auth.roles);
+    //const roles = useAppSelector((store) => store.auth.roles);
 
     const columns: TableProps<DataType>["columns"] = [
         {

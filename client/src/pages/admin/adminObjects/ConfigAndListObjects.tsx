@@ -1,17 +1,16 @@
 import { Col, Row } from "antd";
-import { useState } from "react";
 import { ListShortObject } from "../../../entities";
 
 const ConfigAndListObjects = () => {
-    const [collapsed, setCollapsed] = useState(false);
+    // const [collapsed, setCollapsed] = useState(false);
 
-    const [activeTabKey1, setActiveTabKey1] = useState<string>("main");
-    const onTab1Change = (key: string) => {
-        setActiveTabKey1(key);
-    };
-    const toggleMenu = () => {
-        setCollapsed(!collapsed);
-    };
+    // const [activeTabKey1, setActiveTabKey1] = useState<string>("main");
+    // const onTab1Change = (key: string) => {
+    //     setActiveTabKey1(key);
+    // };
+    // const toggleMenu = () => {
+    //     setCollapsed(!collapsed);
+    // };
 
     return (
         <Row style={{ margin: 10, flexDirection: "column", flexBasis: "100%" }}>

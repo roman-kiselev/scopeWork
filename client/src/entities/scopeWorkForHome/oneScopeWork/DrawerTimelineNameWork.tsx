@@ -31,22 +31,17 @@ const DrawerTimelineNameWork: React.FC<IDrawerTimelineNameWork> = ({
     dataUnit,
     unitId,
     roles,
-    nameListId,
-    nameWorkId,
-    scopeWorkId,
+
     handleClickQuery,
     refetch,
     isLoading,
 }) => {
     const { id } = useAppSelector((store) => store.auth);
-    const [handleRemove, { data: DataRemove, isSuccess: isSuccessRemove }] =
-        tableAddingDataApi.useRemoveMutation();
-    const [handleRecovery, { data: dataRecover, isSuccess: isSuccessRecover }] =
-        tableAddingDataApi.useRecoveryMutation();
-    const [handleCandidateDel, { data: dataCandidate }] =
+    const [handleRemove] = tableAddingDataApi.useRemoveMutation();
+    const [handleRecovery] = tableAddingDataApi.useRecoveryMutation();
+    const [handleCandidateDel] =
         tableAddingDataApi.useCreateCandidateDelMutation();
-    const [handleConfirm, { data: dataConfirm }] =
-        tableAddingDataApi.useConfirmMutation();
+    const [handleConfirm] = tableAddingDataApi.useConfirmMutation();
 
     const handleClickRemove = (id: number) => {
         handleRemove({ id: id });

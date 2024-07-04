@@ -40,8 +40,9 @@ const checkData = (data: IFormStorage, dataForm: IFormStorage) => {
 const StorageDescriptionShort: React.FC<IStorageDescriptionShort> = ({
     idStorage,
 }) => {
-    const { data, isSuccess, isError, isLoading } =
-        storageApi.useGetOneByIdQuery({ id: idStorage });
+    const { data, isLoading } = storageApi.useGetOneByIdQuery({
+        id: idStorage,
+    });
 
     const currentData: IFormStorage = {
         name: data ? data.name : "",
@@ -75,7 +76,7 @@ const StorageDescriptionShort: React.FC<IStorageDescriptionShort> = ({
                   };
               })
             : [];
-    let optionFinishObject: SelectProps["options"] = [
+    const optionFinishObject: SelectProps["options"] = [
         {
             label: "Выберите объект",
             value: 0,

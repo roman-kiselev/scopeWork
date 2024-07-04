@@ -16,7 +16,7 @@ interface UniqueCardProps {
 }
 
 const UniqueCard: React.FC<UniqueCardProps> = ({ object, tabList }) => {
-    const [collapsed, setCollapsed] = useState(false);
+    //const [collapsed, setCollapsed] = useState(false);
     const dispatch = useAppDispatch();
     const [activeTabKey1, setActiveTabKey1] = useState<string>("Главная");
     const onTab1Change = (key: string) => {

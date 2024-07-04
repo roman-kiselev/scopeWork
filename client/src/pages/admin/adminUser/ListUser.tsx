@@ -1,35 +1,33 @@
 import { Card, Col, Divider, Progress, Row, Space, Spin } from "antd";
 import { Link } from "react-router-dom";
 import { typeWorkApi, userApi } from "../../../shared/api";
-import { IUser } from "../../../shared/interfaces";
 
-interface INewUser {
-    id: number;
-    name: string;
-    firstname: string;
-    lastname: string;
-}
+// interface INewUser {
+//     id: number;
+//     name: string;
+//     firstname: string;
+//     lastname: string;
+// }
 
-const getDataItem = (data: IUser[]) => {
-    const newData = data.map((user, index) => {
-        const { userDescription } = user;
-        const { firstname, lastname } = userDescription;
-        return {
-            id: user.id,
-            name: user.email,
-            firstname: firstname,
-            lastname: lastname,
-        } as INewUser;
-    });
-    return newData;
-};
+// const getDataItem = (data: IUser[]) => {
+//     const newData = data.map((user, index) => {
+//         const { userDescription } = user;
+//         const { firstname, lastname } = userDescription;
+//         return {
+//             id: user.id,
+//             name: user.email,
+//             firstname: firstname,
+//             lastname: lastname,
+//         } as INewUser;
+//     });
+//     return newData;
+// };
 
 const ListUser = () => {
     // const { data, isSuccess } = userApi.useGetAllUsersQuery();
 
     // const dataUser: INewUser[] = getDataItem(data || []);
-    const { data: dataTypeWork, isSuccess: isSuccessTypeWork } =
-        typeWorkApi.useGetAllShortQuery();
+    const { data: dataTypeWork } = typeWorkApi.useGetAllShortQuery();
     const { data, isSuccess, isLoading } =
         userApi.useGetAllUsersWithDataQuery();
     if (isLoading) {
@@ -95,7 +93,7 @@ const ListUser = () => {
                                     <Col>
                                         Общий процент:
                                         {user.scopeWorkPlusData.map(
-                                            (scopeWork, index) => (
+                                            (scopeWork) => (
                                                 <Progress
                                                     key={`${scopeWork.id}`}
                                                     percent={Number(
@@ -110,7 +108,7 @@ const ListUser = () => {
                                     <Col>
                                         Процент участия:
                                         {user.scopeWorkPlusData.map(
-                                            (scopeWork, index) => (
+                                            (scopeWork) => (
                                                 <Progress
                                                     key={`${scopeWork.id}`}
                                                     percent={Number(

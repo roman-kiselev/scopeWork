@@ -13,7 +13,7 @@ const HomePageWarehousemanRoutes = lazy(
     () => import("./home/HomePageWarehousemanRoutes")
 );
 const LayoutPage = lazy(() => import("./home/LayoutPage"));
-const ObjectsRoutes = lazy(() => import("./objects/index"));
+// const ObjectsRoutes = lazy(() => import("./objects/index"));
 const AdminRoutes = lazy(() => import("./admin/index"));
 const OrdersRouter = lazy(() => import("./orders/index"));
 const StorageRouter = lazy(() => import("./storage/index"));

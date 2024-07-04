@@ -32,11 +32,7 @@ const BodyEditScopeWork = () => {
             <Content style={{ display: "flex" }}>
                 <div style={{ flex: 1, flexBasis: "60%", marginTop: 10 }}>
                     {/* <h1>Собрать список</h1> */}
-                    <Tabs
-                        defaultActiveKey="1"
-                        items={items}
-                        onChange={() => {}}
-                    />
+                    <Tabs defaultActiveKey="1" items={items} />
                     {/* <div style={{ overflow: "auto", height: "90vh" }}></div> */}
                 </div>
                 <Divider type="vertical" style={{ height: "80vh" }} />

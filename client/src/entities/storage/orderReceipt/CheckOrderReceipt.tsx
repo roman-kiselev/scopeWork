@@ -5,10 +5,6 @@ import { orderReceiptApi, storageApi } from "src/shared/api";
 import { useAppSelector } from "src/shared/hooks";
 import FormTableNameCheck from "../form/FormTableNameCheck";
 
-interface ICheckOrderReceiptProps {
-    id: string;
-}
-
 const CheckOrderReceipt = () => {
     const { id } = useParams();
 
@@ -63,7 +59,6 @@ const CheckOrderReceipt = () => {
                         disabled={true}
                         style={{ backgroundColor: "#009900", color: "white" }}
                         size="small"
-                        onClick={() => {}}
                     >
                         <CheckOutlined /> - Принять
                     </Button>
@@ -71,7 +66,6 @@ const CheckOrderReceipt = () => {
                         disabled={true}
                         style={{ backgroundColor: "#FFFF00", color: "black" }}
                         size="small"
-                        onClick={() => {}}
                     >
                         <ExclamationOutlined /> - Принять частично
                     </Button>

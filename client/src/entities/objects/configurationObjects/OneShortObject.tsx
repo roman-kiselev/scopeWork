@@ -32,7 +32,6 @@ const OneShortObject: React.FC<IOneObjectDataShort> = ({
     id,
     address,
     countTableAddingData,
-    createdAt,
     dataObject,
     mainCount,
     name,

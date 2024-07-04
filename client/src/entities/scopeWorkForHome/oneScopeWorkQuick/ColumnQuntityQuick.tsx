@@ -16,7 +16,7 @@ const replacementValue = (value: string | undefined): string => {
             return arrValue.join("");
         }
         if (indexComma !== -1) {
-            let newArrValue = [...arrValue];
+            const newArrValue = [...arrValue];
             newArrValue[indexComma] = ".";
             return newArrValue.join("");
         }
@@ -45,8 +45,7 @@ const ColumnQuntityQuick: React.FC<IColumnQuntityQuickProps> = ({
     scopeWorkId,
 }) => {
     const { id: userId } = useAppSelector((store) => store.auth);
-    const [setTableAddingData, { data: dataEdit }] =
-        tableAddingDataApi.useAddDataMutation();
+    const [setTableAddingData] = tableAddingDataApi.useAddDataMutation();
 
     const getValue = (id: number, listNameWorkId: number) => {
         const findedValue = data.find(

@@ -6,10 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
 import { addNameListForEdit } from "../../../shared/models";
 import DrawerOneList from "../create/DrawerOneList";
 
-interface ShortListNameWorksProps {
-    typeWorkId: number;
-}
-
 interface IDataForColumn {
     key: number;
     id: number;
@@ -21,7 +17,8 @@ interface IDataForColumn {
 
 const ShortListNames = () => {
     const dispatch = useAppDispatch();
-    const query = unitsApi.useGetAllUnitsQuery();
+    const { isLoading } = unitsApi.useGetAllUnitsQuery();
+    if (isLoading) <Spin />;
     const { selectedTypeWorkId, isLoading } = useAppSelector(
         (store) => store.scopeWork
     );

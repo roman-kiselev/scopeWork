@@ -1,10 +1,12 @@
+import { Spin } from "antd";
 import { SimpleShortItemForList, SimpleShortList } from "../../entities";
 import { unitsApi } from "../../shared/api";
 import { useAppSelector } from "../../shared/hooks";
 
 const ListUnits = () => {
-    const { isSuccess } = unitsApi.useGetAllUnitsQuery();
+    const { isLoading } = unitsApi.useGetAllUnitsQuery();
     const { listUnits } = useAppSelector((state) => state.unit);
+    if (isLoading) <Spin />;
 
     return (
         <>

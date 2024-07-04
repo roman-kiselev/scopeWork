@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Form, Row, Typography } from "antd";
+import { Alert, Button, Card, Form, Row } from "antd";
 import React from "react";
 import {
     IDataError,
@@ -6,7 +6,6 @@ import {
     IInputPasswordFormItemProps,
 } from "../../shared/interfaces";
 import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
-const { Link, Text } = Typography;
 
 const propsEmail: IInputFormItemProps = {
     input: {

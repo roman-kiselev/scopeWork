@@ -77,10 +77,6 @@ const OneFullScopeWork: React.FC<OneFullScopeWorkProps> = ({ scopeWork }) => {
         setOpen(false);
     };
 
-    const showChildrenDrawer = () => {
-        setChildrenDrawer(true);
-    };
-
     const onChildrenDrawerClose = () => {
         setChildrenDrawer(false);
     };

@@ -6,6 +6,7 @@ import {
     Input,
     Popconfirm,
     Row,
+    Spin,
     message,
 } from "antd";
 import dayjs from "dayjs";
@@ -19,29 +20,29 @@ import {
     setNameAndDescription,
 } from "../../shared/models";
 
-const onChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-) => {
-    console.log("Change:", e.target.value);
-};
+// const onChange = (
+//     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+// ) => {
+//     console.log("Change:", e.target.value);
+// };
 const dateFormat = "YYYY-MM-DD";
-const d = new Date();
-const getNumWithZero = (n: number) => {
-    let newN: string;
-    if (n < 10) {
-        newN = `0${n}`;
-        return newN;
-    }
-    return n;
-};
-const nowDate = `${d.getFullYear()}-${getNumWithZero(
-    d.getMonth()
-)}-${getNumWithZero(d.getDate())}`;
+// const d = new Date();
+// const getNumWithZero = (n: number) => {
+//     let newN: string;
+//     if (n < 10) {
+//         newN = `0${n}`;
+//         return newN;
+//     }
+//     return n;
+// };
+// const nowDate = `${d.getFullYear()}-${getNumWithZero(
+//     d.getMonth()
+// )}-${getNumWithZero(d.getDate())}`;
 
-const layout = {
-    labelCol: { span: 8 },
-    wrapperCol: { span: 16 },
-};
+// const layout = {
+//     labelCol: { span: 8 },
+//     wrapperCol: { span: 16 },
+// };
 
 const confirm = (e: React.MouseEvent<HTMLElement>) => {
     console.log(e);
@@ -62,11 +63,10 @@ const MainNameWork = () => {
     }, [dispatch]);
     const { id } = useParams();
 
-    const { data: dataById, isLoading: isLoadingQuery } =
-        listNameWorkApi.useGetOneByIdQuery({
-            id: Number(id) ? Number(id) : 0,
-        });
-
+    const { isLoading: isLoadingQuery } = listNameWorkApi.useGetOneByIdQuery({
+        id: Number(id) ? Number(id) : 0,
+    });
+    if (isLoadingQuery) <Spin />;
     // Получаем состояние oneItem
     const { isLoading } = useAppSelector((store) => store.nameWorkList);
     const { idNumber, dateCreate, name, description } = useAppSelector(
@@ -147,8 +147,8 @@ const MainNameWork = () => {
                             <Popconfirm
                                 title="Удалить ед.измерения!"
                                 description="Вы уверены что хотите удалить?"
-                                onConfirm={(e) => confirm}
-                                onCancel={(e) => cancel}
+                                onConfirm={() => confirm}
+                                onCancel={() => cancel}
                                 okText="Да"
                                 cancelText="Нет"
                             >

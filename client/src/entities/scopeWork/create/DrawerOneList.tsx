@@ -1,6 +1,6 @@
 import { Button, Drawer, Space } from "antd";
 import React, { useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../../shared/hooks";
+import { useAppSelector } from "../../../shared/hooks";
 import { IUnit } from "../../../shared/interfaces";
 
 interface IDrawerOneList {
@@ -13,7 +13,6 @@ const getUnitName = (id: number, arr: IUnit[]) => {
 };
 
 const DrawerOneList: React.FC<IDrawerOneList> = ({ id }) => {
-    const dispatch = useAppDispatch();
     const { listUnits } = useAppSelector((store) => store.unit);
     const [open, setOpen] = useState(false);
     const showDrawer = () => {

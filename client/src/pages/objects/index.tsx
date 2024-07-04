@@ -1,7 +1,5 @@
-import React, { lazy } from "react";
+import { lazy } from "react";
 import { Route, Routes } from "react-router";
-import { SuspenseLoadCheckAR } from "../../features";
-import { RoleString } from "../../shared/config";
 const ObjectPage = lazy(() => import("./ObjectPage"));
 
 const ObjectsRoutes = () => {

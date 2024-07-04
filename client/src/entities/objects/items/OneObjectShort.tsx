@@ -1,38 +1,26 @@
-import React from 'react';
-import {List, Row} from "antd";
-import {IObjectCreateResponse} from "../../../shared/interfaces";
-import {Link} from "react-router-dom";
-import {useNavigate} from "react-router";
+import { List, Row } from "antd";
+import React from "react";
+import { Link } from "react-router-dom";
+import { IObjectCreateResponse } from "../../../shared/interfaces";
 
 interface IOneObjectShortProps {
-    object: IObjectCreateResponse
+    object: IObjectCreateResponse;
 }
 
-
-const OneObjectShort: React.FC<IOneObjectShortProps> = ({object}) => {
-    const navigate = useNavigate()
-
-
+const OneObjectShort: React.FC<IOneObjectShortProps> = ({ object }) => {
     return (
         <>
             <List.Item key={object.name}>
                 <List.Item.Meta
                     avatar={object.id}
-                    title={
-                        <a href='https://ant.design'>
-                            {object.name}
-                        </a>
-                    }
+                    title={<a href="https://ant.design">{object.name}</a>}
                     description={object.address}
                 />
                 <Row>
                     <span>{object.createdAt.toString()}</span>
                 </Row>
                 <div>
-                    <Link to={`/admin/object/${object.id}`}>
-                        К объекту
-                    </Link>
-
+                    <Link to={`/admin/object/${object.id}`}>К объекту</Link>
                 </div>
             </List.Item>
         </>

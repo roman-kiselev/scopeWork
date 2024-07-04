@@ -1,14 +1,5 @@
-import {
-    Button,
-    Form,
-    Input,
-    Select,
-    SelectProps,
-    Spin,
-    Tag,
-    message,
-} from "antd";
-import { objectsApi, userApi, userDescriptionApi } from "src/shared/api";
+import { Button, Form, Input, Select, SelectProps, Spin, Tag } from "antd";
+import { objectsApi, userDescriptionApi } from "src/shared/api";
 
 interface ICreateStorage {
     form: any;
@@ -27,15 +18,13 @@ const CreateStorage: React.FC<ICreateStorage> = ({
     onFinish,
     isError,
     isSuccessCreate,
-    dataCheck,
-    isStorage,
+
     isErrorCheck,
     name,
     isLoadingCheck,
 }) => {
-    const [messageApi, contextHolder] = message.useMessage();
     const { data: dataObject } = objectsApi.useGetAllObjectShortQuery();
-    const { data: dataUsers } = userApi.useGetAllUsersQuery();
+
     const { data: dataUserDescription } = userDescriptionApi.useGetAllQuery();
     const optionObject: SelectProps["options"] =
         dataObject !== undefined
@@ -46,7 +35,7 @@ const CreateStorage: React.FC<ICreateStorage> = ({
                   };
               })
             : [];
-    let optionFinishObject: SelectProps["options"] = [
+    const optionFinishObject: SelectProps["options"] = [
         {
             label: "Выберите объект",
             value: 0,

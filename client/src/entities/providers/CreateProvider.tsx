@@ -28,7 +28,7 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
     const dataForm: IForm = useWatch([], form);
     useEffect(() => {
         const selectedData = form.getFieldValue("transportCompanyId");
-        let dataForDefault = [];
+        const dataForDefault = [];
         if (selectedData) {
             for (let i = 0; i < selectedData.length; i++) {
                 const findedData = dataTransportCompany.find(
@@ -45,7 +45,6 @@ const CreateProvider: React.FC<CreateProviderProps> = ({
     const [
         createProvider,
         {
-            data: dataCreateProvider,
             isLoading: isLoadingCreateProvider,
             isError: isErrorCreateProvider,
             isSuccess: isSuccessCreateProvider,
