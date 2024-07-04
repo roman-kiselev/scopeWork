@@ -16,7 +16,6 @@ class GetList
         state.dataError = null;
     };
     fulfilled: CaseReducer<INameWorkListSlice> = (state, action) => {
-        const data = action.payload;
         state.listItem = action.payload;
         state.isLoading = false;
     };

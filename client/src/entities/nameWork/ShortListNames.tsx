@@ -1,4 +1,4 @@
-import { Button, Col, Input, MenuProps, Row, Select, Table } from "antd";
+import { Button, Col, Input, Row, Select, Table } from "antd";
 import { useState } from "react";
 import { nameWorkApi, typeWorkApi } from "../../shared/api";
 
@@ -8,37 +8,12 @@ interface IDataSourse {
     name: string;
     unit: string;
 }
-const dataSource = [
-    {
-        key: "1",
-        name: "Кран шаровый ду.50",
-        unit: "шт.",
-        // address: "10 Downing Street",
-    },
-    {
-        key: "2",
-        name: "John",
-        unit: "м",
-        // address: "10 Downing Street",
-    },
-];
-
-const items: MenuProps["items"] = [
-    {
-        label: "АСКУЭ",
-        key: "1",
-    },
-    {
-        label: "Водоснабжение",
-        key: "2",
-    },
-];
 
 const ShortListNames = () => {
     // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
     // Выбранные строки checkbox
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         console.log("selectedRowKeys changed: ", newSelectedRowKeys);
@@ -81,7 +56,7 @@ const ShortListNames = () => {
     };
     // Получение типов при изменении select
     const [valueOption, setValueOption] = useState(0);
-    const { data: dataNameWork, isSuccess } =
+    const { data: dataNameWork } =
         nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
             typeWorkId: valueOption,
         });

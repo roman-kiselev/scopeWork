@@ -14,7 +14,7 @@ class EditList
     fulfilled: CaseReducer<
         INameWorkListSlice,
         { payload: INameListWork; type: string }
-    > = (state, action) => {
+    > = (state) => {
         // const { id } = action.payload;
         // state.lastAddedItem = id;
         state.isLoading = false;

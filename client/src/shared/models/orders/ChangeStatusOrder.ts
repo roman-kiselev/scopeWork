@@ -21,7 +21,7 @@ class ChangeStatusOrder
         state.orderReceipt.stateOrder = action.payload.state;
     };
 
-    rejected: CaseReducer<IOrderSlice> = (state, action) => {
+    rejected: CaseReducer<IOrderSlice> = (state) => {
         state.orderReceipt.isError = true;
         state.orderReceipt.isLoading = false;
         state.orderReceipt.isSuccess = false;

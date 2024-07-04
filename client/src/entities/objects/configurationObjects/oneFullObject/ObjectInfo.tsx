@@ -19,7 +19,7 @@ const getUserName = (userId: number, data: IUser[]) => {
 };
 
 const ObjectInfo: React.FC<ObjectInfoProps> = ({ oneObjectWithFullData }) => {
-    const { isLoading: isLoadingUsers, data } = userApi.useGetAllUsersQuery();
+    const { isLoading: isLoadingUsers } = userApi.useGetAllUsersQuery();
     const { listUsers, isLoading: isLoadingStore } = useAppSelector(
         (store) => store.users
     );

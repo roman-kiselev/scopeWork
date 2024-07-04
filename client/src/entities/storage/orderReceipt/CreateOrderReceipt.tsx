@@ -47,12 +47,12 @@ const prepareData = (
 const CreateOrderReceipt = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { numberOrder } = useAppSelector(
-        (store) => store.orders.orderReceipt
-    );
+    // const { numberOrder } = useAppSelector(
+    //     (store) => store.orders.orderReceipt
+    // );
     useEffect(() => {
         dispatch(resetOrderReceipt());
-    }, []);
+    }, [dispatch]);
 
     // useEffect(() => {
     //     if (numberOrder !== 0) {
@@ -65,12 +65,12 @@ const CreateOrderReceipt = () => {
     const { id: userId } = useAppSelector((store) => store.auth);
     const { data: listStorage, isLoading: isLoadingStorage } =
         storageApi.useGetAllShortQuery();
-    const [createOrderReceipt, { isLoading: isLoadingCreateOrderReceipt }] =
-        orderReceiptApi.useCreateOrderReceiptMutation();
+    // const [createOrderReceipt, { isLoading: isLoadingCreateOrderReceipt }] =
+    //     orderReceiptApi.useCreateOrderReceiptMutation();
 
     const { orderReceipt } = useAppSelector((store) => store.orders);
 
-    if (isLoadingStorage || isLoadingCreateOrderReceipt) {
+    if (isLoadingStorage) {
         return <Spin />;
     }
 

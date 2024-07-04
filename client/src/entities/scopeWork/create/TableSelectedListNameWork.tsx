@@ -94,7 +94,7 @@ const TableSelectedListNameWork = () => {
         (store) => store.scopeWork.scopeWorkData
     );
     const data = listNameWork?.map((item, index) => {
-        const { id, name, description, nameWorks } = item;
+        const { id, name, description } = item;
 
         return {
             key: id.toString(),

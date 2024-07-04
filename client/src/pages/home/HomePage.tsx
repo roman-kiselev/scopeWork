@@ -4,9 +4,7 @@ import { RoleString } from "src/shared/config";
 import { useAppSelector } from "src/shared/hooks";
 
 const HomePage = () => {
-    const roles = useAppSelector((store) => store.auth.roles).map(
-        (item) => item.name
-    );
+    const roles = useAppSelector((store) => store.auth.roles);
 
     // if (roles.includes(RoleString.ADMIN) || roles.includes(RoleString.MASTER)) {
     //     // return <Navigate to="/" />;

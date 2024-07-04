@@ -47,12 +47,12 @@ export const ordersSlice = createSlice({
                 price: 1,
             } as IDataOrderReceipt;
             state.orderReceipt.itemIndex += 1;
-            const data = state.orderReceipt.data.map((item, index) => {
-                return {
-                    ...item,
-                    key: (index + 1).toString(),
-                };
-            });
+            // const data = state.orderReceipt.data.map((item, index) => {
+            //     return {
+            //         ...item,
+            //         key: (index + 1).toString(),
+            //     };
+            // });
             state.orderReceipt.data = [...state.orderReceipt.data, row];
             if (state.orderReceipt.data.length > 0) {
                 state.orderReceipt.isLoading = false;
@@ -63,7 +63,7 @@ export const ordersSlice = createSlice({
             { orderReceipt },
             action: PayloadAction<IEditRowByName<IDataOrderReceipt>>
         ) => {
-            let { nameField, value, key } = action.payload;
+            const { nameField, value, key } = action.payload;
 
             const findedIndex = orderReceipt.data.findIndex(
                 (item) => item.key === key

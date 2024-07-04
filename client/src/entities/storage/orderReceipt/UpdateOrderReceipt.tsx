@@ -53,8 +53,7 @@ const UpdateOrderReceipt: React.FC<IUpdateOrderReceiptProps> = ({ id }) => {
     const { data: order, isLoading: isLoadingOrder } =
         orderReceiptApi.useGetOneOrderReceiptQuery(id);
 
-    const [updateOrder, { data: dataUpdate }] =
-        orderReceiptApi.useUpdateOrderReceiptMutation();
+    const [updateOrder] = orderReceiptApi.useUpdateOrderReceiptMutation();
     const { data: listStorage, isLoading: isLoadingStorage } =
         storageApi.useGetAllShortQuery();
 

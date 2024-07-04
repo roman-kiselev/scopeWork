@@ -3,15 +3,15 @@ import { INameWorkWithNameList } from "../nameWork";
 import { INameListWork } from "../nameWorkList";
 import { ITypeWork } from "../typeWork";
 import { IUser } from "../users";
-interface IMainCountData {
-    listNameWorkId: string[];
-    idScopeWork: string[];
-    quntity: number;
-    isDifference: boolean;
-    quantityDifference: number;
-    addingCount: number;
-    percent: string;
-}
+// interface IMainCountData {
+//     listNameWorkId: string[];
+//     idScopeWork: string[];
+//     quntity: number;
+//     isDifference: boolean;
+//     quantityDifference: number;
+//     addingCount: number;
+//     percent: string;
+// }
 export interface IScopeWorkWithData {
     id: number | null;
     deletedAt: Date | null;

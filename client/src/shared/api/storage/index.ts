@@ -5,10 +5,6 @@ import {
 } from "src/shared/interfaces";
 import { mainManagerApi } from "../main";
 
-type T0<T> = T extends IStorageAndUsersAndObjects
-    ? IStorageAndUsersAndObjects
-    : { err: string };
-
 export const storageApi = mainManagerApi.injectEndpoints({
     endpoints: (builder) => ({
         getAllStorage: builder.query<IStorageAndUsersAndObjects[], void>({

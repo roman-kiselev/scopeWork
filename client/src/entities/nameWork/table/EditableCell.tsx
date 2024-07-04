@@ -17,8 +17,7 @@ const EditableCell: React.FC<EditableCellProps> = ({
     dataIndex,
     title,
     inputType,
-    record,
-    index,
+
     children,
     ...restProps
 }) => {

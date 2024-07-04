@@ -1,7 +1,7 @@
 import { Button, Divider, Input, Row, Table, TableProps } from "antd";
 import { useState } from "react";
 import { nameWorkApi } from "src/shared/api";
-import { useAppDispatch, useAppSelector } from "src/shared/hooks";
+import { useAppDispatch } from "src/shared/hooks";
 import { INameWork, INameWorkShort } from "src/shared/interfaces";
 import { editRow } from "src/shared/models";
 
@@ -19,7 +19,7 @@ const ModalFindName: React.FC<IModalFindNameProps> = ({
     handleCancel,
 }) => {
     const dispatch = useAppDispatch();
-    const { data } = useAppSelector((store) => store.orders.orderReceipt);
+    //const { data } = useAppSelector((store) => store.orders.orderReceipt);
     const [nameState, setNameString] = useState<string>("");
     const [dataForTable, setData] = useState<INameWorkForTable[]>([]);
     const { data: dataText } = nameWorkApi.useFindNameWorkQuery(

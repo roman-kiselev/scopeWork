@@ -19,25 +19,17 @@ import CellQuantity from "./row/CellQuantity";
 const FormTableNameCheck = () => {
     const { id } = useParams();
     const idOrder = id ? id : 0;
-    const { data: providers, isLoading: isLoadingProviders } =
-        providerApi.useGetAllQuery();
+    const { data: providers } = providerApi.useGetAllQuery();
     const [stateModal, setStateModal] = useState<boolean>(false);
-    const [dataItem, setDataItem] = useState<IDataOrderReceipt | null>(null);
-    const [addRow, { data: newData, isLoading: isLoadingReceipt }] =
-        orderReceiptApi.useAddChildrenRowMutation();
+    const [dataItem] = useState<IDataOrderReceipt | null>(null);
+    const [addRow] = orderReceiptApi.useAddChildrenRowMutation();
 
-    const [accept, { isLoading: isLoadingAccept }] =
-        orderReceiptNameApi.useAcceptRowMutation();
+    const [accept] = orderReceiptNameApi.useAcceptRowMutation();
 
     const [form] = Form.useForm();
     const dataQuantity: { quantity: string } = useWatch([], form);
 
-    const {
-        data,
-        total,
-        numberOrder,
-        isLoading: isLoadingData,
-    } = useAppSelector((store) => store.orders.orderReceipt);
+    const { data } = useAppSelector((store) => store.orders.orderReceipt);
 
     const dataForTable = data.map((item) => {
         return {
@@ -53,10 +45,11 @@ const FormTableNameCheck = () => {
         };
     });
 
-    const handleOpenModal = (record: IDataOrderReceipt) => {
-        setDataItem(record);
-        setStateModal(true);
-    };
+    // const handleOpenModal = (record: IDataOrderReceipt) => {
+    //     setDataItem(record);
+    //     setStateModal(true);
+    // };
+
     const handleClickModal = () => {
         if (dataItem) {
             addRow({

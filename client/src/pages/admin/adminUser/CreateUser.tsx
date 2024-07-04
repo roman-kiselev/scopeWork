@@ -104,9 +104,9 @@ const propsConfirm: IInputPasswordFormItemProps = {
 const CreateUser = () => {
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
-    const [registered, { isSuccess }] = authApi.useRegisterMutation();
+    const [registered] = authApi.useRegisterMutation();
     const onFinish = async () => {
-        const res = await registered(data);
+        await registered(data);
     };
     return (
         <>

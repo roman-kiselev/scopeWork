@@ -25,7 +25,7 @@ export const unitSlice = createSlice({
     extraReducers(builder) {
         builder.addMatcher(
             unitsApi.endpoints.createUnit.matchPending,
-            (state, action) => {
+            (state) => {
                 state.isLoading = true;
                 state.isError = false;
                 state.dataError = null;
@@ -34,7 +34,6 @@ export const unitSlice = createSlice({
         builder.addMatcher(
             unitsApi.endpoints.createUnit.matchFulfilled,
             (state, action) => {
-                const data = action.payload;
                 state.listUnits = [...state.listUnits, action.payload];
                 state.isLoading = false;
             }

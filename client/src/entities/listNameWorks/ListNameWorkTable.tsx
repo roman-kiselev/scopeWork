@@ -1,4 +1,4 @@
-import { Button, Space, Table } from "antd";
+import { Button, Space, Spin, Table } from "antd";
 import { ColumnsType } from "antd/es/table";
 import { Link } from "react-router-dom";
 import { listNameWorkApi } from "../../shared/api";
@@ -13,25 +13,6 @@ interface DataType {
     description: string;
 }
 
-const dataSource: DataType[] = [
-    {
-        key: "1",
-        id: 1,
-        index: 1,
-        number: "334",
-        date: "10/10/2020",
-        description: "Описание",
-    },
-    {
-        key: "2",
-        id: 2,
-        index: 2,
-        number: "335",
-        date: "10/10/2020",
-        description: "Описание",
-    },
-];
-
 // Получаем дату
 const getDate = (d: string) => {
     const arrD = d.split("T");
@@ -40,7 +21,8 @@ const getDate = (d: string) => {
 
 const ListNameWorkTable = () => {
     const dispatch = useAppDispatch();
-    const { data: dataQuery } = listNameWorkApi.useGetAllNamesQuery();
+    const { isLoading: isLoadingQuery } = listNameWorkApi.useGetAllNamesQuery();
+    if (isLoadingQuery) <Spin />;
     // const [copyListNameWork, { data: dataCopy }] =
     //     listNameWorkApi.useCopyListMutation();
     const { isLoading, listItem } = useAppSelector(

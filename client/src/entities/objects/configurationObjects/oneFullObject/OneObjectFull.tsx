@@ -7,8 +7,9 @@ import ObjectInfo from "./ObjectInfo";
 
 const OneObjectFull = () => {
     const { id: idObject } = useParams();
-    const { data, isLoading: isLoadingQuery } =
-        objectsApi.useGetFullDataForOneQuery(Number(idObject));
+    const { isLoading: isLoadingQuery } = objectsApi.useGetFullDataForOneQuery(
+        Number(idObject)
+    );
     const { oneObjectWithFullData, isLoading: isLoadingStore } = useAppSelector(
         (store) => store.objects
     );

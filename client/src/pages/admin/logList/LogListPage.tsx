@@ -42,7 +42,7 @@ const stringDateTo = `${date.getFullYear()}-${dateMonthTo}-${dateDay}`;
 
 const LogListPage = () => {
     const [currentPage, setCurrentPage] = useState("1");
-    const [limit, setLimit] = useState("10");
+    const [limit] = useState("10");
     const [dateFrom, setDateFrom] = useState<string>(stringDateFrom);
     const [dateTo, setDateTo] = useState<string>(stringDateTo);
 

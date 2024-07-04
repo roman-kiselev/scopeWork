@@ -59,7 +59,7 @@ const OneScopeWorkForEdit = () => {
     );
 
     if (id) {
-        const { data, isLoading: isLoadingTest } =
+        const { isLoading: isLoadingTest } =
             scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
                 id: id,
             });

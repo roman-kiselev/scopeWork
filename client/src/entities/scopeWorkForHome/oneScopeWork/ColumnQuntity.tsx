@@ -24,8 +24,7 @@ const ColumnQuntity: React.FC<IColumnQuntity> = ({
     refetch,
 }) => {
     const { id: userId } = useAppSelector((store) => store.auth);
-    const [setTableAddingData, { data: dataEdit }] =
-        tableAddingDataApi.useAddDataMutation();
+    const [setTableAddingData] = tableAddingDataApi.useAddDataMutation();
     const getValue = (id: number, listNameWorkId: number) => {
         const findedValue = dataList.find(
             (item) =>

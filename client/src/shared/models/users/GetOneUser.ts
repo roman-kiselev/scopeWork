@@ -5,7 +5,7 @@ import { CreateHandler, IDataError } from "../../interfaces/api";
 class GetOneUser
     implements CreateHandler<IUsersSlice, IUserWithDescription, IDataError>
 {
-    pending: CaseReducer<IUsersSlice> = (state, action) => {
+    pending: CaseReducer<IUsersSlice> = (state) => {
         state.isLoading = true;
         state.isError = false;
         state.dataError = null;

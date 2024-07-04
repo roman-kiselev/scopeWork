@@ -38,7 +38,6 @@ const FormCreateNameWork: React.FC<IFormCreateNameWork> = ({
                 >
                     <Select
                         placeholder="Select a option and change input text above"
-                        onChange={() => {}}
                         allowClear
                     >
                         {units.length > 0 ? (

@@ -54,7 +54,7 @@ export const dataOneUserSlice = createSlice({
         ) => {
             const arr = current(state.listByScopeWorkIdTest);
             const { id: idPayload, listId, value = "" } = action.payload;
-            const newArr = arr.map((item, index) => {
+            const newArr = arr.map((item) => {
                 const { id, listNameWorkId } = item;
                 if (idPayload === id && listId === listNameWorkId) {
                     return {

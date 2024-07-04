@@ -1,4 +1,4 @@
-import { Button, Col, Input, Row, Table } from "antd";
+import { Button, Col, Input, Row, Spin, Table } from "antd";
 import { useEffect, useState } from "react";
 import { nameWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
@@ -21,18 +21,19 @@ const ShortListNamesWithoutTypes = () => {
     );
     // const [valueOption, setValueOption] = useState(0);
 
-    const { data: dataNameWork, isSuccess } =
+    const { data: dataNameWork } =
         nameWorkApi.useGetAllNameWorkByTypeWorkIdQuery({
             typeWorkId:
                 idNumber && typeWorkId !== null ? typeWorkId : selectedTypeWork,
         });
 
-    const { list } = useAppSelector((store) => store.nameWorkList.oneItem);
+    const { isLoading: isLoadingNameWorkList } = useAppSelector(
+        (store) => store.nameWorkList.oneItem
+    );
+    if (isLoadingNameWorkList) <Spin />;
     const { selectedData } = useAppSelector((store) => store.nameWork);
 
-    const [stateSelectedData, setStateSelectedData] = useState<
-        INameWorkAndUnit | []
-    >([]);
+    const [stateSelectedData] = useState<INameWorkAndUnit | []>([]);
 
     useEffect(() => {
         const stateSelectedData = selectedData;
@@ -43,7 +44,7 @@ const ShortListNamesWithoutTypes = () => {
     // Текст для поиска
     const [searchedText, setSearchedText] = useState("");
     // Выбранные строки checkbox
-    const [loading, setLoading] = useState(false);
+    const [loading] = useState(false);
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
         setSelectedRowKeys(newSelectedRowKeys);

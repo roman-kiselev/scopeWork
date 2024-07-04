@@ -11,37 +11,14 @@ import { useAppDispatch, useAppSelector } from "../../shared/hooks";
 import { logout } from "../../shared/models";
 const { Header, Sider, Content, Footer } = Layout;
 
-const tabList = [
-    {
-        key: "askue",
-        tab: "АСКУЭ",
-    },
-    {
-        key: "water",
-        tab: "Водоснабжение",
-    },
-    {
-        key: "canal",
-        tab: "Канализация",
-    },
-    {
-        key: "otopl",
-        tab: "Отопление",
-    },
-    {
-        key: "nalad",
-        tab: "Наладка",
-    },
-];
-
 const LayoutPage = () => {
     const dispatch = useAppDispatch();
     const [collapsed, setCollapsed] = useState(false);
     const { email } = useAppSelector((store) => store.auth);
-    const [activeTabKey1, setActiveTabKey1] = useState<string>("tab1");
-    const onTab1Change = (key: string) => {
-        setActiveTabKey1(key);
-    };
+
+    // const onTab1Change = (key: string) => {
+    //     setActiveTabKey1(key);
+    // };
     const toggleMenu = () => {
         setCollapsed(!collapsed);
     };
@@ -82,7 +59,7 @@ const LayoutPage = () => {
                 <div style={{ margin: "10px" }}>
                     <div style={{ fontSize: 20, paddingTop: 10 }}>
                         <a style={{ textDecoration: "none", color: "black" }}>
-                            ООО "ГК КРОН"
+                            "ООО ГК КРОН"
                         </a>
                     </div>
                 </div>
@@ -135,7 +112,7 @@ const LayoutPage = () => {
                 >
                     <p>
                         <a href="mailto:snab.pto@yandex.ru">
-                            Задавайте вопросы по электронной почте
+                            "Задавайте вопросы по электронной почте"
                         </a>
                     </p>
                 </Footer>

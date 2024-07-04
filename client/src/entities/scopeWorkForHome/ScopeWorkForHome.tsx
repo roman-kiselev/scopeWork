@@ -89,7 +89,7 @@ const ScopeWorkForHome = () => {
     const { id, banned, roles } = useAppSelector((store) => store.auth);
     const [selectedId, setSelectedId] = useState<string>("");
     const [open, setOpen] = useState<boolean>(false);
-    const { data, isLoading, isError } = scopeWorkApi.useGetShortSqlQuery({
+    const { data, isLoading } = scopeWorkApi.useGetShortSqlQuery({
         id: id !== null ? id.toString() : "",
     });
     // if (id) {

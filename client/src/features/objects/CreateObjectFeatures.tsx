@@ -1,23 +1,18 @@
-import React from 'react'
-import { FormCreateObject } from '../../entities'
-import { useForm, useWatch } from 'antd/es/form/Form'
-import { objectsApi } from '../../shared/api'
-import { useAppSelector } from '../../shared/hooks'
+import { useForm, useWatch } from "antd/es/form/Form";
+import { FormCreateObject } from "../../entities";
+import { objectsApi } from "../../shared/api";
 
 const CreateObjectFeatures = () => {
-    const [form] = useForm()
-    const data = useWatch([], form)
-    const { listObject } = useAppSelector((state) => state.objects)
+    const [form] = useForm();
+    const data = useWatch([], form);
 
-    const [createObject, { isSuccess }] = objectsApi.useCreateMutation()
+    const [createObject] = objectsApi.useCreateMutation();
 
     const onFinish = async () => {
-        const res = await createObject(data)
-    }
+        await createObject(data);
+    };
 
-    return (
-        <FormCreateObject form={form} onFinish={onFinish} />
-    )
-}
+    return <FormCreateObject form={form} onFinish={onFinish} />;
+};
 
-export default CreateObjectFeatures
+export default CreateObjectFeatures;

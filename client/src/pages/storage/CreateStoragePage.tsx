@@ -7,13 +7,9 @@ import { storageApi } from "src/shared/api";
 import { CreateStorage } from "src/shared/ui";
 
 // { name: "Кантри", address: "г. Пенза", object: 1, responsibleUser: 1 }
-// ​
 // address: "г. Пенза"
-// ​
 // name: "Кантри"
-// ​
 // object: 1
-// ​
 // responsibleUser: 1
 interface IFormStorage {
     name: string;
@@ -25,22 +21,20 @@ interface IFormStorage {
 const CreateStoragePage = () => {
     const [form] = useForm<IFormStorage>();
 
-    const [messageApi, contextHolder] = message.useMessage();
+    const [, contextHolder] = message.useMessage();
     const name: string = Form.useWatch("name", { form, preserve: true });
     const [nameEdit, setNameEdit] = useState<string>("");
     const {
         data: dataCheck,
         isError: isErrorCheck,
-        isSuccess: isSuccessCheck,
         isLoading: isLoadingCheck,
-        refetch,
     } = storageApi.useCheckNameQuery(
         { nameStorage: nameEdit },
         { refetchOnMountOrArgChange: true }
     );
 
     useEffect(() => {
-        let timeoutId: any;
+        let timeoutId: any = 0;
         if (timeoutId) {
             clearTimeout(timeoutId);
         }
@@ -51,7 +45,7 @@ const CreateStoragePage = () => {
     }, [name]);
     const data: IFormStorage = useWatch([], form);
     // console.log(data);
-    const [createStorage, { data: dataStorage, isSuccess, isError }] =
+    const [createStorage, { isSuccess, isError }] =
         storageApi.useCreateStorageMutation();
 
     const onFinish = () => {

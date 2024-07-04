@@ -1,6 +1,6 @@
 import { Spin } from "antd";
 import React from "react";
-import { Navigate, useLocation } from "react-router";
+import { Navigate } from "react-router";
 interface ICheckAuthProps {
     children: React.ReactNode;
     location: any;
@@ -13,7 +13,6 @@ const CheckAuth: React.FC<ICheckAuthProps> = ({
     children,
     isAuth,
     isLoading,
-    isSuccess,
     location,
 }) => {
     if (isLoading) {

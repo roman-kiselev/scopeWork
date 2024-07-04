@@ -21,7 +21,6 @@ const cancel = (e: React.MouseEvent<HTMLElement>) => {
 };
 
 const SimpleShortItemForList: React.FC<ISimpleShortItemForList> = ({
-    id,
     index,
     name,
     description,
@@ -48,8 +47,8 @@ const SimpleShortItemForList: React.FC<ISimpleShortItemForList> = ({
                         <Popconfirm
                             title="Удалить ед.измерения!"
                             description="Вы уверены что хотите удалить?"
-                            onConfirm={(e) => confirm}
-                            onCancel={(e) => cancel}
+                            onConfirm={() => confirm}
+                            onCancel={() => cancel}
                             okText="Да"
                             cancelText="Нет"
                         >

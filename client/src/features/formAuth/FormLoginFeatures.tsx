@@ -14,23 +14,18 @@ const FormLoginFeatures = () => {
 
     const [
         refreshToken,
-        {
-            isSuccess: isSuccessCheck,
-            isLoading: isLoadingCheck,
-            data: dataCheck,
-        },
+        { isSuccess: isSuccessCheck, isLoading: isLoadingCheck },
     ] = authApi.useRefreshMutation();
 
     useEffect(() => {
         refreshToken();
-    }, []);
+    }, [refreshToken]);
 
-    const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
+    const { dataError, isError, isLoading } = useAppSelector(
         (state) => state.auth
     );
 
-    const [login, { isSuccess, isLoading: isLoadingLogin }] =
-        authApi.useLoginMutation();
+    const [login, { isLoading: isLoadingLogin }] = authApi.useLoginMutation();
     const onFinish = async () => {
         await login(data);
         navigate(location.state?.from || "/", { replace: true });

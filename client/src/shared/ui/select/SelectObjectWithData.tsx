@@ -1,5 +1,5 @@
 import { SelectProps } from "antd";
-import React, { useState } from "react";
+import React from "react";
 import { objectsApi } from "src/shared/api";
 import SelectObject from "./SelectObject";
 
@@ -12,9 +12,9 @@ const SelectObjectWithData: React.FC<ISelectObjectWithDataProps> = ({
 }) => {
     const { data: dataObject } = objectsApi.useGetAllObjectShortQuery();
 
-    const [stateScopeWork, setStateScopeWork] = useState<
-        SelectProps["options"]
-    >([{ value: "0", label: "Выберите объём" }]);
+    // const [stateScopeWork, setStateScopeWork] = useState<
+    //     SelectProps["options"]
+    // >([{ value: "0", label: "Выберите объём" }]);
     const optionObject: SelectProps["options"] =
         dataObject !== undefined
             ? dataObject.map(({ id, name }) => {
@@ -24,7 +24,7 @@ const SelectObjectWithData: React.FC<ISelectObjectWithDataProps> = ({
                   };
               })
             : [];
-    let optionFinishObject: SelectProps["options"] = [
+    const optionFinishObject: SelectProps["options"] = [
         {
             label: "Выберите объект",
             value: "0",

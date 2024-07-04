@@ -9,18 +9,12 @@ const ProviderFeatures = () => {
     const [stateModal, setStateModal] = useState<boolean>(false);
     const [formTk] = useForm();
     const dataFormTk = useWatch([], formTk);
-    const {
-        data: dataTransportCompany,
-        isSuccess: isSuccessTransportCompany,
-        isError: isErrorTransportCompany,
-        isLoading: isLoadingTransportCompany,
-        refetch: refetchTransportCompany,
-    } = transportCompanyApi.useGetAllTkQuery();
+    const { data: dataTransportCompany, refetch: refetchTransportCompany } =
+        transportCompanyApi.useGetAllTkQuery();
 
     const [
         createTransportCompany,
         {
-            data: dataCreateTk,
             isLoading: isLoadingCreateTk,
             isError: isErrorCreateTk,
             isSuccess: isSuccessCreateTk,

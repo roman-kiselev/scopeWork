@@ -10,7 +10,7 @@ interface ILinkCardAccess {
     accessRoles: string[];
 }
 
-interface ILinkCardAccessConfig extends Omit<ILinkCardAccess, "dataRoles"> {}
+type ILinkCardAccessConfig = Omit<ILinkCardAccess, "dataRoles">;
 
 interface ILinkCardAccessArr {
     data: ILinkCardAccessConfig[];

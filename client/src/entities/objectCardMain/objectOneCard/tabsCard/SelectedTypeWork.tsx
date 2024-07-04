@@ -1,13 +1,12 @@
 import { Spin } from "antd";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "../../../../shared/hooks";
+import { useAppSelector } from "../../../../shared/hooks";
 
 interface SelectedTypeWorkProps {
-    tabName: string;
+    tabName?: string;
 }
 
-const SelectedTypeWork: React.FC<SelectedTypeWorkProps> = ({ tabName }) => {
-    const dispatch = useAppDispatch();
+const SelectedTypeWork: React.FC<SelectedTypeWorkProps> = () => {
     const { oneScopeWorkForOneTab, isLoading } = useAppSelector(
         (store) => store.dataOneUser
     );

@@ -18,27 +18,6 @@ interface DataType {
     object: string;
 }
 
-const dataSource: DataType[] = [
-    {
-        key: "1",
-        id: 1,
-        index: 1,
-        number: "334",
-        date: "10/10/2020",
-        typeWork: "АСКУЭ",
-        object: "Зеландия",
-    },
-    {
-        key: "2",
-        id: 2,
-        index: 2,
-        number: "335",
-        date: "10/10/2020",
-        typeWork: "Водоснабжение",
-        object: "Континент",
-    },
-];
-
 const columns: ColumnsType<DataType> = [
     {
         title: "№",
@@ -76,8 +55,7 @@ const columns: ColumnsType<DataType> = [
 const ListScopeWork = () => {
     const { data: dataScopeWork, isLoading: isLoadingScopeWorkAll } =
         scopeWorkApi.useGetAllScopeWorkQuery();
-    const { data: dataUser, isLoading: isLoadingUser } =
-        userApi.useGetAllUsersQuery();
+    const { isLoading: isLoadingUser } = userApi.useGetAllUsersQuery();
     const { data: dataObject, isLoading: isLoadingObject } =
         objectsApi.useGetAllObjectsQuery();
     const { data: dataTypeWork, isLoading: isLoadingScopeWork } =
@@ -92,8 +70,7 @@ const ListScopeWork = () => {
     }
 
     const dataForTable = dataScopeWork?.map((scopeWork, index) => {
-        const { id, createdAt, objectId, typeWorkId, users, listNameWork } =
-            scopeWork;
+        const { id, createdAt, objectId, typeWorkId } = scopeWork;
         const findedObject = dataObject?.find((item) => item.id === objectId);
         const findedTytpeWork = dataTypeWork?.find(
             (item) => item.id === typeWorkId

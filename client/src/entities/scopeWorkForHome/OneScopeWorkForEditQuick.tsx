@@ -11,11 +11,10 @@ import ColumnQuntityQuick from "./oneScopeWorkQuick/ColumnQuntityQuick";
 
 const OneScopeWorkForEditQuick = () => {
     const { id: idScopeWork } = useParams();
-    const { id, banned } = useAppSelector((store) => store.auth);
+    const { banned } = useAppSelector((store) => store.auth);
     const {
         data: scopeWorkDataQuick,
         isLoading,
-        isError,
         refetch,
     } = scopeWorkApi.useQuickOneScopeWorkByIdQuery({
         id: idScopeWork !== undefined && !banned ? idScopeWork.toString() : "0",
@@ -79,10 +78,8 @@ const OneScopeWorkForEditQuick = () => {
                 {
                     id,
                     name,
-                    listNameWorkId,
                     nameWorkId,
                     percent,
-                    quntityCompleted,
                     quntityMain,
                     remainderQuntity,
                     unitName,

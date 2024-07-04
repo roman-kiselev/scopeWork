@@ -64,7 +64,6 @@ const EditNameWorkFeatures: React.FC<EditNameWorkFeaturesProps> = ({
                 >
                     <Select
                         placeholder="Select a option and change input text above"
-                        onChange={() => {}}
                         allowClear
                     >
                         {listUnits.length > 0 ? (

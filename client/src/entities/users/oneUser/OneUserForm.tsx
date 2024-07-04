@@ -1,6 +1,5 @@
 import { Button, Col, Form, Input, Row, Spin, Switch } from "antd";
 import { useForm, useWatch } from "antd/es/form/Form";
-import { useParams } from "react-router";
 import { authApi, userApi } from "../../../shared/api";
 import { useAppSelector } from "../../../shared/hooks";
 import { MultiSelectRoles } from "../../../shared/ui";
@@ -10,23 +9,17 @@ interface OneUserFormProps {
 }
 
 const OneUserForm: React.FC<OneUserFormProps> = ({ userId }) => {
-    const { id } = useParams();
     const [form] = useForm();
     const dataForm = useWatch([], form);
 
-    const { data, isLoading, isSuccess, isError } = userApi.useGetOneUserQuery({
+    const { data, isLoading } = userApi.useGetOneUserQuery({
         id: userId,
     });
-    const [
-        editUser,
-        { data: dataEdit, isSuccess: isSuccessEdit, isLoading: isLoadingEdit },
-    ] = authApi.useEditMutation();
+    const [editUser] = authApi.useEditMutation();
 
-    const {
-        oneUserWithDescription,
-        isLoading: isLoadingStore,
-        isError: isErrorStore,
-    } = useAppSelector((store) => store.users);
+    const { isLoading: isLoadingStore } = useAppSelector(
+        (store) => store.users
+    );
 
     if (isLoading || isLoadingStore) {
         return <Spin />;
@@ -54,13 +47,13 @@ const OneUserForm: React.FC<OneUserFormProps> = ({ userId }) => {
     //     return <Spin />;
     // }
 
-    const handleChange = (value: string) => {
-        console.log(`selected ${value}`);
-    };
+    // const handleChange = (value: string) => {
+    //     console.log(`selected ${value}`);
+    // };
 
-    const handleFinish = (dataValue: any) => {
-        console.log(dataValue);
-    };
+    // const handleFinish = (dataValue: any) => {
+    //     console.log(dataValue);
+    // };
     const handleSave = (dataForm: any, userId: any) => {
         editUser({ ...dataForm, userId });
     };

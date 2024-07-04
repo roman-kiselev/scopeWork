@@ -19,7 +19,7 @@ export const objectSlice = createSlice({
         // Create Start //
         builder.addMatcher(
             objectsApi.endpoints.create.matchPending,
-            (state, action) => {
+            (state) => {
                 state.isLoading = true;
                 state.isError = false;
                 state.dataError = null;
@@ -49,7 +49,7 @@ export const objectSlice = createSlice({
         // GetAll Objects Start //
         builder.addMatcher(
             objectsApi.endpoints.getAllObjects.matchPending,
-            (state, action) => {
+            (state) => {
                 state.isLoading = true;
                 state.isError = false;
                 state.dataError = null;

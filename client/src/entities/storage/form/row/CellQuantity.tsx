@@ -1,6 +1,6 @@
 import { Input, Row } from "antd";
 import React from "react";
-import { useAppDispatch, useAppSelector } from "src/shared/hooks";
+import { useAppDispatch } from "src/shared/hooks";
 import { editRow } from "src/shared/models";
 
 interface ICellQuantityProps {
@@ -15,7 +15,7 @@ const CellQuantity: React.FC<ICellQuantityProps> = ({
     disabled = false,
 }) => {
     const dispatch = useAppDispatch();
-    const { data } = useAppSelector((store) => store.orders.orderReceipt);
+    //const { data } = useAppSelector((store) => store.orders.orderReceipt);
 
     const handleShangeInput = (value: string) => {
         dispatch(
