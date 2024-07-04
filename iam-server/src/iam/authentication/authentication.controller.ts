@@ -102,7 +102,7 @@ export class AuthenticationController {
     @ApiBearerAuth()
     async refreshToken(@Req() req: Request, @Res() res: Response) {
         const rt = req.cookies['refreshToken'];
-        //console.log(rt);
+        console.log(rt.cookies);
         const result = await this.authenticationService.refreshTokens({
             refreshToken: rt,
         });

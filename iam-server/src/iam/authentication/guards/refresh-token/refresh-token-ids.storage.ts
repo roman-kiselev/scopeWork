@@ -44,6 +44,8 @@ export class RefreshTokenIdsStorage
 
     async invalidate(userId: number): Promise<number> {
         this.logger.debug(`Refresh token cleared for user with ID ${userId}`);
-        return await this.redisClient.del(this.getKey(userId));
+        const x = await this.redisClient.del(this.getKey(userId));
+        console.log(x);
+        return x;
     }
 }

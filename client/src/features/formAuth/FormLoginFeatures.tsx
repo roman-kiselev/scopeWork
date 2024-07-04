@@ -19,7 +19,7 @@ const FormLoginFeatures = () => {
 
     useEffect(() => {
         refreshToken();
-    }, [refreshToken]);
+    }, []);
 
     const { dataError, isError, isLoading } = useAppSelector(
         (state) => state.auth

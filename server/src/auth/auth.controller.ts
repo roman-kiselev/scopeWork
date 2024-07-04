@@ -7,39 +7,39 @@ import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
 interface RequestWithUser extends Request {
-  user: any;
+    user: any;
 }
 
 @ApiTags('Авторизация')
-@Controller('auth')
+@Controller('a')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) {}
 
-  @ApiOperation({ summary: 'Авторизация' })
-  @ApiResponse({ status: 200, type: CreateUserDto })
-  @Post('/login')
-  login(@Body() userDto: CreateUserDto) {
-    return this.authService.login(userDto);
-  }
+    @ApiOperation({ summary: 'Авторизация' })
+    @ApiResponse({ status: 200, type: CreateUserDto })
+    @Post('/login')
+    login(@Body() userDto: CreateUserDto) {
+        return this.authService.login(userDto);
+    }
 
-  @ApiOperation({ summary: 'Регистрация' })
-  @ApiResponse({ status: 200, type: CreateUserDto })
-  @Post('/registration')
-  registration(@Body() dto: CreateUserAndDescription) {
-    return this.authService.registrationWithDescription(dto);
-  }
+    @ApiOperation({ summary: 'Регистрация' })
+    @ApiResponse({ status: 200, type: CreateUserDto })
+    @Post('/registration')
+    registration(@Body() dto: CreateUserAndDescription) {
+        return this.authService.registrationWithDescription(dto);
+    }
 
-  @ApiOperation({ summary: 'Проверка авторизации' })
-  @ApiResponse({ status: 200 })
-  @UseGuards(JwtAuthGuard)
-  @Get('/check')
-  checkAuth(@Req() req: RequestWithUser) {
-    return this.authService.checkAuth(req.user);
-  }
+    @ApiOperation({ summary: 'Проверка авторизации' })
+    @ApiResponse({ status: 200 })
+    @UseGuards(JwtAuthGuard)
+    @Get('/check')
+    checkAuth(@Req() req: RequestWithUser) {
+        return this.authService.checkAuth(req.user);
+    }
 
-  @Post('/edit')
-  editUser(@Body() dto: EditUserDto) {
-    console.log(dto);
-    return this.authService.editUser(dto);
-  }
+    @Post('/edit')
+    editUser(@Body() dto: EditUserDto) {
+        console.log(dto);
+        return this.authService.editUser(dto);
+    }
 }

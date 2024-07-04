@@ -20,7 +20,7 @@ const CheckAR: React.FC<ICheckAR> = ({ children, roles, location }) => {
         authApi.useRefreshMutation();
     useEffect(() => {
         refreshToken();
-    }, [refreshToken]);
+    }, []);
     return (
         <CheckAuth
             isAuth={isAuth}

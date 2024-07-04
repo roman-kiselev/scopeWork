@@ -29,6 +29,8 @@ listenerMiddleware.startListening({
     matcher: authApi.endpoints.login.matchFulfilled,
     effect: (action, listenerApi) => {
         console.log(action.payload);
+        // const cookie = new Cookies();
+        // cookie.remove("refreshToken");
         listenerApi.cancelActiveListeners();
         if (action.payload.accessToken && action.payload.refreshToken) {
             localStorage.setItem("token", action.payload.accessToken);
@@ -37,15 +39,15 @@ listenerMiddleware.startListening({
         }
     },
 });
-listenerMiddleware.startListening({
-    matcher: authApi.endpoints.refresh.matchFulfilled,
-    effect: (action, listenerApi) => {
-        listenerApi.cancelActiveListeners();
-        if (action.payload.accessToken) {
-            localStorage.setItem("token", action.payload.accessToken);
-        }
-    },
-});
+// listenerMiddleware.startListening({
+//     matcher: authApi.endpoints.refresh.matchFulfilled,
+//     effect: (action, listenerApi) => {
+//         listenerApi.cancelActiveListeners();
+//         if (action.payload.accessToken) {
+//             localStorage.setItem("token", action.payload.accessToken);
+//         }
+//     },
+// });
 
 const rootReducer = combineReducers({
     auth: authReducer,

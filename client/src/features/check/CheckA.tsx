@@ -13,7 +13,7 @@ const CheckA: React.FC<ICheckA> = ({ children, location }) => {
         authApi.useRefreshMutation();
     useEffect(() => {
         refreshToken();
-    }, [refreshToken]);
+    }, []);
     const { isAuth, isLoading } = useAppSelector((state) => state.auth);
     return (
         <CheckAuth

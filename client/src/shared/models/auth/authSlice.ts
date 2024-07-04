@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import jwt_decode from "jwt-decode";
+import Cookies from "universal-cookie";
 import { authApi } from "../../api";
 import { IAuthSlice, IDataError, IUserToken } from "../../interfaces";
 
@@ -105,11 +106,11 @@ export const authSlice = createSlice({
                 state.isAuth = true;
                 const { accessToken } = action.payload;
                 const user: IUserToken = jwt_decode(accessToken);
+                localStorage.setItem("token", accessToken);
                 state.id = user.sub;
                 state.email = user.email;
                 state.banned = user.banned;
                 state.organizationId = user.organizationId;
-                //localStorage.setItem("token", accessToken);
                 const { roles } = user;
                 state.roles = roles;
                 state.token = accessToken;
@@ -123,6 +124,9 @@ export const authSlice = createSlice({
                 state.isError = true;
                 state.token = null;
                 localStorage.removeItem("token");
+                const cookies = new Cookies();
+                console.log(cookies.get("refreshToken"));
+                //cookies.remove("refreshToken");
                 const { data, status } = action.payload as IDataError;
                 state.dataError = {
                     status: Number(status),
