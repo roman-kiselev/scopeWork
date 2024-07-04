@@ -663,6 +663,7 @@ export class ScopeWorkService {
       SELECT 
 	tad.scopeWorkId as scopeWorkId,
     tad.nameListId as nameListId,
+    tad.createdAt as createdAt,
     CONCAT(ud.lastname, ' ' ,ud.firstname) as userName,
     SUM(tad.quntity) as quntity,
     sw.name as nameTypeWork,
@@ -742,6 +743,7 @@ ORDER BY nameWork ASC;
         // Добявляем заголовки
         worksheet.addRow([
           '№ Объёма',
+          'Дата добавления',
           'Тип работ',
           'Пользователь',
           'Наименование',
@@ -751,6 +753,7 @@ ORDER BY nameWork ASC;
         data.forEach((item) => {
           worksheet.addRow([
             item.scopeWorkId,
+            item.createdAt,
             item.nameTypeWork,
             item.userName,
             item.nameWork,

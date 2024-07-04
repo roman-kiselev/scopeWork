@@ -6,4 +6,5 @@ export class ResHistoryTimeline {
   readonly nameTypeWork: string;
   readonly nameWork: string;
   readonly unitName: string;
+  readonly createdAt: string;
 }
