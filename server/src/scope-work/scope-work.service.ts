@@ -695,7 +695,7 @@ WHERE
         AND tad.createdAt BETWEEN :dateFrom AND :dateTo
         AND tad.deletedAt IS NULL
         AND tad.quntity IS NOT NULL
-        GROUP BY tad.scopeWorkId, tad.nameListId, ud.lastname, ud.firstname, sw.name, nw.name, nw.unitName
+        GROUP BY tad.scopeWorkId, tad.nameListId,tad.createdAt, ud.lastname, ud.firstname, sw.name, nw.name, nw.unitName
 ORDER BY nameWork ASC;
       `;
 
