@@ -28,6 +28,7 @@ import { ScopeWorkService } from './scope-work.service';
 
 @ApiTags('Объём работ')
 @ApiBearerAuth()
+// @UseGuards(AccessTokenGuards)
 @Roles(RoleName.ADMIN)
 @UseGuards(RolesGuard)
 @Controller('scope-work')

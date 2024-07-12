@@ -131,4 +131,9 @@ export class AuthenticationController {
     async handleGetRoles(data: string) {
         return this.authenticationService.getRoles(data);
     }
+
+    @EventPattern('get-user')
+    async handleGetUser(data: string) {
+        return this.authenticationService.getUser(data);
+    }
 }
