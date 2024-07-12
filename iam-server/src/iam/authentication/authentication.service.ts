@@ -201,6 +201,23 @@ export class AuthenticationService {
         return null;
     }
 
+    async getRoles(accessToken: string) {
+        try {
+            const result: ActiveUserData = await this.jwtService.verifyAsync(
+                accessToken,
+                {
+                    secret: this.jwtConfiguration.secret,
+                    audience: this.jwtConfiguration.audience,
+                    issuer: this.jwtConfiguration.issuer,
+                },
+            );
+
+            return result.roles;
+        } catch (e) {
+            throw new UnauthorizedException('Not authorized');
+        }
+    }
+
     // async recovery(email: string) {
     //     const user = await this.userService.findOneBy({email});
     //     if (!user) {

@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import { forwardRef } from '@nestjs/common/utils';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { AuthModule } from 'src/auth/auth.module';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
 import { Objects } from 'src/objects/objects.model';
@@ -18,25 +16,24 @@ import { User } from './user.model';
 import { UserService } from './user.service';
 
 @Module({
-  providers: [UserService],
-  controllers: [UserController],
-  imports: [
-    SequelizeModule.forFeature([
-      User,
-      Roles,
-      UserRole,
-      UserDescription,
-      UserScopeWork,
-      TableAddingData,
-      Objects,
-      ListNameWork,
-      ScopeWork,
-      NameList,
-      DelTableAddingData,
-    ]),
-    RolesModule,
-    forwardRef(() => AuthModule),
-  ],
-  exports: [UserService, UserModule],
+    providers: [UserService],
+    controllers: [UserController],
+    imports: [
+        SequelizeModule.forFeature([
+            User,
+            Roles,
+            UserRole,
+            UserDescription,
+            UserScopeWork,
+            TableAddingData,
+            Objects,
+            ListNameWork,
+            ScopeWork,
+            NameList,
+            DelTableAddingData,
+        ]),
+        RolesModule,
+    ],
+    exports: [UserService, SequelizeModule.forFeature([User])],
 })
 export class UserModule {}

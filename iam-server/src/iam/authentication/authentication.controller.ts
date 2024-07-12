@@ -126,4 +126,9 @@ export class AuthenticationController {
     async handleCheckToken(data: string) {
         return this.authenticationService.verifyToken(data);
     }
+
+    @EventPattern('get-roles')
+    async handleGetRoles(data: string) {
+        return this.authenticationService.getRoles(data);
+    }
 }

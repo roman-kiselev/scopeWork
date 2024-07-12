@@ -1,6 +1,7 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseModule } from 'src/database/database.module';
+import { IamModule } from 'src/iam/iam.module';
 import { ListNameWork } from 'src/list-name-work/list-name-work.model';
 import { NameList } from 'src/name_list/name-list.model';
 import { NameListModule } from 'src/name_list/name_list.module';
@@ -18,6 +19,7 @@ import { UserScopeWork } from './user-scope-work.model';
     controllers: [ScopeWorkController],
     providers: [ScopeWorkService],
     imports: [
+        forwardRef(() => IamModule),
         SequelizeModule.forFeature([
             ScopeWork,
             TypeWork,
