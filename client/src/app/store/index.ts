@@ -5,7 +5,6 @@ import {
 } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
 import {
-    authApi,
     iamApi,
     mainApi,
     mainManagerApi,
@@ -23,31 +22,25 @@ import {
     unitReducer,
     usersReducer,
 } from "../../shared/models";
+import { authApi } from "./../../shared/api/auth/index";
 
 const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
     matcher: authApi.endpoints.login.matchFulfilled,
     effect: (action, listenerApi) => {
-        console.log(action.payload);
-        // const cookie = new Cookies();
-        // cookie.remove("refreshToken");
         listenerApi.cancelActiveListeners();
-        if (action.payload.accessToken && action.payload.refreshToken) {
-            localStorage.setItem("token", action.payload.accessToken);
+        if (
+            action.payload.data.accessToken &&
+            action.payload.data.refreshToken
+        ) {
+            localStorage.setItem("token", action.payload.data.accessToken);
             const cookie = new Cookies();
-            cookie.set("refreshToken", action.payload.refreshToken);
+            cookie.set("refreshToken", action.payload.data.refreshToken);
+            // Перенаправление на главную страницу
+            // window.location.href = "/";
         }
     },
 });
-// listenerMiddleware.startListening({
-//     matcher: authApi.endpoints.refresh.matchFulfilled,
-//     effect: (action, listenerApi) => {
-//         listenerApi.cancelActiveListeners();
-//         if (action.payload.accessToken) {
-//             localStorage.setItem("token", action.payload.accessToken);
-//         }
-//     },
-// });
 
 const rootReducer = combineReducers({
     auth: authReducer,

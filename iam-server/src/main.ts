@@ -26,10 +26,10 @@ async function bootstrap() {
     });
 
     const config = new DocumentBuilder()
-        .setTitle('Manager')
-        .setDescription('Manager Api')
+        .setTitle('IAM')
+        .setDescription('IAM Api')
         .setVersion('1.0')
-        .addTag('Manager')
+        .addTag('IAM')
         .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
@@ -42,6 +42,7 @@ async function bootstrap() {
             transform: true,
         }),
     );
+    await app.startAllMicroservices();
     await app.listen(PORT);
 }
 bootstrap();

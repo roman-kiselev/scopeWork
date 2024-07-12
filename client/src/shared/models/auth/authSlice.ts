@@ -61,12 +61,14 @@ export const authSlice = createSlice({
             state.isLoading = true;
             state.isError = false;
             state.dataError = null;
+            const cookie = new Cookies();
+            cookie.remove("refreshToken");
         });
         builder.addMatcher(
             authApi.endpoints.login.matchFulfilled,
             (state, action) => {
                 state.isAuth = true;
-                const { accessToken } = action.payload;
+                const { accessToken } = action.payload.data;
                 const user: IUserToken = jwt_decode(accessToken);
                 state.id = user.sub;
                 state.email = user.email;
@@ -103,8 +105,9 @@ export const authSlice = createSlice({
         builder.addMatcher(
             authApi.endpoints.refresh.matchFulfilled,
             (state, action) => {
+                console.log(action.payload);
                 state.isAuth = true;
-                const { accessToken } = action.payload;
+                const { accessToken } = action.payload.data;
                 const user: IUserToken = jwt_decode(accessToken);
                 localStorage.setItem("token", accessToken);
                 state.id = user.sub;
@@ -125,8 +128,8 @@ export const authSlice = createSlice({
                 state.token = null;
                 localStorage.removeItem("token");
                 const cookies = new Cookies();
-                console.log(cookies.get("refreshToken"));
-                //cookies.remove("refreshToken");
+                // console.log(cookies.get("refreshToken"));
+                cookies.remove("refreshToken");
                 const { data, status } = action.payload as IDataError;
                 state.dataError = {
                     status: Number(status),

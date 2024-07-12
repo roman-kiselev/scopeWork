@@ -1,6 +1,12 @@
-import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
+import {
+    forwardRef,
+    MiddlewareConsumer,
+    Module,
+    ValidationPipe,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { Redis } from 'ioredis';
@@ -10,6 +16,7 @@ import { DatabaseModule } from './database/database.module';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
 import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
 import { ListNameWorkModule } from './list-name-work/list-name-work.module';
+import { CheckToken } from './middlewares/CheckToken';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { NameWorkModule } from './name-work/name-work.module';
 import { NameListModule } from './name_list/name_list.module';
@@ -46,6 +53,21 @@ console.log(process.env.REDIS_HOST, Number(process.env.REDIS_PORT));
             synchronize: true,
             //sync: { force: true },
         }),
+        forwardRef(() =>
+            ClientsModule.register([
+                {
+                    name: 'IAM_SERVICE',
+                    transport: Transport.RMQ,
+                    options: {
+                        urls: ['amqp://localhost:5672'],
+                        queue: 'iam_queue',
+                        queueOptions: {
+                            durable: true,
+                        },
+                    },
+                },
+            ]),
+        ),
         ThrottlerModule.forRoot({
             throttlers: [
                 {
@@ -99,6 +121,6 @@ console.log(process.env.REDIS_HOST, Number(process.env.REDIS_PORT));
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
-        consumer.apply(LoggerMiddleware).forRoutes('*');
+        consumer.apply(LoggerMiddleware, CheckToken).forRoutes('*');
     }
 }

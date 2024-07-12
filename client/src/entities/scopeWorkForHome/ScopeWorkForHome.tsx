@@ -92,28 +92,6 @@ const ScopeWorkForHome = () => {
     const { data, isLoading } = scopeWorkApi.useGetShortSqlQuery({
         id: id !== null ? id.toString() : "",
     });
-    // if (id) {
-    //     const { data } = scopeWorkApi.useGetAllScopeWorkByUserIdQuery({
-    //         id: id,
-    //     });
-    //     console.log(data);
-    // }
-    // const { scopeWorkData, isLoading } = useAppSelector(
-    //     (store) => store.dataOneUser
-    // );
-    // // Подсчитаем прогресс
-
-    // const dataForTable = scopeWorkData.map((scopeWork) => {
-    //     const { object, typeWork, id, percent } = scopeWork;
-    //     return {
-    //         key: id ?? "",
-    //         number: id ?? "",
-    //         action: id ?? "",
-    //         progress: percent,
-    //         object: object?.name,
-    //         typeWork: typeWork?.name,
-    //     } as DataType;
-    // });
 
     const handleClickShowModal = (id: string) => {
         setSelectedId(id);

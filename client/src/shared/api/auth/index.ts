@@ -5,14 +5,16 @@ import {
     IUserWithDescription,
 } from "src/shared/interfaces";
 import { IUserRegisterWithOrganization } from "src/shared/interfaces/api/authApi";
+import { ITokens } from "src/shared/interfaces/api/authApi/IUserResponseToken";
 import { iamApi } from "../main";
+
+interface IAccessTokens {
+    data: Omit<ITokens, "refreshToken">;
+}
 
 export const authApi = iamApi.injectEndpoints({
     endpoints: (builder) => ({
-        refresh: builder.mutation<
-            Omit<IUserResponseToken, "refreshToken">,
-            void
-        >({
+        refresh: builder.mutation<IAccessTokens, void>({
             query: () => ({
                 url: "/authentication/refresh-tokens",
                 method: "POST",

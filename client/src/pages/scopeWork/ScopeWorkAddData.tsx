@@ -3,7 +3,6 @@
 import { OneScopeWorkForEditQuick } from "src/entities";
 
 const ScopeWorkAddData = () => {
-    // return <OneScopeWorkForEdit />;
     return <OneScopeWorkForEditQuick />;
 };
 
