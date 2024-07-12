@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { CheckAuth } from "../../entities";
-import { authApi } from "../../shared/api";
 import { useAppSelector } from "../../shared/hooks";
 
 interface ICheckA {
@@ -9,18 +8,19 @@ interface ICheckA {
 }
 
 const CheckA: React.FC<ICheckA> = ({ children, location }) => {
-    const [refreshToken, { isSuccess, isLoading: isLoadingCheck }] =
-        authApi.useRefreshMutation();
-    useEffect(() => {
-        refreshToken();
-    }, [refreshToken]);
-    const { isAuth, isLoading } = useAppSelector((state) => state.auth);
+    // const [refreshToken, { isSuccess, isLoading: isLoadingCheck }] =
+    //     authApi.useRefreshMutation();
+    // useEffect(() => {
+    //     refreshToken();
+    // }, []);
+    const { token, isLoading, isAuth } = useAppSelector((state) => state.auth);
+
     return (
         <CheckAuth
             isAuth={isAuth}
-            isSuccess={isSuccess}
+            isSuccess={token !== null}
             location={location}
-            isLoading={isLoading || isLoadingCheck}
+            isLoading={isLoading}
         >
             {children}
         </CheckAuth>

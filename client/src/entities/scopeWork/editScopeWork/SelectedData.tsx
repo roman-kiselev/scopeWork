@@ -145,11 +145,13 @@ const SelectedData = () => {
         >
             <h4>Объём работ №{idScopeWork}</h4>
             <SelectTypeWork
+                handleChange={() => console.log("typeWork")}
                 defaultValue={typeWorkName}
                 disabled={true}
                 options={listTypeWorkOption}
             />
             <SelectObject
+                handleChange={() => console.log("objects")}
                 defaultValue={objectName}
                 disabled={true}
                 options={listObjectOption}

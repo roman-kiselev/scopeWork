@@ -28,6 +28,7 @@ async function bootstrap() {
         .setDescription('ScopeWork Api')
         .setVersion('1.0')
         .addTag('ScopeWork')
+        .addBearerAuth()
         .build();
     const document = SwaggerModule.createDocument(app, config);
     SwaggerModule.setup('/api/docs', app, document);

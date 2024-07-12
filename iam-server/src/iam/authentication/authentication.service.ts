@@ -160,7 +160,7 @@ export class AuthenticationService {
                         issuer: this.jwtConfiguration.issuer,
                     },
                 );
-            console.log(sub, refreshTokenId);
+
             const user = await this.userService.findOneWithRelation(
                 { id: sub },
                 ['roles', 'organization'],
@@ -170,21 +170,35 @@ export class AuthenticationService {
                 user.id,
                 refreshTokenId,
             );
-            console.log(isValid);
 
             if (isValid) {
                 await this.refreshTokenIdsStorage.invalidate(user.id);
             } else {
-                throw new Error('Refresh token is invalid');
+                throw new ConflictException('Refresh token is invalid');
             }
 
             return this.generateTokens(user);
         } catch (error) {
+            console.log(error);
             if (error instanceof InvalidatedRefreshTokenError) {
                 throw new UnauthorizedException('Access denied');
             }
+
             throw new UnauthorizedException();
         }
+    }
+
+    async verifyToken(token: string) {
+        const result = await this.jwtService.verifyAsync(token, {
+            secret: this.jwtConfiguration.secret,
+            audience: this.jwtConfiguration.audience,
+            issuer: this.jwtConfiguration.issuer,
+        });
+
+        if (result) {
+            return token;
+        }
+        return null;
     }
 
     // async recovery(email: string) {

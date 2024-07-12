@@ -15,23 +15,23 @@ import { ScopeWorkService } from './scope-work.service';
 import { UserScopeWork } from './user-scope-work.model';
 
 @Module({
-  controllers: [ScopeWorkController],
-  providers: [ScopeWorkService],
-  imports: [
-    SequelizeModule.forFeature([
-      ScopeWork,
-      TypeWork,
-      ObjectTypeWork,
-      NameList,
-      User,
-      UserScopeWork,
-      ListNameWork,
-      Objects,
-      TableAddingData,
-    ]),
-    NameListModule,
-    DatabaseModule,
-  ],
-  exports: [ScopeWorkService],
+    controllers: [ScopeWorkController],
+    providers: [ScopeWorkService],
+    imports: [
+        SequelizeModule.forFeature([
+            ScopeWork,
+            TypeWork,
+            ObjectTypeWork,
+            NameList,
+            User,
+            UserScopeWork,
+            ListNameWork,
+            Objects,
+            TableAddingData,
+        ]),
+        NameListModule,
+        DatabaseModule,
+    ],
+    exports: [ScopeWorkService],
 })
 export class ScopeWorkModule {}

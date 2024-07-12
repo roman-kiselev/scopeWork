@@ -17,8 +17,8 @@ interface IDataForColumn {
 
 const ShortListNames = () => {
     const dispatch = useAppDispatch();
-    const { isLoading } = unitsApi.useGetAllUnitsQuery();
-    if (isLoading) <Spin />;
+    const { isLoading: isLoadingUnits } = unitsApi.useGetAllUnitsQuery();
+    if (isLoadingUnits) <Spin />;
     const { selectedTypeWorkId, isLoading } = useAppSelector(
         (store) => store.scopeWork
     );

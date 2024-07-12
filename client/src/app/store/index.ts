@@ -4,13 +4,7 @@ import {
     createListenerMiddleware,
 } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
-import {
-    authApi,
-    iamApi,
-    mainApi,
-    mainManagerApi,
-    objectMainApi,
-} from "../../shared/api";
+import { iamApi, mainApi, mainManagerApi } from "../../shared/api";
 import {
     authReducer,
     dataOneUserReducer,
@@ -23,26 +17,22 @@ import {
     unitReducer,
     usersReducer,
 } from "../../shared/models";
+import { authApi } from "./../../shared/api/auth/index";
 
 const listenerMiddleware = createListenerMiddleware();
 listenerMiddleware.startListening({
     matcher: authApi.endpoints.login.matchFulfilled,
     effect: (action, listenerApi) => {
-        console.log(action.payload);
         listenerApi.cancelActiveListeners();
-        if (action.payload.accessToken && action.payload.refreshToken) {
-            localStorage.setItem("token", action.payload.accessToken);
+        if (
+            action.payload.data.accessToken &&
+            action.payload.data.refreshToken
+        ) {
+            localStorage.setItem("token", action.payload.data.accessToken);
             const cookie = new Cookies();
-            cookie.set("refreshToken", action.payload.refreshToken);
-        }
-    },
-});
-listenerMiddleware.startListening({
-    matcher: authApi.endpoints.refresh.matchFulfilled,
-    effect: (action, listenerApi) => {
-        listenerApi.cancelActiveListeners();
-        if (action.payload.accessToken) {
-            localStorage.setItem("token", action.payload.accessToken);
+            cookie.set("refreshToken", action.payload.data.refreshToken);
+            // Перенаправление на главную страницу
+            // window.location.href = "/";
         }
     },
 });
@@ -59,7 +49,6 @@ const rootReducer = combineReducers({
     dataOneUser: dataOneUserReducer,
     orders: ordersReducer,
     [mainApi.reducerPath]: mainApi.reducer,
-    [objectMainApi.reducerPath]: objectMainApi.reducer,
     [mainManagerApi.reducerPath]: mainManagerApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
 });
@@ -70,7 +59,6 @@ const store = configureStore({
         return getDefaultMiddleware()
             .concat(
                 mainApi.middleware,
-                objectMainApi.middleware,
                 mainManagerApi.middleware,
                 iamApi.middleware
             )

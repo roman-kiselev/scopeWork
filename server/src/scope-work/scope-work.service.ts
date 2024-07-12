@@ -23,274 +23,312 @@ import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
 export class ScopeWorkService {
-  constructor(
-    @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
-    @InjectModel(UserScopeWork)
-    private userScopeWorkRepository: typeof UserScopeWork,
-    @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
-    @InjectModel(ListNameWork)
-    private listNameWorkRepository: typeof ListNameWork,
-    @InjectModel(User) private userRepository: typeof User,
-    @InjectModel(Objects) private objectsRepository: typeof Objects,
-    @InjectModel(TableAddingData)
-    private tableAddingDataRepository: typeof TableAddingData,
-    private nameListService: NameListService,
-    private databaseService: DatabaseService,
-  ) {}
+    constructor(
+        @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
+        @InjectModel(UserScopeWork)
+        private userScopeWorkRepository: typeof UserScopeWork,
+        @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
+        @InjectModel(ListNameWork)
+        private listNameWorkRepository: typeof ListNameWork,
+        @InjectModel(User) private userRepository: typeof User,
+        @InjectModel(Objects) private objectsRepository: typeof Objects,
+        @InjectModel(TableAddingData)
+        private tableAddingDataRepository: typeof TableAddingData,
+        private nameListService: NameListService,
+        private databaseService: DatabaseService,
+    ) {}
 
-  private async getDataCount(arr: ScopeWork[]) {
-    try {
-      let dataProgress = [];
-      const scopeWorkClone = [...arr];
-      for (const scopeWork of scopeWorkClone) {
-        const { id: idScopeWork, listNameWork } = scopeWork;
-        const arr = [];
-        for (const { id: listNameWorkId } of listNameWork) {
-          const item = await this.nameListService.getDataProgressByList(
-            listNameWorkId,
-            idScopeWork,
-          );
-          const itemClone = [...item];
-          const quntityNumber = itemClone
-            .map((item) => item.quntity)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const quantityDifferenceNumber = itemClone
-            .map((item) => item.quantityDifference)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const addingCountNumber = itemClone
-            .map((item) => item.addingCount)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const dataCount = {
-            listNameWorkId,
-            idScopeWork,
-            quntity: quntityNumber,
-            isDifference: itemClone.find((item) => item.isDifference === true)
-              ? true
-              : false,
-            quantityDifference: quantityDifferenceNumber,
-            addingCount: addingCountNumber,
-            percent: ((addingCountNumber / quntityNumber) * 100).toFixed(1),
-          };
-          arr.push(dataCount);
+    private async getDataCount(arr: ScopeWork[]) {
+        try {
+            let dataProgress = [];
+            const scopeWorkClone = [...arr];
+            for (const scopeWork of scopeWorkClone) {
+                const { id: idScopeWork, listNameWork } = scopeWork;
+                const arr = [];
+                for (const { id: listNameWorkId } of listNameWork) {
+                    const item =
+                        await this.nameListService.getDataProgressByList(
+                            listNameWorkId,
+                            idScopeWork,
+                        );
+                    const itemClone = [...item];
+                    const quntityNumber = itemClone
+                        .map((item) => item.quntity)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const quantityDifferenceNumber = itemClone
+                        .map((item) => item.quantityDifference)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const addingCountNumber = itemClone
+                        .map((item) => item.addingCount)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const dataCount = {
+                        listNameWorkId,
+                        idScopeWork,
+                        quntity: quntityNumber,
+                        isDifference: itemClone.find(
+                            (item) => item.isDifference === true,
+                        )
+                            ? true
+                            : false,
+                        quantityDifference: quantityDifferenceNumber,
+                        addingCount: addingCountNumber,
+                        percent: (
+                            (addingCountNumber / quntityNumber) *
+                            100
+                        ).toFixed(1),
+                    };
+                    arr.push(dataCount);
+                }
+                const quntityMain = arr
+                    .map((item) => item.quntity)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    );
+                const addingCountMain = arr
+                    .map((item) => item.addingCount)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    );
+                const mainCountData = {
+                    listNameWorkId: arr.map((item) => item.listNameWorkId),
+                    idScopeWork: arr.map((item) => item.idScopeWork),
+                    quntity: quntityMain,
+                    isDifference: arr.find((item) => item.isDifference === true)
+                        ? true
+                        : false,
+                    quantityDifference: arr
+                        .map((item) => item.quantityDifference)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        ),
+                    addingCount: addingCountMain,
+                    percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+                };
+                dataProgress.push({ ...scopeWork, ...mainCountData });
+            }
+            return dataProgress;
+        } catch (e) {}
+    }
+
+    private async checkArrUsers(arr: number[]) {
+        try {
+            let errUser: boolean = false;
+            for (const item of arr) {
+                const findedUser = await this.userRepository.findByPk(item);
+                if (!findedUser) {
+                    errUser = true;
+                }
+            }
+            return errUser;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-        const quntityMain = arr
-          .map((item) => item.quntity)
-          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-        const addingCountMain = arr
-          .map((item) => item.addingCount)
-          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-        const mainCountData = {
-          listNameWorkId: arr.map((item) => item.listNameWorkId),
-          idScopeWork: arr.map((item) => item.idScopeWork),
-          quntity: quntityMain,
-          isDifference: arr.find((item) => item.isDifference === true)
-            ? true
-            : false,
-          quantityDifference: arr
-            .map((item) => item.quantityDifference)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0),
-          addingCount: addingCountMain,
-          percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
-        };
-        dataProgress.push({ ...scopeWork, ...mainCountData });
-      }
-      return dataProgress;
-    } catch (e) {}
-  }
+    }
 
-  private async checkArrUsers(arr: number[]) {
-    try {
-      let errUser: boolean = false;
-      for (const item of arr) {
-        const findedUser = await this.userRepository.findByPk(item);
-        if (!findedUser) {
-          errUser = true;
+    private async checkArrListNameWork(arr: number[]) {
+        try {
+            let errNameWork: boolean = false;
+
+            for (const item of arr) {
+                const findedNameWork =
+                    await this.listNameWorkRepository.findByPk(item);
+                if (!findedNameWork) {
+                    errNameWork = true;
+                }
+            }
+
+            return errNameWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-      }
-      return errUser;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  private async checkArrListNameWork(arr: number[]) {
-    try {
-      let errNameWork: boolean = false;
-
-      for (const item of arr) {
-        const findedNameWork = await this.listNameWorkRepository.findByPk(item);
-        if (!findedNameWork) {
-          errNameWork = true;
+    private async createArrUsers(arr: number[], scopeWorkId: number) {
+        try {
+            const scopeWork = await this.scopeWorkRepository.findByPk(
+                scopeWorkId,
+            );
+            for (const item of arr) {
+                await scopeWork.$add('users', item);
+            }
+            return scopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-      }
-
-      return errNameWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  private async createArrUsers(arr: number[], scopeWorkId: number) {
-    try {
-      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
-      for (const item of arr) {
-        await scopeWork.$add('users', item);
-      }
-      return scopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
+    private async editArrUsers(arr: number[], scopeWorkId: number) {
+        try {
+            console.log(arr);
+            // Отсортируем массив
+            // Получим для начала уже существующий массив
+            const scopeWork = await this.scopeWorkRepository.findByPk(
+                scopeWorkId,
+                {
+                    include: [
+                        {
+                            model: User,
+                        },
+                    ],
+                },
+            );
 
-  private async editArrUsers(arr: number[], scopeWorkId: number) {
-    try {
-      console.log(arr);
-      // Отсортируем массив
-      // Получим для начала уже существующий массив
-      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId, {
-        include: [
-          {
-            model: User,
-          },
-        ],
-      });
+            const { users } = scopeWork;
+            // Есть 2 массива
+            // Нужно найти id которые отсутствуют в scopeWork => users и добавить
+            const arrUsersId = users.map((item) => item.id);
+            // Проходим для добавления
 
-      const { users } = scopeWork;
-      // Есть 2 массива
-      // Нужно найти id которые отсутствуют в scopeWork => users и добавить
-      const arrUsersId = users.map((item) => item.id);
-      // Проходим для добавления
+            for (const item of arr) {
+                const findedId = arrUsersId.find((user) => user === item);
+                if (!findedId) {
+                    await scopeWork.$add('users', item);
+                }
+            }
 
-      for (const item of arr) {
-        const findedId = arrUsersId.find((user) => user === item);
-        if (!findedId) {
-          await scopeWork.$add('users', item);
+            for (const item of arrUsersId) {
+                const findedId = arr.find((user) => user === item);
+                if (!findedId) {
+                    await scopeWork.$remove('users', item);
+                }
+            }
+
+            return scopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-      }
+    }
 
-      for (const item of arrUsersId) {
-        const findedId = arr.find((user) => user === item);
-        if (!findedId) {
-          await scopeWork.$remove('users', item);
+    private async createArrListNameWork(arr: number[], scopeWorkId: number) {
+        try {
+            const scopeWork = await this.scopeWorkRepository.findByPk(
+                scopeWorkId,
+            );
+            for (const item of arr) {
+                // const newTypeWorkId = await this.listNameWorkRepository.findByPk(item);
+
+                // newTypeWorkId.scopeWorkId = scopeWork.id;
+                // await newTypeWorkId.save();
+                await scopeWork.$add('listNameWork', item);
+            }
+            return scopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-      }
-
-      return scopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  private async createArrListNameWork(arr: number[], scopeWorkId: number) {
-    try {
-      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
-      for (const item of arr) {
-        // const newTypeWorkId = await this.listNameWorkRepository.findByPk(item);
+    // Создаём объём
+    async createScopeWork(dto: CreateScopeWorkDto) {
+        try {
+            // Получаем id Объекта
+            // Получаем id Типа работ
+            // Получаем массив с id наименований работ
+            // Получаем пользователей
+            const { listNameWork, objectId, typeWorkId, users } = dto;
+            // Проверяем существование
+            const object = await this.objectsRepository.findByPk(objectId);
+            if (!object) {
+                throw new HttpException(
+                    'Объект не найден',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+            const typeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+            if (!typeWork) {
+                throw new HttpException(
+                    'Тип работ не найден',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+            const isNameWork = await this.checkArrListNameWork(listNameWork);
+            if (isNameWork) {
+                throw new HttpException(
+                    'Списки работ не найдены',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+            const isUser = await this.checkArrUsers(users);
+            if (isUser) {
+                throw new HttpException(
+                    'Пользователи не найдены',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
 
-        // newTypeWorkId.scopeWorkId = scopeWork.id;
-        // await newTypeWorkId.save();
-        await scopeWork.$add('listNameWork', item);
-      }
-      return scopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+            // Создание
+            // Прикрепляем объект и создаём номер
+            const newScopeWork = await this.scopeWorkRepository.create();
+            newScopeWork.typeWorkId = typeWorkId;
+            newScopeWork.objectId = objectId;
+            await this.createArrUsers(users, newScopeWork.id);
+            await this.createArrListNameWork(listNameWork, newScopeWork.id);
+            await newScopeWork.save();
+
+            const dataScopeWork = await this.scopeWorkRepository.findByPk(
+                newScopeWork.id,
+                { include: { all: true } },
+            );
+            return dataScopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
-  }
 
-  // Создаём объём
-  async createScopeWork(dto: CreateScopeWorkDto) {
-    try {
-      // Получаем id Объекта
-      // Получаем id Типа работ
-      // Получаем массив с id наименований работ
-      // Получаем пользователей
-      const { listNameWork, objectId, typeWorkId, users } = dto;
-      // Проверяем существование
-      const object = await this.objectsRepository.findByPk(objectId);
-      if (!object) {
-        throw new HttpException('Объект не найден', HttpStatus.NOT_FOUND);
-      }
-      const typeWork = await this.typeWorkRepository.findByPk(typeWorkId);
-      if (!typeWork) {
-        throw new HttpException('Тип работ не найден', HttpStatus.NOT_FOUND);
-      }
-      const isNameWork = await this.checkArrListNameWork(listNameWork);
-      if (isNameWork) {
-        throw new HttpException(
-          'Списки работ не найдены',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      const isUser = await this.checkArrUsers(users);
-      if (isUser) {
-        throw new HttpException(
-          'Пользователи не найдены',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      // Создание
-      // Прикрепляем объект и создаём номер
-      const newScopeWork = await this.scopeWorkRepository.create();
-      newScopeWork.typeWorkId = typeWorkId;
-      newScopeWork.objectId = objectId;
-      await this.createArrUsers(users, newScopeWork.id);
-      await this.createArrListNameWork(listNameWork, newScopeWork.id);
-      await newScopeWork.save();
-
-      const dataScopeWork = await this.scopeWorkRepository.findByPk(
-        newScopeWork.id,
-        { include: { all: true } },
-      );
-      return dataScopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  // Получение списка работ по id пользователя и объекта
-  async getScopeWorkByUserIdAndObjectId(dto: {
-    userId: string;
-    objectId: string;
-  }) {
-    try {
-      const query = `
+    // Получение списка работ по id пользователя и объекта
+    async getScopeWorkByUserIdAndObjectId(dto: {
+        userId: string;
+        objectId: string;
+    }) {
+        try {
+            const query = `
       SELECT 
       sw.id AS id,
       sw.typeWorkId AS typeWorkId,
@@ -311,282 +349,318 @@ export class ScopeWorkService {
       objectId = :objectId AND swu.userId = :userId;
       `;
 
-      const replacements = {
-        userId: dto.userId,
-        objectId: dto.objectId,
-      };
+            const replacements = {
+                userId: dto.userId,
+                objectId: dto.objectId,
+            };
 
-      const data: IResScopeWorkByUserAndObject[] =
-        await this.databaseService.executeQuery(query, replacements);
+            const data: IResScopeWorkByUserAndObject[] =
+                await this.databaseService.executeQuery(query, replacements);
 
-      return data;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async getOneScopeWork(id: string) {
-    try {
-      const scopeWork = await this.scopeWorkRepository.findByPk(id, {
-        include: { all: true },
-      });
-      const finishScopeWork = JSON.parse(JSON.stringify(scopeWork));
-      if (!scopeWork) {
-        throw new HttpException(
-          'Такого объёма не существует',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-      const { typeWorkId, objectId, listNameWork } = finishScopeWork;
-      const findTypeWork = await this.typeWorkRepository.findByPk(typeWorkId);
-      const findObject = await this.objectsRepository.findByPk(objectId);
-      let findList = [];
-      for (const item of listNameWork) {
-        const { id } = item;
-        const findedList = await this.listNameWorkRepository.findByPk(id, {
-          include: { all: true },
-        });
-        findList.push(JSON.parse(JSON.stringify(findedList)));
-      }
-      const changedScopeWork = {
-        ...finishScopeWork,
-        object: findObject,
-        typeWork: findTypeWork,
-        listNameWork: findList,
-      };
-
-      return changedScopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async getAllScopeWork() {
-    try {
-      const scopeWorks = await this.scopeWorkRepository.findAll({
-        include: { all: true },
-      });
-      let dataProgress = [];
-      const scopeWorkClone = [...scopeWorks];
-
-      // Расчитаем прогресс
-      for (const scopeWork of scopeWorkClone) {
-        const { id: idScopeWork, listNameWork } = scopeWork;
-        const arr = [];
-        for (const { id: listNameWorkId } of listNameWork) {
-          const item = await this.nameListService.getDataProgressByList(
-            listNameWorkId,
-            idScopeWork,
-          );
-          const itemClone = [...item];
-          const quntityNumber = itemClone
-            .map((item) => item.quntity)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const quantityDifferenceNumber = itemClone
-            .map((item) => item.quantityDifference)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const addingCountNumber = itemClone
-            .map((item) => item.addingCount)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-          const dataCount = {
-            listNameWorkId,
-            idScopeWork,
-            quntity: quntityNumber,
-            isDifference: itemClone.find((item) => item.isDifference === true)
-              ? true
-              : false,
-            quantityDifference: quantityDifferenceNumber,
-            addingCount: addingCountNumber,
-            percent: ((addingCountNumber / quntityNumber) * 100).toFixed(1),
-          };
-          arr.push(dataCount);
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-        const quntityMain = arr
-          .map((item) => item.quntity)
-          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-        const addingCountMain = arr
-          .map((item) => item.addingCount)
-          .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
-        const mainCountData = {
-          listNameWorkId: arr.map((item) => item.listNameWorkId),
-          idScopeWork: arr.map((item) => item.idScopeWork),
-          quntity: quntityMain,
-          isDifference: arr.find((item) => item.isDifference === true)
-            ? true
-            : false,
-          quantityDifference: arr
-            .map((item) => item.quantityDifference)
-            .reduce((currentItem, nextItem) => currentItem + nextItem, 0),
-          addingCount: addingCountMain,
-          percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
-        };
-        const jsonScopeWork = JSON.parse(JSON.stringify(scopeWork));
-        dataProgress.push({ ...jsonScopeWork, ...mainCountData });
-      }
-
-      return dataProgress;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  async getAllScopeWorkByUserId(id: string) {
-    try {
-      if (id === '1') {
-        const getAllScopeWork = await this.userScopeWorkRepository.findAll({
-          attributes: [
-            [
-              sequelize.fn('DISTINCT', sequelize.col('scopeWorkId')),
-              'scopeWorkId',
-            ],
-          ],
-        });
+    async getOneScopeWork(id: string) {
+        try {
+            const scopeWork = await this.scopeWorkRepository.findByPk(id, {
+                include: { all: true },
+            });
+            const finishScopeWork = JSON.parse(JSON.stringify(scopeWork));
+            if (!scopeWork) {
+                throw new HttpException(
+                    'Такого объёма не существует',
+                    HttpStatus.NOT_FOUND,
+                );
+            }
+            const { typeWorkId, objectId, listNameWork } = finishScopeWork;
+            const findTypeWork = await this.typeWorkRepository.findByPk(
+                typeWorkId,
+            );
+            const findObject = await this.objectsRepository.findByPk(objectId);
+            let findList = [];
+            for (const item of listNameWork) {
+                const { id } = item;
+                const findedList = await this.listNameWorkRepository.findByPk(
+                    id,
+                    {
+                        include: { all: true },
+                    },
+                );
+                findList.push(JSON.parse(JSON.stringify(findedList)));
+            }
+            const changedScopeWork = {
+                ...finishScopeWork,
+                object: findObject,
+                typeWork: findTypeWork,
+                listNameWork: findList,
+            };
 
-        const listScopeWork = [];
-        for (const { scopeWorkId } of getAllScopeWork) {
-          const findedScopeWork = await this.getOneScopeWork(
-            scopeWorkId.toString(),
-          );
-          listScopeWork.push(findedScopeWork);
+            return changedScopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-
-        const data = await this.getDataCount(listScopeWork);
-
-        return data;
-      }
-      const getAllScopeWork = await this.userScopeWorkRepository.findAll({
-        where: {
-          userId: id,
-        },
-      });
-
-      const listScopeWork = [];
-      for (const { scopeWorkId } of getAllScopeWork) {
-        const findedScopeWork = await this.getOneScopeWork(
-          scopeWorkId.toString(),
-        );
-        listScopeWork.push(findedScopeWork);
-      }
-      const data = await this.getDataCount(listScopeWork);
-
-      return data;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  // Получение статистики
-  async getAllListWorkForEditByScopeWorkId(id: string) {
-    try {
-      // Получаем объём
-      const scopeWork = await this.scopeWorkRepository.findByPk(id, {
-        include: { all: true },
-      });
-      const scopeWorkFinish = JSON.parse(JSON.stringify(scopeWork));
-      let listNames = [];
-      const { listNameWork } = scopeWorkFinish;
-      // Получаем весь список наименований
-      // Учесть что списков с работами может быть несколько
-      for (const { id: idListNameWork } of listNameWork) {
-        const oneList = await this.listNameWorkRepository.findByPk(
-          idListNameWork,
-          {
-            include: { all: true },
-          },
-        );
+    async getAllScopeWork() {
+        try {
+            const scopeWorks = await this.scopeWorkRepository.findAll({
+                include: { all: true },
+            });
+            let dataProgress = [];
+            const scopeWorkClone = [...scopeWorks];
 
-        const { nameWorks } = oneList;
-        const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
+            // Расчитаем прогресс
+            for (const scopeWork of scopeWorkClone) {
+                const { id: idScopeWork, listNameWork } = scopeWork;
+                const arr = [];
+                for (const { id: listNameWorkId } of listNameWork) {
+                    const item =
+                        await this.nameListService.getDataProgressByList(
+                            listNameWorkId,
+                            idScopeWork,
+                        );
+                    const itemClone = [...item];
+                    const quntityNumber = itemClone
+                        .map((item) => item.quntity)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const quantityDifferenceNumber = itemClone
+                        .map((item) => item.quantityDifference)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const addingCountNumber = itemClone
+                        .map((item) => item.addingCount)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        );
+                    const dataCount = {
+                        listNameWorkId,
+                        idScopeWork,
+                        quntity: quntityNumber,
+                        isDifference: itemClone.find(
+                            (item) => item.isDifference === true,
+                        )
+                            ? true
+                            : false,
+                        quantityDifference: quantityDifferenceNumber,
+                        addingCount: addingCountNumber,
+                        percent: (
+                            (addingCountNumber / quntityNumber) *
+                            100
+                        ).toFixed(1),
+                    };
+                    arr.push(dataCount);
+                }
+                const quntityMain = arr
+                    .map((item) => item.quntity)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    );
+                const addingCountMain = arr
+                    .map((item) => item.addingCount)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    );
+                const mainCountData = {
+                    listNameWorkId: arr.map((item) => item.listNameWorkId),
+                    idScopeWork: arr.map((item) => item.idScopeWork),
+                    quntity: quntityMain,
+                    isDifference: arr.find((item) => item.isDifference === true)
+                        ? true
+                        : false,
+                    quantityDifference: arr
+                        .map((item) => item.quantityDifference)
+                        .reduce(
+                            (currentItem, nextItem) => currentItem + nextItem,
+                            0,
+                        ),
+                    addingCount: addingCountMain,
+                    percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+                };
+                const jsonScopeWork = JSON.parse(JSON.stringify(scopeWork));
+                dataProgress.push({ ...jsonScopeWork, ...mainCountData });
+            }
 
-        for (const {
-          id: nameWorkId,
-          name,
-          unitId,
-          NameList,
-        } of finishNameWorks) {
-          const findedData =
-            await this.nameListService.getDateByNameWorkIdAndListId(
-              nameWorkId,
-              idListNameWork,
+            return dataProgress;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    async getAllScopeWorkByUserId(id: string) {
+        try {
+            if (id === '1') {
+                const getAllScopeWork =
+                    await this.userScopeWorkRepository.findAll({
+                        attributes: [
+                            [
+                                sequelize.fn(
+                                    'DISTINCT',
+                                    sequelize.col('scopeWorkId'),
+                                ),
+                                'scopeWorkId',
+                            ],
+                        ],
+                    });
+
+                const listScopeWork = [];
+                for (const { scopeWorkId } of getAllScopeWork) {
+                    const findedScopeWork = await this.getOneScopeWork(
+                        scopeWorkId.toString(),
+                    );
+                    listScopeWork.push(findedScopeWork);
+                }
+
+                const data = await this.getDataCount(listScopeWork);
+
+                return data;
+            }
+            const getAllScopeWork = await this.userScopeWorkRepository.findAll({
+                where: {
+                    userId: id,
+                },
+            });
+
+            const listScopeWork = [];
+            for (const { scopeWorkId } of getAllScopeWork) {
+                const findedScopeWork = await this.getOneScopeWork(
+                    scopeWorkId.toString(),
+                );
+                listScopeWork.push(findedScopeWork);
+            }
+            const data = await this.getDataCount(listScopeWork);
+
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    // Получение статистики
+    async getAllListWorkForEditByScopeWorkId(id: string) {
+        try {
+            // Получаем объём
+            const scopeWork = await this.scopeWorkRepository.findByPk(id, {
+                include: { all: true },
+            });
+            const scopeWorkFinish = JSON.parse(JSON.stringify(scopeWork));
+            let listNames = [];
+            const { listNameWork } = scopeWorkFinish;
+            // Получаем весь список наименований
+            // Учесть что списков с работами может быть несколько
+            for (const { id: idListNameWork } of listNameWork) {
+                const oneList = await this.listNameWorkRepository.findByPk(
+                    idListNameWork,
+                    {
+                        include: { all: true },
+                    },
+                );
+
+                const { nameWorks } = oneList;
+                const finishNameWorks = JSON.parse(JSON.stringify(nameWorks));
+
+                for (const {
+                    id: nameWorkId,
+                    name,
+                    unitId,
+                    NameList,
+                } of finishNameWorks) {
+                    const findedData =
+                        await this.nameListService.getDateByNameWorkIdAndListId(
+                            nameWorkId,
+                            idListNameWork,
+                        );
+
+                    const newFindedData = findedData.map((item) => {
+                        return {
+                            ...item,
+                            scopeWorkId: id,
+                            name,
+                            unitId,
+                        };
+                    });
+
+                    listNames = [...listNames, ...newFindedData];
+                }
+            }
+
+            return listNames;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
+    }
+
+    // Редактировать объём
+    async editScopeWork(dto: EditScopeWorkDto) {
+        try {
+            const { listNameWork, objectId, typeWorkId, users, scopeWorkId } =
+                dto;
+            const scopeWork = await this.scopeWorkRepository.findByPk(
+                scopeWorkId,
             );
 
-          const newFindedData = findedData.map((item) => {
-            return {
-              ...item,
-              scopeWorkId: id,
-              name,
-              unitId,
-            };
-          });
-
-          listNames = [...listNames, ...newFindedData];
+            // const arr = await this.editArrUsers(users, scopeWorkId);
+            await this.editArrUsers(users, scopeWork.id);
+            await this.createArrListNameWork(listNameWork, scopeWork.id);
+            const dataScopeWork = await this.scopeWorkRepository.findByPk(
+                scopeWork.id,
+                { include: { all: true } },
+            );
+            return dataScopeWork;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
         }
-      }
-
-      return listNames;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
     }
-  }
 
-  // Редактировать объём
-  async editScopeWork(dto: EditScopeWorkDto) {
-    try {
-      const { listNameWork, objectId, typeWorkId, users, scopeWorkId } = dto;
-      const scopeWork = await this.scopeWorkRepository.findByPk(scopeWorkId);
-
-      // const arr = await this.editArrUsers(users, scopeWorkId);
-      await this.editArrUsers(users, scopeWork.id);
-      await this.createArrListNameWork(listNameWork, scopeWork.id);
-      const dataScopeWork = await this.scopeWorkRepository.findByPk(
-        scopeWork.id,
-        { include: { all: true } },
-      );
-      return dataScopeWork;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
-
-  async getAllScopeWorkSqlShort(id: string) {
-    try {
-      const query = `
+    async getAllScopeWorkSqlShort(id: string) {
+        try {
+            const query = `
       SELECT 
       sw.id,
       sw.deletedAt,
@@ -627,7 +701,7 @@ export class ScopeWorkService {
   GROUP BY id; 
       `;
 
-      const query2 = `
+            const query2 = `
       SELECT 
       sw.id,
       sw.deletedAt,
@@ -677,39 +751,40 @@ export class ScopeWorkService {
   WHERE
       userId = :userId;
       `;
-      const replacements = {
-        userId: id,
-      };
+            const replacements = {
+                userId: id,
+            };
 
-      const data: IScopeworkShort[] =
-        await this.scopeWorkRepository.sequelize.query(query2, {
-          type: QueryTypes.SELECT,
-          replacements,
-        });
+            const data: IScopeworkShort[] =
+                await this.scopeWorkRepository.sequelize.query(query2, {
+                    type: QueryTypes.SELECT,
+                    replacements,
+                });
 
-      return data;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
-  }
 
-  async getHistoryTimeline(dto: HistoryTimelineDto) {
-    try {
-      // const query = `
-      // SELECT *
-      // FROM scopework.\`table-adding-data\` tad
-      // WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
-      // ORDER BY tad.createdAt ASC;
-      // `;
-      const query2 = `
+    async getHistoryTimeline(dto: HistoryTimelineDto) {
+        try {
+            // const query = `
+            // SELECT *
+            // FROM scopework.\`table-adding-data\` tad
+            // WHERE tad.scopeWorkId = :idScopeWork AND tad.createdAt BETWEEN :dateFrom AND :dateTo AND tad.deletedAt IS NULL
+            // ORDER BY tad.createdAt ASC;
+            // `;
+            const query2 = `
       SELECT 
 	tad.scopeWorkId as scopeWorkId,
+  tad.createdAt as createdAt,
     tad.nameListId as nameListId,
     CONCAT(ud.lastname, ' ' ,ud.firstname) as userName,
     SUM(tad.quntity) as quntity,
@@ -742,95 +817,97 @@ WHERE
         AND tad.createdAt BETWEEN :dateFrom AND :dateTo
         AND tad.deletedAt IS NULL
         AND tad.quntity IS NOT NULL
-        GROUP BY tad.scopeWorkId, tad.nameListId, ud.lastname, ud.firstname, sw.name, nw.name, nw.unitName
+        GROUP BY tad.scopeWorkId, tad.nameListId, tad.createdAt,ud.lastname, ud.firstname, sw.name, nw.name, nw.unitName
 ORDER BY nameWork ASC;
       `;
 
-      const replacements = {
-        idScopeWork: dto.idScopeWork,
-        dateFrom: dto.dateFrom,
-        dateTo: dto.dateTo,
-      };
+            const replacements = {
+                idScopeWork: dto.idScopeWork,
+                dateFrom: dto.dateFrom,
+                dateTo: dto.dateTo,
+            };
 
-      // const data: ResHistoryTimeline[] =
-      //   await this.scopeWorkRepository.sequelize.query(query2, {
-      //     type: QueryTypes.SELECT,
-      //     replacements,
-      //   });
+            // const data: ResHistoryTimeline[] =
+            //   await this.scopeWorkRepository.sequelize.query(query2, {
+            //     type: QueryTypes.SELECT,
+            //     replacements,
+            //   });
 
-      const data: ResHistoryTimeline[] =
-        await this.databaseService.executeQuery(query2, replacements);
+            const data: ResHistoryTimeline[] =
+                await this.databaseService.executeQuery(query2, replacements);
 
-      //const data = await this.scopeWorkRepository.findAll();
+            //const data = await this.scopeWorkRepository.findAll();
 
-      return data;
-    } catch (e) {
-      console.log(e);
-      if (e instanceof HttpException) {
-        console.log(e);
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+            return data;
+        } catch (e) {
+            console.log(e);
+            if (e instanceof HttpException) {
+                console.log(e);
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
-  }
 
-  async createExcelForScopeWork(
-    dto: HistoryTimelineDto,
-  ): Promise<stream.Readable> {
-    try {
-      //
-      const data = await this.getHistoryTimeline(dto);
-      if (data) {
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Sheet 1');
+    async createExcelForScopeWork(
+        dto: HistoryTimelineDto,
+    ): Promise<stream.Readable> {
+        try {
+            //
+            const data = await this.getHistoryTimeline(dto);
+            if (data) {
+                const workbook = new ExcelJS.Workbook();
+                const worksheet = workbook.addWorksheet('Sheet 1');
 
-        // Добявляем заголовки
-        worksheet.addRow([
-          '№ Объёма',
-          'Тип работ',
-          'Пользователь',
-          'Наименование',
-          'Количество',
-          'Ед.',
-        ]);
-        data.forEach((item) => {
-          worksheet.addRow([
-            item.scopeWorkId,
-            item.nameTypeWork,
-            item.userName,
-            item.nameWork,
-            item.quntity,
-            item.unitName,
-          ]);
-        });
-        // Создаем поток для записи данных в файл
-        const streamEx = new stream.PassThrough();
+                // Добявляем заголовки
+                worksheet.addRow([
+                    '№ Объёма',
+                    'Дата добавления',
+                    'Тип работ',
+                    'Пользователь',
+                    'Наименование',
+                    'Количество',
+                    'Ед.',
+                ]);
+                data.forEach((item) => {
+                    worksheet.addRow([
+                        item.scopeWorkId,
+                        item.createdAt,
+                        item.nameTypeWork,
+                        item.userName,
+                        item.nameWork,
+                        item.quntity,
+                        item.unitName,
+                    ]);
+                });
+                // Создаем поток для записи данных в файл
+                const streamEx = new stream.PassThrough();
 
-        await workbook.xlsx.write(streamEx);
-        streamEx.end();
+                await workbook.xlsx.write(streamEx);
+                streamEx.end();
 
-        return streamEx;
-      }
-      throw new HttpException('Нет данных', HttpStatus.BAD_REQUEST);
-    } catch (e) {
-      console.log(e);
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+                return streamEx;
+            }
+            throw new HttpException('Нет данных', HttpStatus.BAD_REQUEST);
+        } catch (e) {
+            console.log(e);
+            if (e instanceof HttpException) {
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
-  }
 
-  // Без повторяющихся наименований(без группировки)
-  async quickOneScopeWorkById(id: string) {
-    try {
-      const query = `
+    // Без повторяющихся наименований(без группировки)
+    async quickOneScopeWorkById(id: string) {
+        try {
+            const query = `
       SELECT 
     nl.id AS id,
     nl.nameWorkId AS nameWorkId,
@@ -869,23 +946,23 @@ WHERE
 GROUP BY nl.id, nl.nameWorkId, nw.name, u.id, u.name, nl.quntity, tadQ.quntitySum, nl.quntity
 ORDER BY nw.name ASC;
       `;
-      const replacements = {
-        id: id,
-      };
+            const replacements = {
+                id: id,
+            };
 
-      const data: IResQuickOneScopeWorkById[] =
-        await this.databaseService.executeQuery(query, replacements);
+            const data: IResQuickOneScopeWorkById[] =
+                await this.databaseService.executeQuery(query, replacements);
 
-      return data;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        console.log(e);
-        throw e;
-      }
-      throw new HttpException(
-        'Ошибка сервера',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+            return data;
+        } catch (e) {
+            if (e instanceof HttpException) {
+                console.log(e);
+                throw e;
+            }
+            throw new HttpException(
+                'Ошибка сервера',
+                HttpStatus.INTERNAL_SERVER_ERROR,
+            );
+        }
     }
-  }
 }

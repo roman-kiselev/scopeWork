@@ -6,7 +6,9 @@ import {
     Post,
     Req,
     Res,
+    UnauthorizedException,
 } from '@nestjs/common';
+import { EventPattern } from '@nestjs/microservices';
 import {
     ApiBearerAuth,
     ApiConflictResponse,
@@ -85,7 +87,7 @@ export class AuthenticationController {
             httpOnly: true,
             // secure: true, // TODO: Потребуется ли включение в production ?
         });
-        return res.json(result);
+        return res.json({ data: result });
     }
 
     @ApiOperation({
@@ -102,18 +104,26 @@ export class AuthenticationController {
     @ApiBearerAuth()
     async refreshToken(@Req() req: Request, @Res() res: Response) {
         const rt = req.cookies['refreshToken'];
-        //console.log(rt);
+
         const result = await this.authenticationService.refreshTokens({
             refreshToken: rt,
         });
 
-        res.cookie('refreshToken', result.refreshToken, {
-            maxAge: +jwtConfig().refreshTtl, // 30 days
-            httpOnly: true,
-            // secure: true, // TODO: Потребуется ли включение в production ?
-        });
+        if (!result) {
+            throw new UnauthorizedException('Not authorized');
+        } else {
+            res.cookie('refreshToken', result.refreshToken, {
+                maxAge: +jwtConfig().refreshTtl, // 30 days
+                httpOnly: true,
+                // secure: true, // TODO: Потребуется ли включение в production ?
+            });
 
-        //console.log({ accessToken: result.accessToken });
-        return res.json({ accessToken: result.accessToken });
+            return res.json({ data: { accessToken: result.accessToken } });
+        }
+    }
+
+    @EventPattern('check-token')
+    async handleCheckToken(data: string) {
+        return this.authenticationService.verifyToken(data);
     }
 }

@@ -2,6 +2,7 @@ client/node_modules
 server/node_modules
 iam-server/dist
 iam-server/node_modules
+iam-server/.env
 iam-server/developmentJob.env
 iam-server/productionJob.env
 

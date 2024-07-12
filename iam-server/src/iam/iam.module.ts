@@ -20,6 +20,32 @@ import { HashingService } from './hashing/hashing.service';
         ConfigModule.forFeature(jwtConfig),
         UsersModule,
         OrganizationsModule,
+        // forwardRef(() =>
+        //     ClientsModule.register([
+        //         {
+        //             name: 'IAM_SERVICE',
+        //             transport: Transport.RMQ,
+        //             options: {
+        //                 urls: ['amqp://localhost:5672'],
+        //                 queue: 'scopework_queue',
+        //                 queueOptions: {
+        //                     durable: true,
+        //                 },
+        //             },
+        //         },
+        //         {
+        //             name: 'IAM_SERVICE',
+        //             transport: Transport.RMQ,
+        //             options: {
+        //                 urls: ['amqp://localhost:5672'],
+        //                 queue: 'manager_queue',
+        //                 queueOptions: {
+        //                     durable: true,
+        //                 },
+        //             },
+        //         },
+        //     ]),
+        // ),
     ],
     providers: [
         {

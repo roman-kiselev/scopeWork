@@ -1,4 +1,4 @@
-import { Button, Col, Input, Row, Spin, Table } from "antd";
+import { Button, Col, Input, Row, Table } from "antd";
 import { useEffect, useState } from "react";
 import { nameWorkApi } from "../../shared/api";
 import { useAppDispatch, useAppSelector } from "../../shared/hooks";
@@ -27,10 +27,10 @@ const ShortListNamesWithoutTypes = () => {
                 idNumber && typeWorkId !== null ? typeWorkId : selectedTypeWork,
         });
 
-    const { isLoading: isLoadingNameWorkList } = useAppSelector(
-        (store) => store.nameWorkList.oneItem
-    );
-    if (isLoadingNameWorkList) <Spin />;
+    // const {  } = useAppSelector(
+    //     (store) => store.nameWorkList.oneItem
+    // );
+
     const { selectedData } = useAppSelector((store) => store.nameWork);
 
     const [stateSelectedData] = useState<INameWorkAndUnit | []>([]);

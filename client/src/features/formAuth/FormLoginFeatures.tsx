@@ -1,6 +1,5 @@
 import { Form, Spin } from "antd";
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { FormLogin } from "../../entities";
 import { LayoutAuth } from "../../entities/layoutAuth";
 import { authApi } from "../../shared/api";
@@ -12,16 +11,16 @@ const FormLoginFeatures = () => {
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
 
-    const [
-        refreshToken,
-        { isSuccess: isSuccessCheck, isLoading: isLoadingCheck },
-    ] = authApi.useRefreshMutation();
+    // const [
+    //     refreshToken,
+    //     { isSuccess: isSuccessCheck, isLoading: isLoadingCheck },
+    // ] = authApi.useRefreshMutation();
 
-    useEffect(() => {
-        refreshToken();
-    }, [refreshToken]);
+    // useEffect(() => {
+    //     refreshToken();
+    // }, []);
 
-    const { dataError, isError, isLoading } = useAppSelector(
+    const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
 
@@ -30,11 +29,13 @@ const FormLoginFeatures = () => {
         await login(data);
         navigate(location.state?.from || "/", { replace: true });
     };
-    if (isLoading || isLoadingCheck || isLoadingLogin) {
+    if (isLoading || isLoadingLogin) {
         return <Spin />;
     }
-    if (isSuccessCheck) {
-        navigate(location.state?.from || "/", { replace: true });
+    // TODO проверить работу(в данный момент ошибка)
+    if (isAuth && token) {
+        // navigate(location.state?.from || "/", { replace: true });
+        return <Navigate to="/" state={{ from: location }} replace={true} />;
     }
     return (
         <LayoutAuth>

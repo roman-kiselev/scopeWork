@@ -26,31 +26,30 @@ const Routing = () => {
                 path="/"
                 element={
                     <SuspenseLoadCheckAR
-                        roles={[RoleString.USER, RoleString.ADMIN]}
+                        roles={[
+                            RoleString.USER,
+                            RoleString.ADMIN,
+                            RoleString.MASTER,
+                            RoleString.MANAGER,
+                            RoleString.DRIVER,
+                            RoleString.WAREHOUSEMAN,
+                        ]}
                     >
                         <LayoutPage />
                     </SuspenseLoadCheckAR>
                 }
             >
                 <Route index element={<HomePage />} />
-                {/* <Route index element={<p>Hello</p>} /> */}
-
-                <Route path="/:id" element={<ScopeWorkAddData />} />
-                {/* <Route
-                    path="objects/*"
+                <Route
+                    path="/:id"
                     element={
                         <SuspenseLoadCheckR
-                            roles={[
-                                RoleString.USER,
-                                RoleString.ADMIN,
-                                RoleString.DEV,
-                            ]}
+                            roles={[RoleString.ADMIN, RoleString.MASTER]}
                         >
-                            <ObjectsRoutes />
+                            <ScopeWorkAddData />
                         </SuspenseLoadCheckR>
                     }
-                /> */}
-
+                />
                 <Route
                     path="/warehouseman/*"
                     element={
@@ -59,7 +58,6 @@ const Routing = () => {
                         </SuspenseLoadCheckR>
                     }
                 />
-
                 <Route
                     path="orders/*"
                     element={
@@ -70,7 +68,6 @@ const Routing = () => {
                         </SuspenseLoadCheckR>
                     }
                 />
-
                 <Route
                     path="storage/*"
                     element={
@@ -112,6 +109,20 @@ const Routing = () => {
                         </SuspenseLoadCheckR>
                     }
                 />
+                {/* <Route
+                    path="objects/*"
+                    element={
+                        <SuspenseLoadCheckR
+                            roles={[
+                                RoleString.USER,
+                                RoleString.ADMIN,
+                                RoleString.DEV,
+                            ]}
+                        >
+                            <ObjectsRoutes />
+                        </SuspenseLoadCheckR>
+                    }
+                /> */}
             </Route>
             <Route
                 path="/login"

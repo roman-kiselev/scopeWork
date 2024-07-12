@@ -5,39 +5,39 @@ import {
     IObjectShort,
     IOneObjectDataShort,
 } from "../../interfaces";
-import { objectMainApi } from "../main";
+import { mainApi } from "../main";
 
-export const objectsApi = objectMainApi.injectEndpoints({
+export const objectsApi = mainApi.injectEndpoints({
     endpoints: (builder) => ({
         create: builder.mutation<IObjectCreateResponse, IObjectCreateAttr>({
             query: (objectData) => ({
-                url: "/",
+                url: "objects",
                 method: "POST",
                 body: objectData,
             }),
         }),
         getAllObjects: builder.query<IObjectCreateResponse[], void>({
             query: () => ({
-                url: "/",
+                url: "objects",
                 method: "GET",
             }),
         }),
         getAllShortData: builder.query<IOneObjectDataShort[], void>({
             query: () => ({
-                url: "/shortData",
+                url: "objects/shortData",
                 method: "GET",
             }),
         }),
 
         getFullDataForOne: builder.query<IObjectFullData, number>({
             query: (id) => ({
-                url: `/fullData/${id}`,
+                url: `objects/fullData/${id}`,
                 method: "GET",
             }),
         }),
         getAllObjectShort: builder.query<IObjectShort[], void>({
             query: () => ({
-                url: `/shortAllObjects`,
+                url: `objects/shortAllObjects`,
                 method: "GET",
             }),
         }),
