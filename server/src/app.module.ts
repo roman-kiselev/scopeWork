@@ -16,7 +16,7 @@ import { DatabaseModule } from './database/database.module';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
 import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
 import { ListNameWorkModule } from './list-name-work/list-name-work.module';
-import { CheckToken } from './middlewares/CheckToken';
+import { CheckToken } from './middlewares/check-token.middleware';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { NameWorkModule } from './name-work/name-work.module';
 import { NameListModule } from './name_list/name_list.module';
@@ -30,7 +30,6 @@ import { UnitModule } from './unit/unit.module';
 import { UserDescriptionModule } from './user-description/user-description.module';
 import { UserModule } from './user/user.module';
 
-console.log(process.env.REDIS_HOST, Number(process.env.REDIS_PORT));
 @Module({
     imports: [
         // CacheModule.register({

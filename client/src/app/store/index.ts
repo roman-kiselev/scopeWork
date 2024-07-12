@@ -4,12 +4,7 @@ import {
     createListenerMiddleware,
 } from "@reduxjs/toolkit";
 import Cookies from "universal-cookie";
-import {
-    iamApi,
-    mainApi,
-    mainManagerApi,
-    objectMainApi,
-} from "../../shared/api";
+import { iamApi, mainApi, mainManagerApi } from "../../shared/api";
 import {
     authReducer,
     dataOneUserReducer,
@@ -54,7 +49,6 @@ const rootReducer = combineReducers({
     dataOneUser: dataOneUserReducer,
     orders: ordersReducer,
     [mainApi.reducerPath]: mainApi.reducer,
-    [objectMainApi.reducerPath]: objectMainApi.reducer,
     [mainManagerApi.reducerPath]: mainManagerApi.reducer,
     [iamApi.reducerPath]: iamApi.reducer,
 });
@@ -65,7 +59,6 @@ const store = configureStore({
         return getDefaultMiddleware()
             .concat(
                 mainApi.middleware,
-                objectMainApi.middleware,
                 mainManagerApi.middleware,
                 iamApi.middleware
             )
