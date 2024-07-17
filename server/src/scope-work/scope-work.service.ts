@@ -1,25 +1,35 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Inject,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/sequelize';
 import * as ExcelJS from 'exceljs';
+import { firstValueFrom } from 'rxjs';
 import sequelize, { QueryTypes } from 'sequelize';
-import { ListNameWork } from 'src/list-name-work/list-name-work.model';
-import { NameListService } from 'src/name_list/name_list.service';
-import { Objects } from 'src/objects/objects.model';
-import { ScopeWork } from 'src/scope-work/scope-work.model';
-import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
-import { TypeWork } from 'src/type-work/type-work.model';
-import { User } from 'src/user/user.model';
-import * as stream from 'stream';
-
 import { DatabaseService } from 'src/database/database.service';
+import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
+import { ListNameWorkService } from 'src/list-name-work/list-name-work.service';
+import { NameListService } from 'src/name_list/name_list.service';
+import { Objects } from 'src/objects/entities/objects.model';
+import { IListNamesWithData } from 'src/objects/interfaces/IListNamesWithData';
+import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
+import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
+import { TypeWork } from 'src/type-work/entities/type-work.model';
+import * as stream from 'stream';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
+import { GetOneBy } from './dto/get-one-by.dto';
 import { HistoryTimelineDto } from './dto/history-timeline.dto';
+import { ScopeWork } from './entities/scope-work.model';
+import { UserScopeWork } from './entities/user-scope-work.model';
 import { IResQuickOneScopeWorkById } from './interfaces/IResQuickOneScopeWorkById';
 import { IResScopeWorkByUserAndObject } from './interfaces/IResScopeWorkByUserAndObject';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { ResHistoryTimeline } from './interfaces/ResHistoryTimeline';
-import { UserScopeWork } from './user-scope-work.model';
 
 @Injectable()
 export class ScopeWorkService {
@@ -30,14 +40,164 @@ export class ScopeWorkService {
         @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
         @InjectModel(ListNameWork)
         private listNameWorkRepository: typeof ListNameWork,
-        @InjectModel(User) private userRepository: typeof User,
         @InjectModel(Objects) private objectsRepository: typeof Objects,
         @InjectModel(TableAddingData)
         private tableAddingDataRepository: typeof TableAddingData,
         private nameListService: NameListService,
         private databaseService: DatabaseService,
+        @Inject('USER_MAIN_SERVICE') private readonly clientUsers: ClientProxy,
+        private readonly listNameWorkService: ListNameWorkService,
+        private readonly tableAddingDataService: TableAddingDataService,
     ) {}
 
+    async getScopeWorkBy(
+        dto: GetOneBy,
+        organizationId: number,
+        params: { withDelete?: boolean } = {},
+    ) {
+        const scopeWork = await this.scopeWorkRepository.findOne({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDelete ? params.withDelete : null,
+            },
+            include: dto.relations || [],
+        });
+        if (!scopeWork) {
+            throw new NotFoundException(
+                'ScopeWork with this criteria not found',
+            );
+        }
+        return scopeWork;
+    }
+
+    /**
+     * Метод делает подсчёт для одного объёма.
+     * {
+     * "countListNameWorksArr": 3227,
+     * "countTableAddingData": 3188,
+     * "percentOneScopeWork": "98.8",
+     * "listNamesWithData": [
+     *  {
+     *    "id": 1,
+     *    "name": "Установка подоконного приточного клапана Домвент Оптима",
+     *    "deletedAt": "null",
+     *    "createdAt": "2024-02-06T08:44:53.000Z",
+     *    "updatedAt": "2024-02-06T08:44:53.000Z",
+     *    "unitId": 1,
+     *    "nameListId": 1,
+     *    "quntity": 138,
+     *    "finishUserAdding": [
+     *      {
+     *        "quntity": 138,
+     *        "percentForOneName": "100.0",
+     *        "userId": 2,
+     *        "nameListId": 1,
+     *        "scopeWorkId": 2
+     *      }
+     *    ]
+     *  },
+     * @returns Возвращает итог подсчёта
+     */
+    async getFullDataForOneScopeWork(
+        idScopeWork: number,
+        organizationId: number,
+        userIdArr?: number[],
+    ) {
+        const scopeWork = await this.getScopeWorkBy(
+            {
+                criteria: { id: idScopeWork },
+                relations: ['listNameWork', 'tableAddingData'],
+            },
+            organizationId,
+        );
+        // TODO желательно исправить метод
+        const listNameWorkArr = await this.listNameWorkService.getListTest(
+            scopeWork.listNameWork.map((item) => item.id),
+        );
+        const arr = listNameWorkArr.map((item) => item.nameWorks).flat();
+        const nameWorksArr = arr.map((item) => {
+            return {
+                id: item.id,
+                name: item.name,
+                deletedAt: item.deletedAt,
+                createdAt: item.createdAt,
+                updatedAt: item.updatedAt,
+                unitId: item.unitId,
+                nameListId: item['NameList'].id,
+                quntity: item['NameList'].quntity,
+            };
+        });
+
+        const { tableAddingData } = scopeWork;
+        // общее количество
+        const countListNameWorksArr: number = nameWorksArr
+            .map((item) => item.quntity)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        // Количество внесённых изменений
+        const countTableAddingData: number = tableAddingData
+            .map((item) => item.quntity)
+            .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+        // Получим процент выполнения
+        const percentOneScopeWork: string = (
+            (countTableAddingData * 100) /
+            countListNameWorksArr
+        ).toFixed(1);
+
+        const listNamesWithData: IListNamesWithData[] = [];
+        for (const item of nameWorksArr) {
+            const { nameListId } = item;
+            let userAdding = [];
+            for (const item of userIdArr) {
+                // TODO этот метод тоже требует исправления
+                // Здесь куча запросов, нужно оптимизировать
+                const tableAddingUser =
+                    await this.tableAddingDataService.getAnything(
+                        idScopeWork,
+                        nameListId,
+                        item,
+                    );
+
+                userAdding = [
+                    ...userAdding,
+                    ...tableAddingUser.filter(({ userId }) => userId !== null),
+                ];
+            }
+
+            const finishUserAdding = userAdding.map((oneUser) => {
+                return {
+                    quntity: oneUser.quntity,
+                    percentForOneName: (
+                        (oneUser.quntity * 100) /
+                        item.quntity
+                    ).toFixed(1),
+                    userId: oneUser.userId,
+                    nameListId: oneUser.nameListId,
+                    scopeWorkId: oneUser.scopeWorkId,
+                };
+            });
+            listNamesWithData.push({
+                ...item,
+                deletedAt: `${item.deletedAt}`,
+                finishUserAdding,
+            });
+        }
+
+        // Теперь сделаем подсчёт по пользователям
+
+        return {
+            countListNameWorksArr,
+            countTableAddingData,
+            percentOneScopeWork,
+            listNamesWithData,
+        };
+        //return testArr;
+    }
+
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async getDataCount(arr: ScopeWork[]) {
         try {
             let dataProgress = [];
@@ -122,11 +282,17 @@ export class ScopeWorkService {
         } catch (e) {}
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async checkArrUsers(arr: number[]) {
         try {
             let errUser: boolean = false;
             for (const item of arr) {
-                const findedUser = await this.userRepository.findByPk(item);
+                const findedUser = await firstValueFrom(
+                    this.clientUsers.send('test-test', item),
+                );
                 if (!findedUser) {
                     errUser = true;
                 }
@@ -143,6 +309,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async checkArrListNameWork(arr: number[]) {
         try {
             let errNameWork: boolean = false;
@@ -167,6 +337,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async createArrUsers(arr: number[], scopeWorkId: number) {
         try {
             const scopeWork = await this.scopeWorkRepository.findByPk(
@@ -187,6 +361,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async editArrUsers(arr: number[], scopeWorkId: number) {
         try {
             console.log(arr);
@@ -195,33 +373,36 @@ export class ScopeWorkService {
             const scopeWork = await this.scopeWorkRepository.findByPk(
                 scopeWorkId,
                 {
-                    include: [
-                        {
-                            model: User,
-                        },
-                    ],
+                    // TODO внести изменения
+                    // include: [
+                    //     {
+                    //         model: User,
+                    //     },
+                    // ],
                 },
             );
 
-            const { users } = scopeWork;
-            // Есть 2 массива
-            // Нужно найти id которые отсутствуют в scopeWork => users и добавить
-            const arrUsersId = users.map((item) => item.id);
-            // Проходим для добавления
+            // const { users } = scopeWork;
+            //  TODO изменения нужно внести, ошибка users
+            // const { users } = scopeWork;
+            // // Есть 2 массива
+            // // Нужно найти id которые отсутствуют в scopeWork => users и добавить
+            // const arrUsersId = users.map((item) => item.id);
+            // // Проходим для добавления
 
-            for (const item of arr) {
-                const findedId = arrUsersId.find((user) => user === item);
-                if (!findedId) {
-                    await scopeWork.$add('users', item);
-                }
-            }
+            // for (const item of arr) {
+            //     const findedId = arrUsersId.find((user) => user === item);
+            //     if (!findedId) {
+            //         await scopeWork.$add('users', item);
+            //     }
+            // }
 
-            for (const item of arrUsersId) {
-                const findedId = arr.find((user) => user === item);
-                if (!findedId) {
-                    await scopeWork.$remove('users', item);
-                }
-            }
+            // for (const item of arrUsersId) {
+            //     const findedId = arr.find((user) => user === item);
+            //     if (!findedId) {
+            //         await scopeWork.$remove('users', item);
+            //     }
+            // }
 
             return scopeWork;
         } catch (e) {
@@ -235,6 +416,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async createArrListNameWork(arr: number[], scopeWorkId: number) {
         try {
             const scopeWork = await this.scopeWorkRepository.findByPk(
@@ -259,6 +444,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     // Создаём объём
     async createScopeWork(dto: CreateScopeWorkDto) {
         try {
@@ -322,6 +511,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     // Получение списка работ по id пользователя и объекта
     async getScopeWorkByUserIdAndObjectId(dto: {
         userId: string;
@@ -369,6 +562,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getOneScopeWork(id: string) {
         try {
             const scopeWork = await this.scopeWorkRepository.findByPk(id, {
@@ -416,6 +613,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllScopeWork() {
         try {
             const scopeWorks = await this.scopeWorkRepository.findAll({
@@ -515,6 +716,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllScopeWorkByUserId(id: string) {
         try {
             if (id === '1') {
@@ -570,6 +775,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     // Получение статистики
     async getAllListWorkForEditByScopeWorkId(id: string) {
         try {
@@ -630,6 +839,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     // Редактировать объём
     async editScopeWork(dto: EditScopeWorkDto) {
         try {
@@ -658,6 +871,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllScopeWorkSqlShort(id: string) {
         try {
             const query = `
@@ -773,6 +990,10 @@ export class ScopeWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getHistoryTimeline(dto: HistoryTimelineDto) {
         try {
             // const query = `
@@ -852,6 +1073,10 @@ ORDER BY nameWork ASC;
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async createExcelForScopeWork(
         dto: HistoryTimelineDto,
     ): Promise<stream.Readable> {
@@ -904,6 +1129,10 @@ ORDER BY nameWork ASC;
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     // Без повторяющихся наименований(без группировки)
     async quickOneScopeWorkById(id: string) {
         try {

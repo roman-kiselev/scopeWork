@@ -15,11 +15,30 @@ import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
 
 @Module({
+    controllers: [AuthenticationController],
+    providers: [
+        {
+            provide: HashingService,
+            useClass: BcryptService,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: AuthenticationGuard,
+        },
+        {
+            provide: APP_GUARD,
+            useClass: RolesGuard,
+        },
+        AccessTokenGuard,
+        RefreshTokenIdsStorage,
+        AuthenticationService,
+    ],
     imports: [
         JwtModule.registerAsync(jwtConfig.asProvider()),
         ConfigModule.forFeature(jwtConfig),
         UsersModule,
         OrganizationsModule,
+
         // forwardRef(() =>
         //     ClientsModule.register([
         //         {
@@ -47,24 +66,7 @@ import { HashingService } from './hashing/hashing.service';
         //     ]),
         // ),
     ],
-    providers: [
-        {
-            provide: HashingService,
-            useClass: BcryptService,
-        },
-        {
-            provide: APP_GUARD,
-            useClass: AuthenticationGuard,
-        },
-        {
-            provide: APP_GUARD,
-            useClass: RolesGuard,
-        },
-        AccessTokenGuard,
-        RefreshTokenIdsStorage,
-        AuthenticationService,
-    ],
-    controllers: [AuthenticationController],
+
     exports: [AuthenticationService, HashingService],
 })
 export class IamModule {}

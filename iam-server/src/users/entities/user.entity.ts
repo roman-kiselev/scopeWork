@@ -1,12 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { Role } from 'src/roles/entities/role.entity';
+import { UserDecription } from 'src/user-description/entities/user-description.entity';
 import {
     Column,
     Entity,
+    JoinColumn,
     JoinTable,
     ManyToMany,
     ManyToOne,
+    OneToOne,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -38,4 +41,8 @@ export class User {
     @ManyToMany(() => Role, (role) => role.users)
     @JoinTable()
     roles: Role[];
+
+    @OneToOne(() => UserDecription)
+    @JoinColumn()
+    description: UserDecription;
 }

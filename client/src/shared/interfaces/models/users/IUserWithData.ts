@@ -10,3 +10,27 @@ export interface IUserWithData {
     scopeWorkPlusData: IScopeWorkPlusData[];
     objects: IObjectShort[];
 }
+
+// export interface IScopeWorkPlusData {
+//     id: number;
+//     deletedAt: string | null;
+//     typeWorkId: number;
+//     objectId: number;
+//     createdAt: string;
+//     updatedAt: string;
+//     mainCount: number;
+//     countTableAddingData: number;
+//     percentAll: string;
+//     countUser: number;
+//     percentOneUserForTotalVolume: string;
+//     percentOneUserCompletedVolume: string;
+// }
+
+// export interface IObjectShort {
+//     id: number;
+//     name: string;
+//     address: string;
+//     deletedAt: string | null;
+//     createdAt: string;
+//     updatedAt: string;
+// }

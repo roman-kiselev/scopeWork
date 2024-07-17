@@ -127,26 +127,25 @@ export class AuthenticationService {
             { email: dto.email },
             ['organization', 'roles'],
         );
-        if (user.banned === true) {
-            throw new ForbiddenException('User is banned');
+
+        if (user instanceof User) {
+            if (user.banned === true) {
+                throw new ForbiddenException('User is banned');
+            }
+
+            const isEqual = await this.hashingService.compare(
+                dto.password,
+                user.password,
+            );
+
+            if (!isEqual) {
+                throw new ForbiddenException('Password or email is incorrect');
+            }
+
+            const result = await this.generateTokens(user);
+
+            return result;
         }
-
-        const isEqual = await this.hashingService.compare(
-            dto.password,
-            user.password,
-        );
-
-        if (!isEqual) {
-            throw new ForbiddenException('Password or email is incorrect');
-        }
-
-        const result = await this.generateTokens(user);
-        // const result: {
-        //     accessToken: string;
-        //     refreshToken: string;
-        // }
-
-        return result;
     }
 
     async refreshTokens(refreshTokenDto: RefreshTokenDto) {
@@ -166,20 +165,21 @@ export class AuthenticationService {
                 ['roles', 'organization'],
             );
 
-            const isValid = await this.refreshTokenIdsStorage.validate(
-                user.id,
-                refreshTokenId,
-            );
+            if (user instanceof User) {
+                const isValid = await this.refreshTokenIdsStorage.validate(
+                    user.id,
+                    refreshTokenId,
+                );
 
-            if (isValid) {
-                await this.refreshTokenIdsStorage.invalidate(user.id);
-            } else {
-                throw new ConflictException('Refresh token is invalid');
+                if (isValid) {
+                    await this.refreshTokenIdsStorage.invalidate(user.id);
+                } else {
+                    throw new ConflictException('Refresh token is invalid');
+                }
+
+                return this.generateTokens(user);
             }
-
-            return this.generateTokens(user);
         } catch (error) {
-            console.log(error);
             if (error instanceof InvalidatedRefreshTokenError) {
                 throw new UnauthorizedException('Access denied');
             }
