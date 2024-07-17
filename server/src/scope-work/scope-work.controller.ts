@@ -8,6 +8,7 @@ import {
     Post,
     Query,
     Res,
+    UseGuards,
 } from '@nestjs/common';
 import {
     ApiBearerAuth,
@@ -16,14 +17,20 @@ import {
     ApiTags,
 } from '@nestjs/swagger';
 import { Response } from 'express';
+import { RolesGuard } from 'src/iam/authorization/guards/roles/roles.guard';
+import { Roles } from 'src/iam/decorators/roles-auth.decorator';
+import { RoleName } from 'src/iam/enums/RoleName';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
+import { ScopeWork } from './entities/scope-work.model';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
-import { ScopeWork } from './scope-work.model';
 import { ScopeWorkService } from './scope-work.service';
 
 @ApiTags('Объём работ')
 @ApiBearerAuth()
+// @UseGuards(AccessTokenGuards)
+@Roles(RoleName.ADMIN)
+@UseGuards(RolesGuard)
 @Controller('scope-work')
 export class ScopeWorkController {
     constructor(private scopeWorkService: ScopeWorkService) {}

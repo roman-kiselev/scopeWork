@@ -1,38 +1,48 @@
 import { Module } from '@nestjs/common';
 import { forwardRef } from '@nestjs/common/utils';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ListNameWork } from 'src/list-name-work/list-name-work.model';
-import { NameList } from 'src/name_list/name-list.model';
+import { IamModule } from 'src/iam/iam.module';
+import { ListNameWorkModule } from 'src/list-name-work/list-name-work.module';
+import { NameListModule } from 'src/name_list/name_list.module';
 import { RedisModule } from 'src/redis/redis.module';
-import { ScopeWork } from 'src/scope-work/scope-work.model';
-import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
-import { TypeWork } from 'src/type-work/type-work.model';
+import { ScopeWorkModule } from 'src/scope-work/scope-work.module';
+import { TableAddingDataModule } from 'src/table-adding-data/table-adding-data.module';
 import { TypeWorkModule } from 'src/type-work/type-work.module';
-import { User } from 'src/user/user.model';
-import { AuthModule } from '../auth/auth.module';
-import { ObjectTypeWork } from './objects-type_work.model';
+import { ObjectTypeWork } from './entities/objects-type_work.model';
+import { Objects } from './entities/objects.model';
 import { ObjectsController } from './objects.controller';
-import { Objects } from './objects.model';
 import { ObjectsService } from './objects.service';
 
 @Module({
-  controllers: [ObjectsController],
-  providers: [ObjectsService],
-  imports: [
-    forwardRef(() => TypeWorkModule),
-    forwardRef(() => AuthModule),
-    SequelizeModule.forFeature([
-      Objects,
-      TypeWork,
-      ObjectTypeWork,
-      ScopeWork,
-      NameList,
-      User,
-      TableAddingData,
-      ListNameWork,
-    ]),
-    RedisModule,
-  ],
-  exports: [ObjectsService],
+    controllers: [ObjectsController],
+    providers: [ObjectsService],
+    imports: [
+        forwardRef(() => TypeWorkModule),
+        forwardRef(() =>
+            ClientsModule.register([
+                {
+                    name: 'USER_MAIN_SERVICE',
+                    transport: Transport.RMQ,
+                    options: {
+                        urls: ['amqp://localhost:5672'],
+                        queue: 'iam_queue',
+                        queueOptions: {
+                            durable: true,
+                        },
+                    },
+                },
+            ]),
+        ),
+        SequelizeModule.forFeature([Objects, ObjectTypeWork]),
+        RedisModule,
+        IamModule,
+        ScopeWorkModule,
+        TypeWorkModule,
+        NameListModule,
+        TableAddingDataModule,
+        ListNameWorkModule,
+    ],
+    exports: [ObjectsService, SequelizeModule.forFeature([Objects])],
 })
 export class ObjectsModule {}

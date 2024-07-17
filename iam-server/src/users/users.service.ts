@@ -32,14 +32,17 @@ export class UsersService {
         criteria: Partial<User>,
         relations: string[] = [],
     ) {
-        const user = await this.userRepository.findOne({
-            where: criteria,
-            relations,
-        });
-        if (!user) {
-            throw new NotFoundException('User not found');
+        try {
+            const user = await this.userRepository.findOne({
+                where: criteria,
+                relations,
+            });
+
+            return user;
+        } catch (e) {
+            const error = new Error(e);
+            return new NotFoundException(error);
         }
-        return user;
     }
 
     async checkUniqueEmail(email: string) {
@@ -51,7 +54,6 @@ export class UsersService {
     }
 
     async createUser(dto: SignUpDto) {
-        console.log(dto);
         const isUser = await this.userRepository.findOneBy({
             email: dto.email,
         });
@@ -72,5 +74,31 @@ export class UsersService {
         user.roles = [role];
 
         return this.userRepository.save(user);
+    }
+
+    async getAllUsers(organizationId: number) {
+        const organization =
+            await this.organizationService.findUnique(organizationId);
+
+        return await this.userRepository.find({
+            where: {
+                organization: organization,
+            },
+        });
+    }
+
+    async getAllUsersWith(organizationId: number, relations: string[]) {
+        const organization = await this.organizationService.getOrganigationBy({
+            id: organizationId,
+        });
+
+        const users = await this.userRepository.find({
+            where: {
+                organization: organization,
+            },
+            relations: relations ?? [],
+        });
+
+        return users;
     }
 }

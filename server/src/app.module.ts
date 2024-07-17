@@ -5,16 +5,17 @@ import {
     ValidationPipe,
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { Redis } from 'ioredis';
 import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
-import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
 import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
+import { AccessTokenGuards } from './iam/guards/access-token.guard';
+import { IamModule } from './iam/iam.module';
 import { ListNameWorkModule } from './list-name-work/list-name-work.module';
 import { CheckToken } from './middlewares/check-token.middleware';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
@@ -83,7 +84,6 @@ import { UserModule } from './user/user.module';
         }),
 
         UserModule,
-        AuthModule,
         RolesModule,
         UserDescriptionModule,
         ObjectsModule,
@@ -96,10 +96,15 @@ import { UserModule } from './user/user.module';
         TableAddingDataModule,
         DatabaseModule,
         RedisModule,
+        IamModule,
     ],
 
     controllers: [],
     providers: [
+        {
+            provide: APP_GUARD,
+            useClass: AccessTokenGuards,
+        },
         {
             provide: APP_PIPE,
             useClass: ValidationPipe,

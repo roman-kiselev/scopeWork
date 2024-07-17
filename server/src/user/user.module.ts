@@ -1,42 +1,38 @@
 import { Module } from '@nestjs/common';
-import { forwardRef } from '@nestjs/common/utils';
-import { SequelizeModule } from '@nestjs/sequelize';
-import { AuthModule } from 'src/auth/auth.module';
-import { ListNameWork } from 'src/list-name-work/list-name-work.model';
-import { NameList } from 'src/name_list/name-list.model';
-import { Objects } from 'src/objects/objects.model';
-import { Roles } from 'src/roles/roles.model';
-import { RolesModule } from 'src/roles/roles.module';
-import { UserRole } from 'src/roles/user-role.model';
-import { ScopeWork } from 'src/scope-work/scope-work.model';
-import { UserScopeWork } from 'src/scope-work/user-scope-work.model';
-import { DelTableAddingData } from 'src/table-adding-data/del-table-adding-data.model';
-import { TableAddingData } from 'src/table-adding-data/table-adding-data.model';
-import { UserDescription } from 'src/user-description/user-description.model';
-import { UserController } from './user.controller';
-import { User } from './user.model';
-import { UserService } from './user.service';
 
 @Module({
-  providers: [UserService],
-  controllers: [UserController],
-  imports: [
-    SequelizeModule.forFeature([
-      User,
-      Roles,
-      UserRole,
-      UserDescription,
-      UserScopeWork,
-      TableAddingData,
-      Objects,
-      ListNameWork,
-      ScopeWork,
-      NameList,
-      DelTableAddingData,
-    ]),
-    RolesModule,
-    forwardRef(() => AuthModule),
-  ],
-  exports: [UserService, UserModule],
+    providers: [],
+    controllers: [],
+    imports: [
+        // SequelizeModule.forFeature([
+        //     User,
+        //     Roles,
+        //     UserRole,
+        //     UserDescription,
+        //     UserScopeWork,
+        //     TableAddingData,
+        //     Objects,
+        //     ListNameWork,
+        //     ScopeWork,
+        //     NameList,
+        //     DelTableAddingData,
+        // ]),
+        // forwardRef(() =>
+        //     ClientsModule.register([
+        //         {
+        //             name: 'USER_MAIN_SERVICE',
+        //             transport: Transport.RMQ,
+        //             options: {
+        //                 urls: ['amqp://localhost:5672'],
+        //                 queue: 'iam_queue',
+        //                 queueOptions: {
+        //                     durable: true,
+        //                 },
+        //             },
+        //         },
+        //     ]),
+        // ),
+    ],
+    exports: [],
 })
 export class UserModule {}
