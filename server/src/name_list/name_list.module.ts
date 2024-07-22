@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
-import { NameWork } from 'src/name-work/name-work.model';
+import { NameWork } from 'src/name-work/entities/name-work.model';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import { NameList } from './entities/name-list.model';
 import { NameListController } from './name_list.controller';

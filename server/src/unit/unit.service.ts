@@ -1,140 +1,166 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { GetOneUnitBy } from './dto/get-one-unit-by.dto';
 import { CreateUniteDto } from './dto/unit.dto';
-import { Unit } from './unit.model';
+import { Unit } from './entities/unit.model';
 
 @Injectable()
 export class UnitService {
-  constructor(@InjectModel(Unit) private unitRepository: typeof Unit) {}
+    constructor(@InjectModel(Unit) private unitRepository: typeof Unit) {}
 
-  async checkByName(name: string) {
-    try {
-      const unit = await this.unitRepository.findOne({
-        where: {
-          name,
-          deletedAt: null,
-        },
-      });
-      if (unit) {
-        return true;
-      }
-      return false;
-    } catch (e) {
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
+    /**
+     * Универсальный метод для получения одного объекта.
+     * @returns Возвращает объект.
+     */
+    async getOneUnitBy(
+        dto: GetOneUnitBy,
+        organizationId: number,
+        params: { rejectOnEmpty?: boolean; withDeleted?: boolean } = {},
+    ) {
+        const unit = await this.unitRepository.findOne({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
+            },
+            include: dto.relations || [],
+            rejectOnEmpty: !params.rejectOnEmpty ? true : params.rejectOnEmpty,
+        });
 
-  async findByName(name: string) {
-    try {
-      const unit = await this.unitRepository.findOne({
-        rejectOnEmpty: undefined,
-        where: {
-          name,
-        },
-      });
-      if (!unit) {
-        throw new HttpException('Не существует', HttpStatus.NOT_FOUND);
-      }
-      return unit;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async createUnit(dto: CreateUniteDto) {
-    try {
-      const unit = await this.checkByName(dto.name);
-
-      if (unit) {
-        throw new HttpException('Уже существует', HttpStatus.BAD_REQUEST);
-      }
-      const newUnit = await this.unitRepository.create(dto);
-      if (!newUnit) {
-        throw new HttpException('Не удалось создать', HttpStatus.BAD_REQUEST);
-      }
-      return newUnit;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async getAllUnit() {
-    try {
-      const units = await this.unitRepository.findAll();
-      if (!units) {
-        throw new HttpException('Произошла ошибка', HttpStatus.BAD_REQUEST);
-      }
-      return units;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async getOneUnitById(id: number) {
-    try {
-      const unit = this.unitRepository.findByPk(id);
-      if (!unit) {
-        throw new HttpException('Не найдено', HttpStatus.NOT_FOUND);
-      }
-      return unit;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  async createUniteOrPieces(id?: number) {
-    try {
-      const dtoUnit: CreateUniteDto = {
-        name: 'шт',
-        description: 'Штуки',
-      };
-      // Если нет id
-      if (!id) {
-        const checkUnit = this.checkByName(dtoUnit.name);
-        if (!checkUnit) {
-          const unit = await this.createUnit(dtoUnit);
-          return unit;
+        if (!unit) {
+            throw new NotFoundException('Unit with this criteria not found');
         }
-      }
-      // Если есть id
-      const foundUnit = this.getOneUnitById(id);
-      return foundUnit;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
 
-  // Возвращает значение
-  async getUnitName(id: number) {
-    try {
-      console.log(id);
-      const unit = await this.unitRepository.findByPk(id);
-      console.log(unit);
-      if (!unit) {
-        throw new HttpException('Не найдено', HttpStatus.NOT_FOUND);
-      }
-
-      return unit.name;
-    } catch (e) {
-      if (e instanceof HttpException) {
-        throw e;
-      }
-      throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        return unit;
     }
-  }
+
+    /**
+     * Универсальный метод для получения .
+     * @returns Возвращает объект.
+     */
+    async getAllUnitsBy(
+        dto: GetOneUnitBy,
+        organizationId: number,
+        params: { withDeleted?: boolean } = {},
+    ) {
+        const units = await this.unitRepository.findAll({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
+            },
+        });
+
+        return units;
+    }
+
+    /**
+     * Метод создания еденицы измерения.
+     * @returns Возвращает объект.
+     */
+    async createUnit(dto: CreateUniteDto, organizationId: number) {
+        const unit = await this.getOneUnitBy(
+            { criteria: { name: dto.name }, relations: [] },
+            organizationId,
+        );
+        if (unit) {
+            throw new ConflictException('Unit with this name already exists');
+        }
+        const newUnit = await this.unitRepository.create({
+            ...dto,
+            organizationId,
+        });
+
+        if (!newUnit) {
+            throw new ConflictException('Unit with this name already exists');
+        }
+        return newUnit;
+    }
+
+    /**
+     * Метод получения едениц измерения.
+     * @returns Возвращает список.
+     */
+    async getAllUnit(organizationId: number) {
+        const units = await this.getAllUnitsBy(
+            { criteria: {}, relations: [] },
+            organizationId,
+        );
+        if (!units) {
+            throw new HttpException('Произошла ошибка', HttpStatus.BAD_REQUEST);
+        }
+        return units;
+    }
+
+    /**
+     * Метод получения имени единицы измерения.
+     * @returns Возвращает наименование.
+     */
+    // Возвращает значение
+    async getUnitName(id: number, organizationId: number) {
+        const unit = await this.getOneUnitBy(
+            { criteria: { id }, relations: [] },
+            organizationId,
+        );
+
+        return unit.name;
+    }
+
+    /**
+     * Метод создаёт или создаёт и возвращает unit.
+     * @returns Возвращает объект.
+     */
+    async getDefaultUnit(organizationId: number) {
+        const unit = await this.getOneUnitBy(
+            { criteria: { name: 'шт' }, relations: [] },
+            organizationId,
+        );
+        if (!unit) {
+            const newUnit = await this.createUnit(
+                { name: 'шт', description: 'Штуки' },
+                organizationId,
+            );
+            return newUnit;
+        }
+        return unit;
+    }
 }
+
+// TODO
+// /**
+//  * @deprecated This method is deprecated and will be removed in the future.
+//  * Please use newMethod instead.
+//  */
+// async createUniteOrPieces(id?: number, organizationId?: number) {
+//     try {
+//         const dtoUnit: CreateUniteDto = {
+//             name: 'шт',
+//             description: 'Штуки',
+//         };
+//         // Если нет id
+//         if (!id) {
+//             const checkUnit = this.checkByName(dtoUnit.name);
+//             if (!checkUnit) {
+//                 const unit = await this.createUnit(dtoUnit);
+//                 return unit;
+//             }
+//         }
+//         // Если есть id
+//         const foundUnit = this.getOneUnitById(id);
+//         return foundUnit;
+//     } catch (e) {
+//         if (e instanceof HttpException) {
+//             throw e;
+//         }
+//         throw new HttpException(
+//             e.message,
+//             HttpStatus.INTERNAL_SERVER_ERROR,
+//         );
+//     }
+// }

@@ -9,7 +9,8 @@ import {
     Table,
 } from 'sequelize-typescript';
 import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
-import { NameWork } from 'src/name-work/name-work.model';
+import { NameWork } from 'src/name-work/entities/name-work.model';
+
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 
 interface NameListAttr {

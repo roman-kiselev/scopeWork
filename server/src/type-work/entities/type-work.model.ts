@@ -8,8 +8,9 @@ import {
     Table,
 } from 'sequelize-typescript';
 import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
-import { NameWorkTypeWork } from 'src/name-work/name-work-typework';
-import { NameWork } from 'src/name-work/name-work.model';
+import { NameWorkTypeWork } from 'src/name-work/entities/name-work-typework.model';
+import { NameWork } from 'src/name-work/entities/name-work.model';
+
 import { ObjectTypeWork } from 'src/objects/entities/objects-type_work.model';
 import { Objects } from 'src/objects/entities/objects.model';
 import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
@@ -45,6 +46,9 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
         allowNull: true,
     })
     description: string;
+
+    @Column({ type: DataType.INTEGER })
+    organizationId: number;
 
     @ApiProperty({ example: '12.01.2099', description: 'Дата' })
     @Column({ type: DataType.DATE })
