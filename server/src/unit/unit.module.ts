@@ -1,14 +1,13 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { TypeWork } from '../type-work/entities/type-work.model';
+import { Unit } from './entities/unit.model';
 import { UnitController } from './unit.controller';
-import { Unit } from './unit.model';
 import { UnitService } from './unit.service';
 
 @Module({
     controllers: [UnitController],
     providers: [UnitService],
-    imports: [SequelizeModule.forFeature([Unit, TypeWork])],
-    exports: [UnitService],
+    imports: [SequelizeModule.forFeature([Unit])],
+    exports: [UnitService, SequelizeModule.forFeature([Unit])],
 })
 export class UnitModule {}

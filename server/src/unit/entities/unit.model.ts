@@ -1,16 +1,17 @@
-import {ApiProperty} from '@nestjs/swagger';
-import {Column, DataType, HasMany, Model, Table} from 'sequelize-typescript';
-import {NameWork} from 'src/name-work/name-work.model';
+import { ApiProperty } from '@nestjs/swagger';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { NameWork } from 'src/name-work/entities/name-work.model';
 
 interface UnitAttr {
     id: number;
     name: string;
     description: string;
+    organizationId: number;
 }
 
-@Table({tableName: 'unit'})
+@Table({ tableName: 'unit' })
 export class Unit extends Model<Unit, UnitAttr> {
-    @ApiProperty({example: '1', description: 'ID'})
+    @ApiProperty({ example: '1', description: 'ID' })
     @Column({
         type: DataType.INTEGER,
         unique: true,
@@ -19,14 +20,17 @@ export class Unit extends Model<Unit, UnitAttr> {
     })
     id: number;
 
-    @ApiProperty({example: 'шт.', description: 'Описание'})
+    @ApiProperty({ example: 'шт.', description: 'Описание' })
     @Column({
         type: DataType.STRING,
         unique: true,
     })
     name: string;
 
-    @ApiProperty({example: 'Штуки', description: 'Описание'})
+    @Column({ type: DataType.INTEGER })
+    organizationId: number;
+
+    @ApiProperty({ example: 'Штуки', description: 'Описание' })
     @Column({
         type: DataType.STRING,
         unique: true,
@@ -40,6 +44,4 @@ export class Unit extends Model<Unit, UnitAttr> {
 
     @HasMany(() => NameWork)
     nameWork: NameWork[];
-
-
 }
