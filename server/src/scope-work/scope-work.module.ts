@@ -46,11 +46,11 @@ import { ScopeWorkService } from './scope-work.service';
             UserScopeWork,
             ListNameWork,
         ]),
-        NameListModule,
         DatabaseModule,
-        ListNameWorkModule,
         TableAddingDataModule,
         forwardRef(() => ObjectsModule),
+        NameListModule,
+        ListNameWorkModule,
     ],
     exports: [
         ScopeWorkUserService,

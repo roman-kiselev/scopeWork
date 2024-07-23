@@ -1,7 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { NameWork } from 'src/name-work/entities/name-work.model';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
+import { NameWorkService } from 'src/name-work/name-work.service';
+import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
 import {
     CreateNameListByNameDto,
     Item,
@@ -15,8 +16,10 @@ export class NameListService {
     constructor(
         @InjectModel(NameList) private nameListRepository: typeof NameList,
         // @InjectModel(NameWork) private nameWorkRepositiry: typeof NameWork,
-        @InjectModel(TableAddingData)
-        private tableAddingDataRepository: typeof TableAddingData,
+        // @InjectModel(TableAddingData)
+        // private tableAddingDataRepository: typeof TableAddingData,
+        private readonly tableAddingDataService: TableAddingDataService,
+        private readonly nameWorkService: NameWorkService,
     ) {}
 
     async getAllBy(dto: GetAllByDto) {
@@ -438,13 +441,23 @@ export class NameListService {
                 quntity,
             } = list;
             // Теперь нужны данные из tableAddingdData - выполненые работы
+            // const addingTableForOneList =
+            //     await this.tableAddingDataRepository.findAll({
+            //         where: {
+            //             nameListId,
+            //             scopeWorkId,
+            //             deletedAt: null,
+            //         },
+            //     });
+
             const addingTableForOneList =
-                await this.tableAddingDataRepository.findAll({
-                    where: {
+                await this.tableAddingDataService.getAllBy({
+                    criteria: {
                         nameListId,
                         scopeWorkId,
                         deletedAt: null,
                     },
+                    relations: [],
                 });
 
             const cloneAddingTableForOneList = [...addingTableForOneList];
@@ -472,7 +485,7 @@ export class NameListService {
      * Please use newMethod instead.
      */
     // получение всех наименований работ для одного списка
-    async getAllNameWorkByListId(id: number) {
+    async getAllNameWorkByListId(id: number, organizationId: number) {
         const list = await this.nameListRepository.findAll({
             where: {
                 listNameWorkId: id,
@@ -481,11 +494,12 @@ export class NameListService {
 
         const listNames = [];
         for (const { nameWorkId, quntity, id } of list) {
-            const nameWork = await this.nameWorkRepositiry.findByPk(
-                nameWorkId,
+            const nameWork = await this.nameWorkService.getOneNameWorkBy(
                 {
-                    raw: true,
+                    criteria: { id: nameWorkId },
+                    relations: [],
                 },
+                organizationId,
             );
             listNames.push({
                 ...nameWork,

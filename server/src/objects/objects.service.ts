@@ -27,9 +27,11 @@ import { IOneScopeWorkWithData } from './interfaces/IOneScopeWorkWithData';
 export class ObjectsService {
     constructor(
         @Inject(forwardRef(() => ScopeWorkService))
-        private readonly scopeWorkService: ScopeWorkService,
-        @InjectModel(Objects) private objectsRepository: typeof Objects,
+        @InjectModel(Objects)
+        private objectsRepository: typeof Objects,
         @Inject('USER_MAIN_SERVICE') private readonly clientUser: ClientProxy,
+        @Inject(forwardRef(() => ScopeWorkService))
+        private readonly scopeWorkService: ScopeWorkService,
         private readonly listNameWorkService: ListNameWorkService,
         private readonly tableAddingDataService: TableAddingDataService,
         private readonly typeWorkService: TypeWorkService,
