@@ -15,15 +15,43 @@ export class TypeWorkService {
         @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
     ) {}
 
-    async getOneBy(dto: GetOneByDto) {
+    async getOneBy(
+        dto: GetOneByDto,
+        organizationId: number,
+        params: { withDeleted?: boolean } = {},
+    ) {
         const type = await this.typeWorkRepository.findOne({
-            where: dto.criteria,
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
+            },
             include: dto.relations || [],
         });
         if (!type) {
             throw new NotFoundException('Type with this criteria not found');
         }
         return type;
+    }
+
+    async checkTypeWorksByIds(ids: number[], organizationId: number) {
+        const promisesTypeWork = ids.map((item) => {
+            return this.getOneBy(
+                {
+                    criteria: { id: item },
+                    relations: [],
+                },
+                organizationId,
+            );
+        });
+        const typeWorkArr = await Promise.allSettled(promisesTypeWork);
+        const promisesResolve = typeWorkArr
+            .filter((item) => item.status === 'fulfilled')
+            .map((item) => item.value);
+        const promisesReject = typeWorkArr
+            .filter((item) => item.status === 'rejected')
+            .map((item) => item.reason);
+        return { promisesResolve, promisesReject };
     }
 
     /**

@@ -7,7 +7,7 @@ import {
     Model,
     Table,
 } from 'sequelize-typescript';
-import { NameWork } from 'src/name-work/name-work.model';
+import { NameWork } from 'src/name-work/entities/name-work.model';
 import { NameList } from 'src/name_list/entities/name-list.model';
 import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
 import { DelTableAddingData } from './del-table-adding-data.model';

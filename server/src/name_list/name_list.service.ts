@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { NameWork } from 'src/name-work/name-work.model';
+import { NameWork } from 'src/name-work/entities/name-work.model';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import {
     CreateNameListByNameDto,

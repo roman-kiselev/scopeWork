@@ -12,14 +12,15 @@ import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { NameList } from 'src/name_list/entities/name-list.model';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
-import { Unit } from 'src/unit/unit.model';
-import { NameWorkTypeWork } from '../name-work-typework';
+import { Unit } from 'src/unit/entities/unit.model';
+import { NameWorkTypeWork } from './name-work-typework.model';
 
 interface NameWorkAttr {
     id: number;
     name: string;
     unitId: number;
     typeWork: number;
+    organizationId: number;
 }
 
 @Table({ tableName: 'name_work', paranoid: true })

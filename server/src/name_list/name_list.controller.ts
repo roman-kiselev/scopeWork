@@ -8,11 +8,18 @@ import {
     Post,
     Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { CreateNameListDto } from './dto/create-name-list.dto';
 import { NameList } from './entities/name-list.model';
 import { NameListService } from './name_list.service';
 
+@ApiTags('Name List')
+@ApiBearerAuth()
 @Controller('name-list')
 export class NameListController {
     constructor(private nameListService: NameListService) {}

@@ -1,829 +1,771 @@
 import {
-    HttpException,
-    HttpStatus,
+    ConflictException,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { DatabaseService } from 'src/database/database.service';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
-import { CreateUniteDto } from 'src/unit/dto/unit.dto';
-import { Unit } from 'src/unit/unit.model';
+import { TypeWorkService } from 'src/type-work/type-work.service';
 import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
 import { CreateNameWorkRowDto } from './dto/create-name-work-row.dto';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
-import { GetOneNameWorkByDto } from './dto/get/get-one-namework-by.dto';
+import { GetOneNameWorkBy } from './dto/get-one-name-work-by.dto';
+import { UpdateNameWorkDto } from './dto/update-name-work.dto';
 import { NameWork } from './entities/name-work.model';
-import { NameWorkTypeWork } from './name-work-typework';
 
 @Injectable()
 export class NameWorkService {
     constructor(
         @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
-        @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
-        @InjectModel(NameWorkTypeWork)
-        private nameWorkTypeWorkRepository: typeof NameWorkTypeWork,
-        @InjectModel(Unit) private unitRepository: typeof Unit,
-        private unitService: UnitService,
+        private readonly unitService: UnitService,
+        private readonly typeWorkService: TypeWorkService,
         private databaseService: DatabaseService,
     ) {}
 
-    async getOneBy(
-        dto: GetOneNameWorkByDto,
+    /**
+     * Универсальный метод для получения одного объекта.
+     * @returns Возвращает объект.
+     */
+    private async getOneNameWorkBy(
+        dto: GetOneNameWorkBy,
         organizationId: number,
-        params: { withDelete?: boolean } = {},
+        params: {
+            rejectOnEmpty?: boolean;
+            withDeleted?: boolean;
+        } = {},
     ) {
         const nameWork = await this.nameWorkRepository.findOne({
             where: {
                 ...dto.criteria,
                 organizationId,
-                deletedAt: params.withDelete ? params.withDelete : null,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
             },
             include: dto.relations || [],
+            rejectOnEmpty: !params.rejectOnEmpty ? true : params.rejectOnEmpty,
         });
+
         if (!nameWork) {
-            throw new NotFoundException('NameWork not found');
+            throw new NotFoundException(
+                'NameWork with this criteria not found',
+            );
         }
+
         return nameWork;
     }
 
-    async getAllBy(
-        dto: GetOneNameWorkByDto,
+    /**
+     * Универсальный метод для получения списка.
+     * @returns Возвращает список.
+     */
+    private async getAllNameWorkBy(
+        dto: GetOneNameWorkBy,
         organizationId: number,
-        params: { withDelete?: boolean } = {},
+        params: { withDeleted?: boolean } = {},
     ) {
-        const nameWork = await this.nameWorkRepository.findAll({
+        const nameWorks = await this.nameWorkRepository.findAll({
             where: {
                 ...dto.criteria,
                 organizationId,
-                deletedAt: params.withDelete ? params.withDelete : null,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
             },
             include: dto.relations || [],
         });
+
+        return nameWorks;
+    }
+
+    /**
+     * Проверка на существование имени.
+     * @returns Возвращает true/false.
+     */
+    async checkNameWithDto(dto: CreateNameWorkDto, organizationId: number) {
+        const { name, typeWorkId, unitId } = dto;
+
+        const isName = await this.getOneNameWorkBy(
+            {
+                criteria: { name: name.trim() },
+                relations: [],
+            },
+            organizationId,
+        );
+
+        const promises = typeWorkId.map((item) => {
+            return this.typeWorkService.getOneBy(
+                {
+                    criteria: { id: item },
+                    relations: [],
+                },
+                organizationId,
+            );
+        });
+        const isTypeWorkArr = await Promise.allSettled(promises);
+        const promisesReject = isTypeWorkArr.filter(
+            (item) => item.status === 'rejected',
+        );
+
+        const isUnit = await this.unitService.getOneUnitBy(
+            { criteria: { id: unitId }, relations: [] },
+            organizationId,
+        );
+        if (!isName || promisesReject.length > 0 || !isUnit) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Создание если есть unit.
+     * @returns Возвращает созданный объект.
+     */
+    private async createNameWorkWithUnit(
+        dto: CreateNameWorkDto,
+        organizationId: number,
+    ) {
+        const unit = await this.unitService.getOneUnitBy(
+            { criteria: { id: dto.unitId }, relations: [] },
+            organizationId,
+        );
+
+        const nameWork = await this.nameWorkRepository.create({
+            name: dto.name,
+            unitId: unit.id,
+            organizationId,
+        });
+
+        const { promisesResolve, promisesReject } =
+            await this.typeWorkService.checkTypeWorksByIds(
+                dto.typeWorkId,
+                organizationId,
+            );
+        const promises = promisesResolve.map((item) => {
+            return nameWork.$set('typeWorks', [dto.typeWorkId[item.id]]);
+        });
+        const result = await Promise.all(promises);
+        if (!result || !nameWork) {
+            throw new ConflictException('NameWork not created');
+        }
 
         return nameWork;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Создают с unit по умолчанию (шт.).
+     * @returns Возвращает созданный объект.
      */
-    async checkOneByName(name: string) {
-        try {
-            const nameWork = await this.nameWorkRepository.findOne({
-                where: {
-                    name,
-                },
-            });
-
-            if (!nameWork) {
-                return false;
-            }
-
-            return nameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+    private async createNameWorkWithoutUnit(
+        dto: Omit<CreateNameWorkDto, 'unitId'>,
+        organizationId: number,
+    ) {
+        const unit = await this.unitService.getDefaultUnit(organizationId);
+        const nameWork = this.createNameWorkWithUnit(
+            {
+                name: dto.name.trim(),
+                typeWorkId: dto.typeWorkId,
+                unitId: unit.id,
+            },
+            organizationId,
+        );
+        if (!nameWork) {
+            throw new ConflictException('NameWork not created');
         }
+
+        return nameWork;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Создание наименования по умолчанию со штуками.
+     * @returns объект наименования.
      */
-    async checkNameWithDto(dto: CreateNameWorkDto) {
-        try {
-            const { name, typeWorkId, unitId } = dto;
-            const isName = await this.nameWorkRepository.findOne({
-                where: {
-                    name: name.trim(),
-                },
-            });
-
-            const isTypeWorkArr = [];
-            for (const item of typeWorkId) {
-                const isTypeWork = await this.typeWorkRepository.findByPk(item);
-                if (!isTypeWork) {
-                    isTypeWorkArr.push(false);
-                }
-            }
-
-            const isUnit = await this.unitService.getOneUnitById(unitId);
-            if (!isName || isTypeWorkArr.length > 0 || !isUnit) {
-                return false;
-            }
-            return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
+    async createNameWorkDefault(
+        dto: CreateNameWorkDto,
+        organizationId: number,
+    ) {
+        const nameWork = await this.getOneNameWorkBy(
+            { criteria: { name: dto.name.trim() }, relations: [] },
+            organizationId,
+        );
+        if (nameWork) {
+            throw new ConflictException(
+                'NameWork with this name already exists',
             );
         }
+
+        if (!dto.unitId) {
+            return this.createNameWorkWithoutUnit(dto, organizationId);
+        }
+        return this.createNameWorkWithUnit(dto, organizationId);
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Обновление наименования.
+     * @returns объект наименования.
      */
-    async findOneByName(name: string) {
-        try {
-            const nameWork = await this.nameWorkRepository.findOne({
-                where: {
-                    name,
-                    deletedAt: null,
-                },
-            });
-            if (!nameWork) {
-                throw new HttpException(
-                    'Наименование не найдено',
-                    HttpStatus.NOT_FOUND,
-                );
-            }
-            return nameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+    async updateNameWork(
+        id: number,
+        dto: UpdateNameWorkDto,
+        organizationId: number,
+    ) {
+        const nameWork = await this.getOneNameWorkBy(
+            { criteria: { id }, relations: [] },
+            organizationId,
+        );
+        const updated = await nameWork.update({ ...dto });
+        return updated;
     }
 
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    private async addTypeWork(id: number, arr: number[]): Promise<void> {
-        try {
-            console.log(id);
-            console.log(arr);
-            // Проверяем существование типа и привязываем
-            const nameWork = await this.nameWorkRepository.findByPk(id);
-            if (nameWork) {
-                for (const item of arr) {
-                    const typeWork = await this.typeWorkRepository.findByPk(
-                        item,
-                    );
-                    if (typeWork) {
-                        await nameWork.$set('typeWorks', typeWork.id);
-                    }
-                }
-            }
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
+    // TODO Непонятное что то, переписать или удалить
+    // async createNoChecks(dto: CreateNameWorkDto) {
+    //     try {
+    //         console.log(dto);
+    //         const { name, typeWorkId, unitId } = dto;
+
+    //         // Создаём наименование и связь
+    //         // Ищем наименование
+    //         const findedNameWork = await this.nameWorkRepository.findOne({
+    //             where: { name: name.trim() },
+    //         });
+    //         // Если есть
+    //         if (findedNameWork) {
+    //             // Проверяем связь с типом
+    //             const findNameAndType =
+    //                 await this.nameWorkTypeWorkRepository.findOne({
+    //                     where: {
+    //                         nameWorkId: findedNameWork.id,
+    //                         typeWorkId: typeWorkId,
+    //                     },
+    //                 });
+    //             // Если связи нет , но при этом наименование есть
+    //             if (!findNameAndType) {
+    //                 // Добавляем тип
+    //                 await findedNameWork.$add('typeWorks', typeWorkId);
+    //                 const unit = await this.unitService.getOneUnitById(
+    //                     findedNameWork.unitId,
+    //                 );
+
+    //                 const finishNameWork = {
+    //                     id: findedNameWork.id,
+    //                     name: findedNameWork.name,
+    //                     deletedAt: findedNameWork.deletedAt,
+    //                     createdAt: findedNameWork.createdAt,
+    //                     updatedAt: findedNameWork.updatedAt,
+    //                     unit: unit,
+    //                     typeWorks: findedNameWork.typeWorks,
+    //                 };
+
+    //                 return finishNameWork;
+    //             }
+    //         }
+
+    //         const newNameWork = await this.nameWorkRepository.create({
+    //             name: name.trim(),
+    //             unitId: unitId,
+    //         });
+
+    //         await newNameWork.$set('typeWorks', typeWorkId);
+
+    //         const nameWork = await this.nameWorkRepository.findOne({
+    //             where: { id: newNameWork.id },
+    //             include: [
+    //                 {
+    //                     model: TypeWork,
+    //                     attributes: {
+    //                         exclude: ['NameWorkTypeWork'],
+    //                     },
+    //                     through: { attributes: [] },
+    //                 },
+    //                 {
+    //                     model: TableAddingData,
+    //                 },
+    //             ],
+    //         });
+    //         if (!nameWork) {
+    //             throw new HttpException(
+    //                 'Наименование не найдено',
+    //                 HttpStatus.NOT_FOUND,
+    //             );
+    //         }
+    //         const unit = await this.unitService.getOneUnitById(nameWork.unitId);
+
+    //         const finishNameWork = {
+    //             id: nameWork.id,
+    //             name: nameWork.name,
+    //             deletedAt: nameWork.deletedAt,
+    //             createdAt: nameWork.createdAt,
+    //             updatedAt: nameWork.updatedAt,
+    //             unit: unit,
+    //             typeWorks: nameWork.typeWorks,
+    //         };
+
+    //         return finishNameWork;
+    //     } catch (e) {
+    //         if (e instanceof HttpException) {
+    //             throw e;
+    //         }
+    //         throw new HttpException(
+    //             e.message,
+    //             HttpStatus.INTERNAL_SERVER_ERROR,
+    //         );
+    //     }
+    // }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Получаем список наименований, но с изменённым тип.
+     * @returns список объектов нового типа.
      */
-    async createNameWorkDefault(dto: CreateNameWorkDto) {
-        try {
-            // Проверяем существование штук
-            const nameUnite = 'шт';
-            const unit = await this.unitService.checkByName(nameUnite);
-
-            // Проверяем существование товара
-            const nameWork = await this.checkOneByName(dto.name);
-            // Если нет товара и есть единица
-            if (unit && !nameWork) {
-                const foundUnit = await this.unitService.findByName(nameUnite);
-
-                if (dto.unitId) {
-                    const newNameWork = await this.nameWorkRepository.create(
-                        dto,
-                    );
-                    return newNameWork;
-                }
-                const newNameWork = await this.nameWorkRepository.create({
-                    ...dto,
-                    unitId: foundUnit.id,
-                });
-                await newNameWork.$set('typeWorks', [dto.typeWorkId[0]]);
-
-                return newNameWork;
-            }
-            if (!unit && !nameWork) {
-                const dtoUnit: CreateUniteDto = {
-                    name: 'шт',
-                    description: 'Штуки',
-                };
-                const newUnit = await this.unitService.createUnit(dtoUnit);
-
-                if (dto.unitId) {
-                    const newNameWork = await this.nameWorkRepository.create(
-                        dto,
-                    );
-                    return newNameWork;
-                }
-                const newNameWork = await this.nameWorkRepository.create({
-                    ...dto,
-                    unitId: newUnit.id,
-                });
-                await newNameWork.$set('typeWorks', [dto.typeWorkId[0]]);
-
-                return newNameWork;
-            }
-
-            if (!unit && nameWork) {
-                const dtoUnit: CreateUniteDto = {
-                    name: 'шт',
-                    description: 'Штуки',
-                };
-                await this.unitService.createUnit(dtoUnit);
-                throw new HttpException(
-                    'Наименование уже существует',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-
-            throw new HttpException(
-                'Не удалось создать',
-                HttpStatus.BAD_REQUEST,
-            );
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    async create(dto: CreateNameWorkDto) {
-        try {
-            console.log(dto);
-            const { name, typeWorkId, unitId } = dto;
-            // Проверим существование товара
-            if (!this.checkNameWithDto(dto)) {
-                throw new HttpException(
-                    'Не удалось создать наименование',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-            // Создаём наименование и связь
-            const newNameWork = await this.nameWorkRepository.create({
-                name: name.trim(),
-                unitId: unitId,
-            });
-            await newNameWork.$set('typeWorks', typeWorkId);
-
-            const nameWork = await this.nameWorkRepository.findOne({
-                where: { id: newNameWork.id },
-                include: [
-                    {
-                        model: TypeWork,
-                        attributes: {
-                            exclude: ['NameWorkTypeWork'],
-                        },
-                        through: { attributes: [] },
-                    },
-                    {
-                        model: TableAddingData,
-                    },
-                ],
-            });
-            if (!nameWork) {
-                throw new HttpException(
-                    'Наименование не найдено',
-                    HttpStatus.NOT_FOUND,
-                );
-            }
-            const unit = await this.unitService.getOneUnitById(nameWork.unitId);
-
-            const finishNameWork = {
-                id: nameWork.id,
-                name: nameWork.name,
-                deletedAt: nameWork.deletedAt,
-                createdAt: nameWork.createdAt,
-                updatedAt: nameWork.updatedAt,
+    async findAllNamesWithTypes(organizationId: number) {
+        const units = await this.unitService.getAllUnitsBy(
+            { criteria: {}, relations: [] },
+            organizationId,
+        );
+        const names = await this.getAllNameWorkBy(
+            { criteria: {}, relations: ['typeWorks'] },
+            organizationId,
+        );
+        const newNames = names.map((name) => {
+            const unit = units.find((unit) => unit.id === name.unitId);
+            return {
+                id: name.id,
+                name: name.name,
+                deletedAt: name.deletedAt,
+                createdAt: name.createdAt,
+                updatedAt: name.updatedAt,
+                typeWorks: name.typeWorks,
                 unit: unit,
-                typeWorks: nameWork.typeWorks,
             };
+        });
 
-            return finishNameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return newNames;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Получаем список наименований.
+     * @returns список.
      */
-    async updateNameWork(dto: CreateNameWorkDto) {
-        try {
-            const { name, unitId, typeWorkId } = dto;
+    async getAllData(organizationId: number) {
+        const data = await this.getAllNameWorkBy(
+            { criteria: {}, relations: [] },
+            organizationId,
+        );
 
-            // const findedName = await this.
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return data;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Получаем одно наименование.
+     * @returns объект нового типа.
      */
-    async createNoChecks(dto: CreateNameWorkDto) {
-        try {
-            console.log(dto);
-            const { name, typeWorkId, unitId } = dto;
+    async getOneById(id: number, organizationId: number) {
+        const nameWork = await this.getOneNameWorkBy(
+            { criteria: { id }, relations: ['typeWorks'] },
+            organizationId,
+        );
+        const unit = await this.unitService.getOneUnitBy(
+            { criteria: { id: nameWork.unitId }, relations: [] },
+            organizationId,
+        );
 
-            // Создаём наименование и связь
-            // Ищем наименование
-            const findedNameWork = await this.nameWorkRepository.findOne({
-                where: { name: name.trim() },
-            });
-            // Если есть
-            if (findedNameWork) {
-                // Проверяем связь с типом
-                const findNameAndType =
-                    await this.nameWorkTypeWorkRepository.findOne({
-                        where: {
-                            nameWorkId: findedNameWork.id,
-                            typeWorkId: typeWorkId,
-                        },
-                    });
-                // Если связи нет , но при этом наименование есть
-                if (!findNameAndType) {
-                    // Добавляем тип
-                    await findedNameWork.$add('typeWorks', typeWorkId);
-                    const unit = await this.unitService.getOneUnitById(
-                        findedNameWork.unitId,
-                    );
-
-                    const finishNameWork = {
-                        id: findedNameWork.id,
-                        name: findedNameWork.name,
-                        deletedAt: findedNameWork.deletedAt,
-                        createdAt: findedNameWork.createdAt,
-                        updatedAt: findedNameWork.updatedAt,
-                        unit: unit,
-                        typeWorks: findedNameWork.typeWorks,
-                    };
-
-                    return finishNameWork;
-                }
-            }
-
-            const newNameWork = await this.nameWorkRepository.create({
-                name: name.trim(),
-                unitId: unitId,
-            });
-
-            await newNameWork.$set('typeWorks', typeWorkId);
-
-            const nameWork = await this.nameWorkRepository.findOne({
-                where: { id: newNameWork.id },
-                include: [
-                    {
-                        model: TypeWork,
-                        attributes: {
-                            exclude: ['NameWorkTypeWork'],
-                        },
-                        through: { attributes: [] },
-                    },
-                    {
-                        model: TableAddingData,
-                    },
-                ],
-            });
-            if (!nameWork) {
-                throw new HttpException(
-                    'Наименование не найдено',
-                    HttpStatus.NOT_FOUND,
-                );
-            }
-            const unit = await this.unitService.getOneUnitById(nameWork.unitId);
-
-            const finishNameWork = {
-                id: nameWork.id,
-                name: nameWork.name,
-                deletedAt: nameWork.deletedAt,
-                createdAt: nameWork.createdAt,
-                updatedAt: nameWork.updatedAt,
-                unit: unit,
-                typeWorks: nameWork.typeWorks,
-            };
-
-            return finishNameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        const finishNameWork = {
+            id: nameWork.id,
+            name: nameWork.name,
+            deletedAt: nameWork.deletedAt,
+            createdAt: nameWork.createdAt,
+            updatedAt: nameWork.updatedAt,
+            unit: unit,
+            typeWorks: nameWork.typeWorks,
+        };
+        return finishNameWork;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Получаем одно наименование без зависисмостей.
+     * @returns объект.
      */
-    async findAllNames() {
-        try {
-            const names = await this.nameWorkRepository.findAll({
-                where: {
-                    deletedAt: null,
-                },
-                include: [
-                    {
-                        model: TypeWork,
-                        attributes: {
-                            exclude: ['NameWorkTypeWork'],
-                        },
-                        through: { attributes: [] },
-                    },
-                ],
-            });
+    async getOneByIdShort(id: number, organizationId: number) {
+        const nameWork = await this.getOneNameWorkBy(
+            { criteria: { id }, relations: [] },
+            organizationId,
+        );
 
-            const newNames = Promise.all(
-                names.map(async (name) => {
-                    // Получим по id единицу измерения
-                    const unit = await this.unitService.getOneUnitById(
-                        name.unitId,
-                    );
-                    return {
-                        id: name.id,
-                        name: name.name,
-                        deletedAt: name.deletedAt,
-                        createdAt: name.createdAt,
-                        updatedAt: name.updatedAt,
-                        typeWorks: name.typeWorks,
-                        unit: unit,
-                    };
-                }),
-            );
-
-            return newNames;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return nameWork;
     }
 
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    async getAllData() {
-        try {
-            const data = await this.nameWorkRepository.findAll({
-                include: { all: true },
-            });
-
-            return data;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    async getOneById(id: number) {
-        try {
-            const nameWork = await this.nameWorkRepository.findOne({
-                where: { id },
-                include: [
-                    {
-                        model: TypeWork,
-                        attributes: {
-                            exclude: ['NameWorkTypeWork'],
-                        },
-                        through: { attributes: [] },
-                    },
-                ],
-            });
-            if (!nameWork) {
-                throw new HttpException(
-                    'Наименование не найдено',
-                    HttpStatus.NOT_FOUND,
-                );
-            }
-            const unit = await this.unitService.getOneUnitById(nameWork.unitId);
-
-            const finishNameWork = {
-                id: nameWork.id,
-                name: nameWork.name,
-                deletedAt: nameWork.deletedAt,
-                createdAt: nameWork.createdAt,
-                updatedAt: nameWork.updatedAt,
-                unit: unit,
-                typeWorks: nameWork.typeWorks,
-            };
-            return finishNameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
-
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    async getOneByIdShort(id: number) {
-        try {
-            const nameWork = await this.nameWorkRepository.findByPk(id);
-            if (!nameWork) {
-                throw new HttpException(
-                    'Наименование не найдено',
-                    HttpStatus.NOT_FOUND,
-                );
-            }
-            return nameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
-    }
+    // [
+    //     {
+    //       "id": 78,
+    //       "name": "Счетчик воды многоструйный, с импульсным выходом, метрологический класс В  \"Пульсар-М\" Ду-32 (в комплексте установочные присоединители)",
+    //       "deletedAt": null,
+    //       "createdAt": "2024-02-06T08:45:31.000Z",
+    //       "updatedAt": "2024-02-06T08:45:31.000Z",
+    //       "unit": {
+    //         "id": 1,
+    //         "name": "шт",
+    //         "organizationId": 2,
+    //         "description": "Штуки",
+    //         "deletedAt": null,
+    //         "createdAt": "2024-02-06T05:26:52.000Z",
+    //         "updatedAt": "2024-02-06T05:26:52.000Z"
+    //       }
+    //     },
+    //     {
+    //       "id": 80,
+    //       "name": "Установка фильтра магнитно-механического фланцевого PN16 ( с учётом фланцев)  DN50",
+    //       "deletedAt": null,
+    //       "createdAt": "2024-02-06T08:45:31.000Z",
+    //       "updatedAt": "2024-02-06T08:45:31.000Z",
+    //       "unit": {
+    //         "id": 1,
+    //         "name": "шт",
+    //         "organizationId": 2,
+    //         "description": "Штуки",
+    //         "deletedAt": null,
+    //         "createdAt": "2024-02-06T05:26:52.000Z",
+    //         "updatedAt": "2024-02-06T05:26:52.000Z"
+    //       }
+    //     },
+    //     {
+    //       "id": 79,
+    //       "name": "Установка крана шарового фланцевого PN16 (с учётом фланцев) DN50 (КШ.Ц.Ф.050.050.Н/П.02)",
+    //       "deletedAt": null,
+    //       "createdAt": "2024-02-06T08:45:31.000Z",
+    //       "updatedAt": "2024-02-06T08:45:31.000Z",
+    //       "unit": {
+    //         "id": 1,
+    //         "name": "шт",
+    //         "organizationId": 2,
+    //         "description": "Штуки",
+    //         "deletedAt": null,
+    //         "createdAt": "2024-02-06T05:26:52.000Z",
+    //         "updatedAt": "2024-02-06T05:26:52.000Z"
+    //       }
+    //     },
 
     // Получить наименования по типу
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Получаем список наименований по типу.
+     * @returns список.
      */
-    async getAllByTypeWorkId(typeWorkId: string) {
-        try {
-            if (typeWorkId === '0') {
-                // const names = await this.nameWorkRepository.findAll({
-                //   where: {
-                //     deletedAt: null,
-                //   },
-                // });
-                return [];
-            }
-            const names = await this.typeWorkRepository.findByPk(typeWorkId, {
-                include: [
-                    {
-                        model: NameWork,
-                        attributes: {
-                            exclude: ['NameWorkTypeWork'],
-                        },
-                        through: { attributes: [] },
-                    },
-                ],
-            });
-            const newNames = Promise.all(
-                names.nameWorks.map(async (name) => {
-                    // Получим по id единицу измерения
-                    const unit = await this.unitService.getOneUnitById(
-                        name.unitId,
-                    );
-                    return {
-                        id: name.id,
-                        name: name.name,
-                        deletedAt: name.deletedAt,
-                        createdAt: name.createdAt,
-                        updatedAt: name.updatedAt,
-                        typeWorks: name.typeWorks,
-                        unit: unit,
-                    };
-                }),
-            );
-
-            return newNames;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+    async getAllByTypeWorkId(typeWorkId: string, organizationId: number) {
+        if (typeWorkId === '0') {
+            return [];
         }
+
+        const units = await this.unitService.getAllUnitsBy(
+            { criteria: { organizationId }, relations: [] },
+            organizationId,
+        );
+        const result = await this.nameWorkRepository.findAll({
+            include: [
+                {
+                    model: TypeWork,
+                    where: {
+                        id: +typeWorkId,
+                    },
+                },
+            ],
+        });
+        const newNames = result.map((name) => {
+            const unit = units.find((u) => u.id === name.unitId);
+            return {
+                id: name.id,
+                name: name.name,
+                deletedAt: name.deletedAt,
+                createdAt: name.createdAt,
+                updatedAt: name.updatedAt,
+                typeWorks: name.typeWorks,
+                unit: unit,
+            };
+        });
+
+        return newNames;
     }
 
     // Создать из excel файла - получаем массив
+    // TODO требуется доработать
     /**
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async createArrNameWork(dto: CreateNameWorkArrDto[]) {
-        try {
-            const arr = [];
+    async createArrNameWork(
+        dto: CreateNameWorkArrDto[],
+        organizationId: number,
+    ) {
+        const arr = [];
 
-            for (const { name, typeWork, unit } of dto) {
-                // Проверяем существование
+        for (const { name, typeWork, unit } of dto) {
+            const findedTypeWork = await this.typeWorkService.getOneBy(
+                { criteria: { name: typeWork.trim() }, relations: [] },
+                organizationId,
+            );
+            const findedName = await this.nameWorkRepository.findOne({
+                where: { name: name.trim() },
+            });
+            const findedUnit = await this.unitService.getOneUnitBy(
+                {
+                    criteria: { name: unit.trim() },
+                    relations: [],
+                },
+                organizationId,
+            );
 
-                const findedTypeWork = await this.typeWorkRepository.findOne({
-                    where: { name: typeWork },
-                });
-                const findedName = await this.nameWorkRepository.findOne({
-                    where: { name: name.trim() },
-                });
-                const findedUnit = await this.unitRepository.findOne({
-                    where: { name: unit },
-                });
-                let isFindedNameTypeWork = false;
-                if (findedTypeWork && findedName) {
-                    const findedNameTypeWork =
-                        await this.nameWorkTypeWorkRepository.findOne({
-                            where: {
-                                nameWorkId: findedName.id,
-                                typeWorkId: findedTypeWork.id,
+            let isFindedNameTypeWork = false;
+
+            if (findedTypeWork && findedName) {
+                const findedNameTypeWork =
+                    await this.nameWorkRepository.findOne({
+                        where: {
+                            id: findedName.id,
+                        },
+                        include: [
+                            {
+                                model: TypeWork,
+                                where: {
+                                    id: findedTypeWork.id,
+                                },
                             },
-                        });
-                    if (findedNameTypeWork) {
-                        isFindedNameTypeWork = true;
-                    }
-                }
-
-                if (findedTypeWork && findedUnit && !isFindedNameTypeWork) {
-                    arr.push({
-                        name,
-                        typeWorkId: findedTypeWork.id,
-                        unitId: findedUnit.id,
+                        ],
                     });
+                if (findedNameTypeWork) {
+                    isFindedNameTypeWork = true;
                 }
             }
 
-            const responseArr = [];
-
-            for (const item of arr) {
-                const itemCreate = await this.createNoChecks(item);
-                responseArr.push(itemCreate);
+            if (findedTypeWork && findedUnit && !isFindedNameTypeWork) {
+                arr.push({
+                    name,
+                    typeWorkId: findedTypeWork.id,
+                    unitId: findedUnit.id,
+                });
             }
-
-            return responseArr;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
         }
-    }
 
-    // ----------------------------------------------------- //
-    // Получим список наименований для одного листа
-    /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
-     */
-    async getAllNamesInByListId(id: number) {
-        try {
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        const responseArr = [];
+
+        // Здесь ошибка с createNoChecks
+        // for (const item of arr) {
+        //     const itemCreate = await this.createNoChecks(item);
+        //     responseArr.push(itemCreate);
+        // }
+
+        return responseArr;
     }
 
     // Создаём наименования и отдаём список
+    // TODO требуется доработать
     /**
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async createNameWork(dto: CreateNameWorkRowDto[]) {
-        try {
-            // Отдаём в любом случае наименование
-            const arrNames = Promise.all(
-                dto.map(async (nameWork) => {
-                    if ((await this.checkOneByName(nameWork.name)) === false) {
-                        console.log(false);
-                        // const newNameWork = await this.createNameWorkDefault({
-                        //   name: nameWork.name,
-                        //   unitId: nameWork.unitId,
-                        //   typeWorkId: [nameWork.typeWorkId],
-                        // });
-                        const newNameWork = await this.create({
+    async createNameWork(dto: CreateNameWorkRowDto[], organizationId: number) {
+        // Отдаём в любом случае наименование
+        const arrNames = Promise.all(
+            dto.map(async (nameWork) => {
+                if (
+                    !(await this.getOneNameWorkBy(
+                        { criteria: { name: nameWork.name }, relations: [] },
+                        organizationId,
+                    ))
+                ) {
+                    const newNameWork = await this.createNameWorkWithUnit(
+                        {
                             name: nameWork.name,
                             unitId: nameWork.unitId,
                             typeWorkId: [nameWork.typeWorkId],
-                        });
-
-                        if (newNameWork) {
-                            return {
-                                id: newNameWork.id,
-                                name: newNameWork.name,
-                                typeWorkId: nameWork.typeWorkId,
-                                unitId: newNameWork.unit.id,
-                                row: nameWork.row,
-                                quntity: nameWork.quntity,
-                            } as CreateNameWorkRowDto;
-                        }
-                    }
-                    const oldNameWork = await this.nameWorkRepository.findOne({
-                        where: {
-                            name: nameWork.name,
                         },
-                    });
-                    return {
-                        ...nameWork,
-                        id: oldNameWork.id,
-                    };
-                }),
-            );
+                        organizationId,
+                    );
 
-            return arrNames;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+                    if (newNameWork) {
+                        return {
+                            id: newNameWork.id,
+                            name: newNameWork.name,
+                            typeWorkId: nameWork.typeWorkId,
+                            unitId: newNameWork.unitId,
+                            row: nameWork.row,
+                            quntity: nameWork.quntity,
+                        } as CreateNameWorkRowDto;
+                    }
+                }
+                const oldNameWork = await this.nameWorkRepository.findOne({
+                    where: {
+                        name: nameWork.name,
+                    },
+                });
+                return {
+                    ...nameWork,
+                    id: oldNameWork.id,
+                };
+            }),
+        );
+
+        return arrNames;
     }
 
-    async findNameWorksByName(text: string) {
-        try {
-            const query = `
+    /**
+     * Получаем список наименований по тексту.
+     * @returns список.
+     */
+    async findNameWorksByName(text: string, organizationId: number) {
+        const query = `
       SELECT * FROM scopework.name_work
-      WHERE name LIKE :textForFind
+      WHERE name LIKE :textForFind AND organizationId = :organizationId
       ORDER BY CASE WHEN name LIKE :textStart THEN 0 ELSE 1 END, name
       LIMIT 10;
       `;
-            const textArr = text.split(' ');
-            const replacements = {
-                textForFind: `%${textArr.join('%')}%`,
-                textStart: `${textArr.join('%')}%`,
-            };
-            const result = await this.databaseService.executeQuery(
-                query,
-                replacements,
-            );
+        const textArr = text.split(' ');
+        const replacements = {
+            textForFind: `%${textArr.join('%')}%`,
+            textStart: `${textArr.join('%')}%`,
+            organizationId: organizationId,
+        };
+        const result = await this.databaseService.executeQuery(
+            query,
+            replacements,
+        );
 
-            return result;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return result;
     }
 }
+
+/**
+ * @deprecated This method is deprecated and will be removed in the future.
+ * Please use newMethod instead.
+ */
+// async checkOneByName(name: string) {
+//     try {
+//         const nameWork = await this.nameWorkRepository.findOne({
+//             where: {
+//                 name,
+//             },
+//         });
+
+//         if (!nameWork) {
+//             return false;
+//         }
+
+//         return nameWork;
+//     } catch (e) {
+//         if (e instanceof HttpException) {
+//             throw e;
+//         }
+//         throw new HttpException(
+//             e.message,
+//             HttpStatus.INTERNAL_SERVER_ERROR,
+//         );
+//     }
+// }
+
+/**
+ * @deprecated This method is deprecated and will be removed in the future.
+ * Please use newMethod instead.
+ */
+// async findOneByName(name: string) {
+//     try {
+//         const nameWork = await this.nameWorkRepository.findOne({
+//             where: {
+//                 name,
+//                 deletedAt: null,
+//             },
+//         });
+//         if (!nameWork) {
+//             throw new HttpException(
+//                 'Наименование не найдено',
+//                 HttpStatus.NOT_FOUND,
+//             );
+//         }
+//         return nameWork;
+//     } catch (e) {
+//         if (e instanceof HttpException) {
+//             throw e;
+//         }
+//         throw new HttpException(
+//             e.message,
+//             HttpStatus.INTERNAL_SERVER_ERROR,
+//         );
+//     }
+// }
+
+// /**
+//  * @deprecated This method is deprecated and will be removed in the future.
+//  * Please use newMethod instead.
+//  */
+// private async addTypeWork(id: number, arr: number[]): Promise<void> {
+//     // Проверяем существование типа и привязываем
+//     const nameWork = await this.nameWorkRepository.findByPk(id);
+//     if (nameWork) {
+//         for (const item of arr) {
+//             const typeWork = await this.typeWorkRepository.findByPk(item);
+//             if (typeWork) {
+//                 await nameWork.$set('typeWorks', typeWork.id);
+//             }
+//         }
+//     }
+// }
+
+/**
+ * @deprecated This method is deprecated and will be removed in the future.
+ * Please use newMethod instead.
+ */
+// async create(dto: CreateNameWorkDto) {
+//     try {
+//         console.log(dto);
+//         const { name, typeWorkId, unitId } = dto;
+//         // Проверим существование товара
+//         if (!this.checkNameWithDto(dto)) {
+//             throw new HttpException(
+//                 'Не удалось создать наименование',
+//                 HttpStatus.BAD_REQUEST,
+//             );
+//         }
+//         // Создаём наименование и связь
+//         const newNameWork = await this.nameWorkRepository.create({
+//             name: name.trim(),
+//             unitId: unitId,
+//         });
+//         await newNameWork.$set('typeWorks', typeWorkId);
+
+//         const nameWork = await this.nameWorkRepository.findOne({
+//             where: { id: newNameWork.id },
+//             include: [
+//                 {
+//                     model: TypeWork,
+//                     attributes: {
+//                         exclude: ['NameWorkTypeWork'],
+//                     },
+//                     through: { attributes: [] },
+//                 },
+//                 {
+//                     model: TableAddingData,
+//                 },
+//             ],
+//         });
+//         if (!nameWork) {
+//             throw new HttpException(
+//                 'Наименование не найдено',
+//                 HttpStatus.NOT_FOUND,
+//             );
+//         }
+//         const unit = await this.unitService.getOneUnitById(nameWork.unitId);
+
+//         const finishNameWork = {
+//             id: nameWork.id,
+//             name: nameWork.name,
+//             deletedAt: nameWork.deletedAt,
+//             createdAt: nameWork.createdAt,
+//             updatedAt: nameWork.updatedAt,
+//             unit: unit,
+//             typeWorks: nameWork.typeWorks,
+//         };
+
+//         return finishNameWork;
+//     } catch (e) {
+//         if (e instanceof HttpException) {
+//             throw e;
+//         }
+//         throw new HttpException(
+//             e.message,
+//             HttpStatus.INTERNAL_SERVER_ERROR,
+//         );
+//     }
+// }

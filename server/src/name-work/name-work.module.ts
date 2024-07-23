@@ -1,13 +1,10 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseModule } from 'src/database/database.module';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
-import { TypeWork } from 'src/type-work/entities/type-work.model';
-import { Unit } from 'src/unit/unit.model';
+import { TypeWorkModule } from 'src/type-work/type-work.module';
 import { UnitModule } from 'src/unit/unit.module';
+import { NameWorkTypeWork } from './entities/name-work-typework.model';
 import { NameWork } from './entities/name-work.model';
-import { NameWorkTypeWork } from './name-work-typework';
 import { NameWorkController } from './name-work.controller';
 import { NameWorkService } from './name-work.service';
 
@@ -15,18 +12,14 @@ import { NameWorkService } from './name-work.service';
     controllers: [NameWorkController],
     providers: [NameWorkService],
     imports: [
-        SequelizeModule.forFeature([
-            NameWork,
-            Unit,
-            TypeWork,
-            ListNameWork,
-            TableAddingData,
-            NameWorkTypeWork,
-        ]),
+        SequelizeModule.forFeature([NameWork, NameWorkTypeWork]),
         UnitModule,
-        NameWorkTypeWork,
+        TypeWorkModule,
         DatabaseModule,
     ],
-    exports: [NameWorkService, SequelizeModule.forFeature([NameWork])],
+    exports: [
+        NameWorkService,
+        SequelizeModule.forFeature([NameWork, NameWorkTypeWork]),
+    ],
 })
 export class NameWorkModule {}

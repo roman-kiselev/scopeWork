@@ -131,9 +131,12 @@ export class ObjectsService {
      * @returns Возвращает объект.
      */
     async assignTypeWorkById(dto: CreateAssignDto, organizationId: number) {
-        const isType = await this.typeWorkService.getOneBy({
-            criteria: { id: dto.idTypeWork },
-        });
+        const isType = await this.typeWorkService.getOneBy(
+            {
+                criteria: { id: dto.idTypeWork },
+            },
+            organizationId,
+        );
         const isObject = await this.getOneBy(
             {
                 criteria: { id: dto.idObject },
@@ -157,9 +160,12 @@ export class ObjectsService {
      * @returns Возвращает объект.
      */
     async deleteAssignById(dto: CreateAssignDto, organizationId: number) {
-        const isType = await this.typeWorkService.getOneBy({
-            criteria: { id: dto.idTypeWork },
-        });
+        const isType = await this.typeWorkService.getOneBy(
+            {
+                criteria: { id: dto.idTypeWork },
+            },
+            organizationId,
+        );
         const isObject = await this.getOneBy(
             {
                 criteria: { id: dto.idObject },
