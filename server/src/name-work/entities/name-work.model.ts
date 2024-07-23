@@ -13,7 +13,7 @@ import { NameList } from 'src/name_list/entities/name-list.model';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 import { Unit } from 'src/unit/unit.model';
-import { NameWorkTypeWork } from './name-work-typework';
+import { NameWorkTypeWork } from '../name-work-typework';
 
 interface NameWorkAttr {
     id: number;
@@ -39,6 +39,11 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
         unique: true,
     })
     name: string;
+
+    @Column({
+        type: DataType.INTEGER,
+    })
+    organizationId: number;
 
     @Column({
         type: DataType.DATE,

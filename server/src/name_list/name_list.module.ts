@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { NameWork } from 'src/name-work/name-work.model';
+import { NameWorkModule } from 'src/name-work/name-work.module';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
 import { NameList } from './entities/name-list.model';
 import { NameListController } from './name_list.controller';
@@ -11,12 +11,8 @@ import { NameListService } from './name_list.service';
     controllers: [NameListController],
     providers: [NameListService],
     imports: [
-        SequelizeModule.forFeature([
-            NameList,
-            ListNameWork,
-            TableAddingData,
-            NameWork,
-        ]),
+        SequelizeModule.forFeature([NameList, TableAddingData, NameWork]),
+        NameWorkModule,
     ],
     exports: [NameListService, SequelizeModule.forFeature([NameList])],
 })

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { DatabaseService } from 'src/database/database.service';
 import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
@@ -9,8 +14,9 @@ import { UnitService } from 'src/unit/unit.service';
 import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
 import { CreateNameWorkRowDto } from './dto/create-name-work-row.dto';
 import { CreateNameWorkDto } from './dto/create-name-work.dto';
+import { GetOneNameWorkByDto } from './dto/get/get-one-namework-by.dto';
+import { NameWork } from './entities/name-work.model';
 import { NameWorkTypeWork } from './name-work-typework';
-import { NameWork } from './name-work.model';
 
 @Injectable()
 export class NameWorkService {
@@ -24,6 +30,46 @@ export class NameWorkService {
         private databaseService: DatabaseService,
     ) {}
 
+    async getOneBy(
+        dto: GetOneNameWorkByDto,
+        organizationId: number,
+        params: { withDelete?: boolean } = {},
+    ) {
+        const nameWork = await this.nameWorkRepository.findOne({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDelete ? params.withDelete : null,
+            },
+            include: dto.relations || [],
+        });
+        if (!nameWork) {
+            throw new NotFoundException('NameWork not found');
+        }
+        return nameWork;
+    }
+
+    async getAllBy(
+        dto: GetOneNameWorkByDto,
+        organizationId: number,
+        params: { withDelete?: boolean } = {},
+    ) {
+        const nameWork = await this.nameWorkRepository.findAll({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDelete ? params.withDelete : null,
+            },
+            include: dto.relations || [],
+        });
+
+        return nameWork;
+    }
+
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async checkOneByName(name: string) {
         try {
             const nameWork = await this.nameWorkRepository.findOne({
@@ -48,6 +94,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async checkNameWithDto(dto: CreateNameWorkDto) {
         try {
             const { name, typeWorkId, unitId } = dto;
@@ -81,6 +131,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async findOneByName(name: string) {
         try {
             const nameWork = await this.nameWorkRepository.findOne({
@@ -107,6 +161,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     private async addTypeWork(id: number, arr: number[]): Promise<void> {
         try {
             console.log(id);
@@ -134,6 +192,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async createNameWorkDefault(dto: CreateNameWorkDto) {
         try {
             // Проверяем существование штук
@@ -209,6 +271,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async create(dto: CreateNameWorkDto) {
         try {
             console.log(dto);
@@ -272,6 +338,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async updateNameWork(dto: CreateNameWorkDto) {
         try {
             const { name, unitId, typeWorkId } = dto;
@@ -288,6 +358,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async createNoChecks(dto: CreateNameWorkDto) {
         try {
             console.log(dto);
@@ -382,6 +456,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async findAllNames() {
         try {
             const names = await this.nameWorkRepository.findAll({
@@ -429,6 +507,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllData() {
         try {
             const data = await this.nameWorkRepository.findAll({
@@ -447,6 +529,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getOneById(id: number) {
         try {
             const nameWork = await this.nameWorkRepository.findOne({
@@ -490,6 +576,10 @@ export class NameWorkService {
         }
     }
 
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getOneByIdShort(id: number) {
         try {
             const nameWork = await this.nameWorkRepository.findByPk(id);
@@ -512,6 +602,10 @@ export class NameWorkService {
     }
 
     // Получить наименования по типу
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllByTypeWorkId(typeWorkId: string) {
         try {
             if (typeWorkId === '0') {
@@ -564,6 +658,10 @@ export class NameWorkService {
     }
 
     // Создать из excel файла - получаем массив
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async createArrNameWork(dto: CreateNameWorkArrDto[]) {
         try {
             const arr = [];
@@ -624,6 +722,10 @@ export class NameWorkService {
 
     // ----------------------------------------------------- //
     // Получим список наименований для одного листа
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async getAllNamesInByListId(id: number) {
         try {
         } catch (e) {
@@ -638,6 +740,10 @@ export class NameWorkService {
     }
 
     // Создаём наименования и отдаём список
+    /**
+     * @deprecated This method is deprecated and will be removed in the future.
+     * Please use newMethod instead.
+     */
     async createNameWork(dto: CreateNameWorkRowDto[]) {
         try {
             // Отдаём в любом случае наименование

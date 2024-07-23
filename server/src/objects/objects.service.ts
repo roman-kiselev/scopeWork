@@ -1,6 +1,7 @@
 import {
     BadRequestException,
     ConflictException,
+    forwardRef,
     HttpException,
     HttpStatus,
     Inject,
@@ -25,11 +26,12 @@ import { IOneScopeWorkWithData } from './interfaces/IOneScopeWorkWithData';
 @Injectable()
 export class ObjectsService {
     constructor(
+        @Inject(forwardRef(() => ScopeWorkService))
+        private readonly scopeWorkService: ScopeWorkService,
         @InjectModel(Objects) private objectsRepository: typeof Objects,
         @Inject('USER_MAIN_SERVICE') private readonly clientUser: ClientProxy,
         private readonly listNameWorkService: ListNameWorkService,
         private readonly tableAddingDataService: TableAddingDataService,
-        private readonly scopeWorkService: ScopeWorkService,
         private readonly typeWorkService: TypeWorkService,
         private readonly nameListService: NameListService,
         private readonly scopeWorkUserService: ScopeWorkUserService,

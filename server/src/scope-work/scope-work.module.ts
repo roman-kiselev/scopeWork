@@ -8,8 +8,7 @@ import { ListNameWorkModule } from 'src/list-name-work/list-name-work.module';
 import { NameList } from 'src/name_list/entities/name-list.model';
 import { NameListModule } from 'src/name_list/name_list.module';
 import { ObjectTypeWork } from 'src/objects/entities/objects-type_work.model';
-import { Objects } from 'src/objects/entities/objects.model';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
+import { ObjectsModule } from 'src/objects/objects.module';
 import { TableAddingDataModule } from 'src/table-adding-data/table-adding-data.module';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 import { ScopeWork } from './entities/scope-work.model';
@@ -46,17 +45,16 @@ import { ScopeWorkService } from './scope-work.service';
             NameList,
             UserScopeWork,
             ListNameWork,
-            Objects,
-            TableAddingData,
         ]),
         NameListModule,
         DatabaseModule,
         ListNameWorkModule,
         TableAddingDataModule,
+        forwardRef(() => ObjectsModule),
     ],
     exports: [
-        ScopeWorkService,
         ScopeWorkUserService,
+        ScopeWorkService,
         SequelizeModule.forFeature([ScopeWork, UserScopeWork]),
     ],
 })

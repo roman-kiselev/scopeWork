@@ -8,7 +8,7 @@ import {
 } from 'sequelize-typescript';
 
 import { TypeWork } from 'src/type-work/entities/type-work.model';
-import { NameWork } from './name-work.model';
+import { NameWork } from './entities/name-work.model';
 
 @Table({ tableName: 'namework_typework' })
 export class NameWorkTypeWork extends Model<NameWorkTypeWork> {

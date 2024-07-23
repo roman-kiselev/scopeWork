@@ -14,9 +14,8 @@ import { DatabaseService } from 'src/database/database.service';
 import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { ListNameWorkService } from 'src/list-name-work/list-name-work.service';
 import { NameListService } from 'src/name_list/name_list.service';
-import { Objects } from 'src/objects/entities/objects.model';
 import { IListNamesWithData } from 'src/objects/interfaces/IListNamesWithData';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
+import { ObjectsService } from 'src/objects/objects.service';
 import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 import * as stream from 'stream';
@@ -40,14 +39,13 @@ export class ScopeWorkService {
         @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
         @InjectModel(ListNameWork)
         private listNameWorkRepository: typeof ListNameWork,
-        @InjectModel(Objects) private objectsRepository: typeof Objects,
-        @InjectModel(TableAddingData)
-        private tableAddingDataRepository: typeof TableAddingData,
+        // @InjectModel(Objects) private objectsRepository: typeof Objects,
         private nameListService: NameListService,
         private databaseService: DatabaseService,
         @Inject('USER_MAIN_SERVICE') private readonly clientUsers: ClientProxy,
         private readonly listNameWorkService: ListNameWorkService,
         private readonly tableAddingDataService: TableAddingDataService,
+        private readonly objectService: ObjectsService,
     ) {}
 
     async getScopeWorkBy(
@@ -199,87 +197,79 @@ export class ScopeWorkService {
      * Please use newMethod instead.
      */
     private async getDataCount(arr: ScopeWork[]) {
-        try {
-            let dataProgress = [];
-            const scopeWorkClone = [...arr];
-            for (const scopeWork of scopeWorkClone) {
-                const { id: idScopeWork, listNameWork } = scopeWork;
-                const arr = [];
-                for (const { id: listNameWorkId } of listNameWork) {
-                    const item =
-                        await this.nameListService.getDataProgressByList(
-                            listNameWorkId,
-                            idScopeWork,
-                        );
-                    const itemClone = [...item];
-                    const quntityNumber = itemClone
-                        .map((item) => item.quntity)
-                        .reduce(
-                            (currentItem, nextItem) => currentItem + nextItem,
-                            0,
-                        );
-                    const quantityDifferenceNumber = itemClone
-                        .map((item) => item.quantityDifference)
-                        .reduce(
-                            (currentItem, nextItem) => currentItem + nextItem,
-                            0,
-                        );
-                    const addingCountNumber = itemClone
-                        .map((item) => item.addingCount)
-                        .reduce(
-                            (currentItem, nextItem) => currentItem + nextItem,
-                            0,
-                        );
-                    const dataCount = {
-                        listNameWorkId,
-                        idScopeWork,
-                        quntity: quntityNumber,
-                        isDifference: itemClone.find(
-                            (item) => item.isDifference === true,
-                        )
-                            ? true
-                            : false,
-                        quantityDifference: quantityDifferenceNumber,
-                        addingCount: addingCountNumber,
-                        percent: (
-                            (addingCountNumber / quntityNumber) *
-                            100
-                        ).toFixed(1),
-                    };
-                    arr.push(dataCount);
-                }
-                const quntityMain = arr
+        let dataProgress = [];
+        const scopeWorkClone = [...arr];
+        for (const scopeWork of scopeWorkClone) {
+            const { id: idScopeWork, listNameWork } = scopeWork;
+            const arr = [];
+
+            for (const { id: listNameWorkId } of listNameWork) {
+                const item = await this.nameListService.getDataProgressByList(
+                    listNameWorkId,
+                    idScopeWork,
+                );
+                const itemClone = [...item];
+                const quntityNumber = itemClone
                     .map((item) => item.quntity)
                     .reduce(
                         (currentItem, nextItem) => currentItem + nextItem,
                         0,
                     );
-                const addingCountMain = arr
+                const quantityDifferenceNumber = itemClone
+                    .map((item) => item.quantityDifference)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    );
+                const addingCountNumber = itemClone
                     .map((item) => item.addingCount)
                     .reduce(
                         (currentItem, nextItem) => currentItem + nextItem,
                         0,
                     );
-                const mainCountData = {
-                    listNameWorkId: arr.map((item) => item.listNameWorkId),
-                    idScopeWork: arr.map((item) => item.idScopeWork),
-                    quntity: quntityMain,
-                    isDifference: arr.find((item) => item.isDifference === true)
+                const dataCount = {
+                    listNameWorkId,
+                    idScopeWork,
+                    quntity: quntityNumber,
+                    isDifference: itemClone.find(
+                        (item) => item.isDifference === true,
+                    )
                         ? true
                         : false,
-                    quantityDifference: arr
-                        .map((item) => item.quantityDifference)
-                        .reduce(
-                            (currentItem, nextItem) => currentItem + nextItem,
-                            0,
-                        ),
-                    addingCount: addingCountMain,
-                    percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+                    quantityDifference: quantityDifferenceNumber,
+                    addingCount: addingCountNumber,
+                    percent: (
+                        (addingCountNumber / quntityNumber) *
+                        100
+                    ).toFixed(1),
                 };
-                dataProgress.push({ ...scopeWork, ...mainCountData });
+                arr.push(dataCount);
             }
-            return dataProgress;
-        } catch (e) {}
+            const quntityMain = arr
+                .map((item) => item.quntity)
+                .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+            const addingCountMain = arr
+                .map((item) => item.addingCount)
+                .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+            const mainCountData = {
+                listNameWorkId: arr.map((item) => item.listNameWorkId),
+                idScopeWork: arr.map((item) => item.idScopeWork),
+                quntity: quntityMain,
+                isDifference: arr.find((item) => item.isDifference === true)
+                    ? true
+                    : false,
+                quantityDifference: arr
+                    .map((item) => item.quantityDifference)
+                    .reduce(
+                        (currentItem, nextItem) => currentItem + nextItem,
+                        0,
+                    ),
+                addingCount: addingCountMain,
+                percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+            };
+            dataProgress.push({ ...scopeWork, ...mainCountData });
+        }
+        return dataProgress;
     }
 
     /**
@@ -449,7 +439,7 @@ export class ScopeWorkService {
      * Please use newMethod instead.
      */
     // Создаём объём
-    async createScopeWork(dto: CreateScopeWorkDto) {
+    async createScopeWork(dto: CreateScopeWorkDto, organizationId: number) {
         try {
             // Получаем id Объекта
             // Получаем id Типа работ
@@ -457,7 +447,11 @@ export class ScopeWorkService {
             // Получаем пользователей
             const { listNameWork, objectId, typeWorkId, users } = dto;
             // Проверяем существование
-            const object = await this.objectsRepository.findByPk(objectId);
+            // const object = await this.objectsRepository.findByPk(objectId);
+            const object = await this.objectService.getOneBy(
+                { criteria: { id: objectId }, relations: [] },
+                organizationId,
+            );
             if (!object) {
                 throw new HttpException(
                     'Объект не найден',
@@ -566,7 +560,7 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async getOneScopeWork(id: string) {
+    async getOneScopeWork(id: string, organizationId: number) {
         try {
             const scopeWork = await this.scopeWorkRepository.findByPk(id, {
                 include: { all: true },
@@ -582,7 +576,11 @@ export class ScopeWorkService {
             const findTypeWork = await this.typeWorkRepository.findByPk(
                 typeWorkId,
             );
-            const findObject = await this.objectsRepository.findByPk(objectId);
+            // const findObject = await this.objectsRepository.findByPk(objectId);
+            const findObject = await this.objectService.getOneBy(
+                { criteria: { id: objectId }, relations: [] },
+                organizationId,
+            );
             let findList = [];
             for (const item of listNameWork) {
                 const { id } = item;
@@ -720,7 +718,7 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async getAllScopeWorkByUserId(id: string) {
+    async getAllScopeWorkByUserId(id: string, organizationId: number) {
         try {
             if (id === '1') {
                 const getAllScopeWork =
@@ -740,6 +738,7 @@ export class ScopeWorkService {
                 for (const { scopeWorkId } of getAllScopeWork) {
                     const findedScopeWork = await this.getOneScopeWork(
                         scopeWorkId.toString(),
+                        organizationId,
                     );
                     listScopeWork.push(findedScopeWork);
                 }
@@ -758,6 +757,7 @@ export class ScopeWorkService {
             for (const { scopeWorkId } of getAllScopeWork) {
                 const findedScopeWork = await this.getOneScopeWork(
                     scopeWorkId.toString(),
+                    organizationId,
                 );
                 listScopeWork.push(findedScopeWork);
             }
