@@ -18,8 +18,8 @@ import { ObjectsService } from './objects.service';
     controllers: [ObjectsController],
     providers: [ObjectsService],
     imports: [
-        IamModule,
         SequelizeModule.forFeature([Objects, ObjectTypeWork]),
+        IamModule,
         forwardRef(() =>
             ClientsModule.register([
                 {

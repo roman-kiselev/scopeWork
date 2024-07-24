@@ -36,7 +36,7 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
     @ApiProperty({ example: 'Товар', description: 'Товар' })
     @Column({
-        type: DataType.TEXT,
+        type: DataType.STRING,
         unique: true,
     })
     name: string;
@@ -53,9 +53,6 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
     @ForeignKey(() => Unit)
     unitId: number;
-
-    // @HasMany(() => TotalVolume)
-    // totalVolume: TotalVolume[];
 
     @HasMany(() => TableAddingData)
     tableAddingData: TableAddingData[];

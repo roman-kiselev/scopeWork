@@ -1,11 +1,16 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    HttpException,
+    HttpStatus,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { NameListService } from 'src/name_list/name_list.service';
 
 import { Item } from 'src/name_list/dto/create-name-list-by-name.dto';
 import { CreateNameListDto } from 'src/name_list/dto/create-name-list.dto';
-import { NameList } from 'src/name_list/entities/name-list.model';
 import { CreateListDto } from './dto/create-list.dto';
+import { GetOneListNameWorkByDto } from './dto/get/get-one-list-namework-by.dto';
 import { ListNameWorkEditDto } from './dto/list-name-work-edit.dto';
 import { ListNameWork } from './entities/list-name-work.model';
 
@@ -14,9 +19,31 @@ export class ListNameWorkService {
     constructor(
         @InjectModel(ListNameWork)
         private listNameWorkRepository: typeof ListNameWork,
-        @InjectModel(NameList) private nameListRepository: typeof NameList,
         private nameListService: NameListService,
     ) {}
+
+    async getOneBy(
+        dto: GetOneListNameWorkByDto,
+        organizationId: number,
+        params: { withDelete?: boolean } = {},
+    ) {
+        const listNameWork = await this.listNameWorkRepository.findOne({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDelete ? params.withDelete : null,
+            },
+            include: dto.relations || [],
+        });
+
+        if (!listNameWork) {
+            throw new NotFoundException(
+                'ListNameWork with this criteria not found',
+            );
+        }
+
+        return listNameWork;
+    }
 
     // TODO изменить include и изменить наименование
     /**
@@ -36,38 +63,29 @@ export class ListNameWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    private async formNameAsItem(nameListId: number) {
-        try {
-            const nameList = await this.listNameWorkRepository.findByPk(
-                nameListId,
-                {
-                    include: { all: true },
+    private async formNameAsItem(nameListId: number, organizationId: number) {
+        const nameList = await this.getOneBy(
+            {
+                criteria: {
+                    id: nameListId,
                 },
-            );
-            const x = JSON.stringify(nameList.nameWorks);
-            const cleanObj = JSON.parse(x);
-            //console.log(cleanObj);
-            const arrItem: Item[] = cleanObj.map((item) => {
-                //console.log(item);
-                return {
-                    id: item.id,
-                    index: item.id,
-                    key: item.id,
-                    name: item.name,
-                    quntity: item.NameList.quntity,
-                } as Item;
-            });
+                relations: ['nameWorks'],
+            },
+            organizationId,
+        );
+        const x = JSON.stringify(nameList.nameWorks);
+        const cleanObj = JSON.parse(x);
+        const arrItem: Item[] = cleanObj.map((item) => {
+            return {
+                id: item.id,
+                index: item.id,
+                key: item.id,
+                name: item.name,
+                quntity: item.NameList.quntity,
+            } as Item;
+        });
 
-            return arrItem;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return arrItem;
     }
 
     /**
@@ -75,36 +93,26 @@ export class ListNameWorkService {
      * Please use newMethod instead.
      */
     async createList(dto: CreateListDto) {
-        try {
-            const { name = '', description = '', typeWorkId = 5, list } = dto;
-            // После получения данных создаём список
-            const nameList = await this.listNameWorkRepository.create({
-                description,
-                name,
-                typeWorkId,
-            });
-            // Далее создаём наименования и количество
-            const finishedList = await this.nameListService.createByName({
-                list,
-                listNameWorkId: nameList.id,
-                typeWorkId: typeWorkId,
-            });
-            if (finishedList) {
-                const newNameList = await this.listNameWorkRepository.findByPk(
-                    nameList.id,
-                    { include: { all: true } },
-                );
-
-                return newNameList;
-            }
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
+        const { name = '', description = '', typeWorkId = 5, list } = dto;
+        // После получения данных создаём список
+        const listNameWork = await this.listNameWorkRepository.create({
+            description,
+            name,
+            typeWorkId,
+        });
+        // Далее создаём наименования и количество
+        const finishedList = await this.nameListService.createByName({
+            list,
+            listNameWorkId: listNameWork.id,
+            typeWorkId: typeWorkId,
+        });
+        if (finishedList) {
+            const newNameList = await this.listNameWorkRepository.findByPk(
+                listNameWork.id,
+                { include: { all: true } },
             );
+
+            return newNameList;
         }
     }
 
@@ -177,7 +185,7 @@ export class ListNameWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async editList(dto: ListNameWorkEditDto) {
+    async editList(dto: ListNameWorkEditDto, organizationId: number) {
         try {
             const { description, name, list, idNumber } = dto;
             // Редактируем
@@ -202,7 +210,10 @@ export class ListNameWorkService {
 
             const dataForAdd = [];
             const dataForEdit = [];
-            const cleanEditFields = await this.formNameAsItem(idNumber);
+            const cleanEditFields = await this.formNameAsItem(
+                idNumber,
+                organizationId,
+            );
 
             for (let i = 0; i < list.length; i++) {
                 const findItem = editFields.nameWorks.find(

@@ -14,6 +14,7 @@ import { ObjectTypeWork } from './objects-type_work.model';
 interface ObjectsAttr {
     name: string;
     address: string;
+    organizationId: number;
 }
 
 @Table({ tableName: 'objects', paranoid: true })
@@ -26,22 +27,26 @@ export class Objects extends Model<Objects, ObjectsAttr> {
         primaryKey: true,
     })
     id: number;
+
     @ApiProperty({ example: 'Зеландия', description: 'Название' })
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
     name: string;
+
     @ApiProperty({ example: 'г. Москва', description: 'Адрес' })
     @Column({
         type: DataType.STRING,
         allowNull: false,
     })
     address: string;
+
     @ApiProperty({ example: '12.01.2099', description: 'Дата' })
     @Column({ type: DataType.DATE })
     deletedAt!: Date;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор организации' })
     @Column({ type: DataType.INTEGER })
     organizationId: number;
 

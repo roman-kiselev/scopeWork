@@ -7,12 +7,18 @@ import {
     Param,
     Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { CreateTypeWorkDto } from './dto/create-type-work.dto';
 import { TypeWork } from './entities/type-work.model';
 import { TypeWorkService } from './type-work.service';
 
 @ApiTags('Тип работ')
+@ApiBearerAuth()
 @Controller('type-work')
 export class TypeWorkController {
     constructor(private typeWorkService: TypeWorkService) {}

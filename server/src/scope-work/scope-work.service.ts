@@ -11,13 +11,12 @@ import * as ExcelJS from 'exceljs';
 import { firstValueFrom } from 'rxjs';
 import sequelize, { QueryTypes } from 'sequelize';
 import { DatabaseService } from 'src/database/database.service';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { ListNameWorkService } from 'src/list-name-work/list-name-work.service';
 import { NameListService } from 'src/name_list/name_list.service';
 import { IListNamesWithData } from 'src/objects/interfaces/IListNamesWithData';
 import { ObjectsService } from 'src/objects/objects.service';
 import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
-import { TypeWork } from 'src/type-work/entities/type-work.model';
+import { TypeWorkService } from 'src/type-work/type-work.service';
 import * as stream from 'stream';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
@@ -36,16 +35,13 @@ export class ScopeWorkService {
         @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
         @InjectModel(UserScopeWork)
         private userScopeWorkRepository: typeof UserScopeWork,
-        @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
-        @InjectModel(ListNameWork)
-        private listNameWorkRepository: typeof ListNameWork,
-        // @InjectModel(Objects) private objectsRepository: typeof Objects,
-        private nameListService: NameListService,
-        private databaseService: DatabaseService,
         @Inject('USER_MAIN_SERVICE') private readonly clientUsers: ClientProxy,
         private readonly listNameWorkService: ListNameWorkService,
         private readonly tableAddingDataService: TableAddingDataService,
         private readonly objectService: ObjectsService,
+        private readonly databaseService: DatabaseService,
+        private readonly nameListService: NameListService,
+        private readonly typeWorkService: TypeWorkService,
     ) {}
 
     async getScopeWorkBy(
@@ -196,10 +192,10 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    private async getDataCount(arr: ScopeWork[]) {
+    private async _getDataCount(arr: ScopeWork[]) {
         let dataProgress = [];
-        const scopeWorkClone = [...arr];
-        for (const scopeWork of scopeWorkClone) {
+
+        for (const scopeWork of arr) {
             const { id: idScopeWork, listNameWork } = scopeWork;
             const arr = [];
 
@@ -245,6 +241,7 @@ export class ScopeWorkService {
                 };
                 arr.push(dataCount);
             }
+
             const quntityMain = arr
                 .map((item) => item.quntity)
                 .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
@@ -267,8 +264,74 @@ export class ScopeWorkService {
                 addingCount: addingCountMain,
                 percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
             };
+
             dataProgress.push({ ...scopeWork, ...mainCountData });
         }
+        return dataProgress;
+    }
+    private async getDataCount(arr: ScopeWork[]) {
+        const dataProgress = [];
+
+        for (const scopeWork of arr) {
+            let quntityMain = 0;
+            let addingCountMain = 0;
+            const dataCounts = [];
+
+            for (const { id: listNameWorkId } of scopeWork.listNameWork) {
+                const item = await this.nameListService.getDataProgressByList(
+                    listNameWorkId,
+                    scopeWork.id,
+                );
+
+                const quntityNumber = item.reduce(
+                    (acc, cur) => acc + cur.quntity,
+                    0,
+                );
+                const quantityDifferenceNumber = item.reduce(
+                    (acc, cur) => acc + cur.quantityDifference,
+                    0,
+                );
+                const addingCountNumber = item.reduce(
+                    (acc, cur) => acc + cur.addingCount,
+                    0,
+                );
+                const isDifference = item.some((item) => item.isDifference);
+
+                quntityMain += quntityNumber;
+                addingCountMain += addingCountNumber;
+
+                const percent = (
+                    (addingCountNumber / quntityNumber) *
+                    100
+                ).toFixed(1);
+
+                dataCounts.push({
+                    listNameWorkId,
+                    idScopeWork: scopeWork.id,
+                    quntity: quntityNumber,
+                    isDifference,
+                    quantityDifference: quantityDifferenceNumber,
+                    addingCount: addingCountNumber,
+                    percent,
+                });
+            }
+
+            const mainCountData = {
+                listNameWorkId: dataCounts.map((item) => item.listNameWorkId),
+                idScopeWork: scopeWork.id,
+                quntity: quntityMain,
+                isDifference: dataCounts.some((item) => item.isDifference),
+                quantityDifference: dataCounts.reduce(
+                    (acc, cur) => acc + cur.quantityDifference,
+                    0,
+                ),
+                addingCount: addingCountMain,
+                percent: ((addingCountMain / quntityMain) * 100).toFixed(1),
+            };
+
+            dataProgress.push({ ...scopeWork, ...mainCountData });
+        }
+
         return dataProgress;
     }
 
@@ -303,28 +366,25 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    private async checkArrListNameWork(arr: number[]) {
-        try {
-            let errNameWork: boolean = false;
+    private async checkArrListNameWork(arr: number[], organizationId: number) {
+        let errNameWork: boolean = false;
 
-            for (const item of arr) {
-                const findedNameWork =
-                    await this.listNameWorkRepository.findByPk(item);
-                if (!findedNameWork) {
-                    errNameWork = true;
-                }
-            }
-
-            return errNameWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
+        for (const item of arr) {
+            const findedNameWork = await this.listNameWorkService.getOneBy(
+                {
+                    criteria: {
+                        id: item,
+                    },
+                    relations: [],
+                },
+                organizationId,
             );
+            if (!findedNameWork) {
+                errNameWork = true;
+            }
         }
+
+        return errNameWork;
     }
 
     /**
@@ -458,14 +518,24 @@ export class ScopeWorkService {
                     HttpStatus.NOT_FOUND,
                 );
             }
-            const typeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+            // const typeWork = await this.typeWorkRepository.findByPk(typeWorkId);
+            const typeWork = await this.typeWorkService.getOneBy(
+                {
+                    criteria: { id: typeWorkId },
+                    relations: [],
+                },
+                organizationId,
+            );
             if (!typeWork) {
                 throw new HttpException(
                     'Тип работ не найден',
                     HttpStatus.NOT_FOUND,
                 );
             }
-            const isNameWork = await this.checkArrListNameWork(listNameWork);
+            const isNameWork = await this.checkArrListNameWork(
+                listNameWork,
+                organizationId,
+            );
             if (isNameWork) {
                 throw new HttpException(
                     'Списки работ не найдены',
@@ -573,8 +643,15 @@ export class ScopeWorkService {
                 );
             }
             const { typeWorkId, objectId, listNameWork } = finishScopeWork;
-            const findTypeWork = await this.typeWorkRepository.findByPk(
-                typeWorkId,
+            // const findTypeWork = await this.typeWorkRepository.findByPk(
+            //     typeWorkId,
+            // );
+            const findTypeWork = await this.typeWorkService.getOneBy(
+                {
+                    criteria: { id: typeWorkId },
+                    relations: [],
+                },
+                organizationId,
             );
             // const findObject = await this.objectsRepository.findByPk(objectId);
             const findObject = await this.objectService.getOneBy(
@@ -584,11 +661,18 @@ export class ScopeWorkService {
             let findList = [];
             for (const item of listNameWork) {
                 const { id } = item;
-                const findedList = await this.listNameWorkRepository.findByPk(
-                    id,
+                // const findedList = await this.listNameWorkRepository.findByPk(
+                //     id,
+                //     {
+                //         include: { all: true },
+                //     },
+                // );
+                const findedList = await this.listNameWorkService.getOneBy(
                     {
-                        include: { all: true },
+                        criteria: { id },
+                        relations: ['nameWorks'],
                     },
+                    organizationId,
                 );
                 findList.push(JSON.parse(JSON.stringify(findedList)));
             }
@@ -780,7 +864,10 @@ export class ScopeWorkService {
      * Please use newMethod instead.
      */
     // Получение статистики
-    async getAllListWorkForEditByScopeWorkId(id: string) {
+    async getAllListWorkForEditByScopeWorkId(
+        id: string,
+        organizationId: number,
+    ) {
         try {
             // Получаем объём
             const scopeWork = await this.scopeWorkRepository.findByPk(id, {
@@ -792,11 +879,18 @@ export class ScopeWorkService {
             // Получаем весь список наименований
             // Учесть что списков с работами может быть несколько
             for (const { id: idListNameWork } of listNameWork) {
-                const oneList = await this.listNameWorkRepository.findByPk(
-                    idListNameWork,
+                // const oneList = await this.listNameWorkRepository.findByPk(
+                //     idListNameWork,
+                //     {
+                //         include: { all: true },
+                //     },
+                // );
+                const oneList = await this.listNameWorkService.getOneBy(
                     {
-                        include: { all: true },
+                        criteria: { id: idListNameWork },
+                        relations: ['nameWorks'],
                     },
+                    organizationId,
                 );
 
                 const { nameWorks } = oneList;
@@ -875,9 +969,8 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async getAllScopeWorkSqlShort(id: string) {
-        try {
-            const query = `
+    async getAllScopeWorkSqlShort(id: string, organizationId: number) {
+        const query = `
       SELECT 
       sw.id,
       sw.deletedAt,
@@ -918,7 +1011,7 @@ export class ScopeWorkService {
   GROUP BY id; 
       `;
 
-            const query2 = `
+        const query2 = `
       SELECT 
       sw.id,
       sw.deletedAt,
@@ -926,13 +1019,15 @@ export class ScopeWorkService {
       sw.nameObject,
       sw.sum,
       sw.sumCurrent,
-      sw.percent
+      sw.percent,
+      sw.organizationId
   FROM
       scopework.\`user-scope-work\` usw
           INNER JOIN
       (SELECT 
-          sw.id,
+              sw.id,
               sw.deletedAt,
+              sw.organizationId,
               tw.name AS nameTypework,
               obj.name AS nameObject,
               SUM(sumSw.t1Quntity) AS sum,
@@ -966,28 +1061,20 @@ export class ScopeWorkService {
       INNER JOIN scopework.objects obj ON obj.id = sw.objectId
       GROUP BY id) sw ON sw.id = usw.scopeWorkId
   WHERE
-      userId = :userId;
+      userId = :userId AND organizationId = :organizationId;
       `;
-            const replacements = {
-                userId: id,
-            };
+        const replacements = {
+            userId: id,
+            organizationId: organizationId,
+        };
 
-            const data: IScopeworkShort[] =
-                await this.scopeWorkRepository.sequelize.query(query2, {
-                    type: QueryTypes.SELECT,
-                    replacements,
-                });
+        const data: IScopeworkShort[] =
+            await this.scopeWorkRepository.sequelize.query(query2, {
+                type: QueryTypes.SELECT,
+                replacements,
+            });
 
-            return data;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+        return data;
     }
 
     /**

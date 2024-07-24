@@ -3,14 +3,11 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { DatabaseModule } from 'src/database/database.module';
 import { IamModule } from 'src/iam/iam.module';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { ListNameWorkModule } from 'src/list-name-work/list-name-work.module';
-import { NameList } from 'src/name_list/entities/name-list.model';
 import { NameListModule } from 'src/name_list/name_list.module';
-import { ObjectTypeWork } from 'src/objects/entities/objects-type_work.model';
 import { ObjectsModule } from 'src/objects/objects.module';
 import { TableAddingDataModule } from 'src/table-adding-data/table-adding-data.module';
-import { TypeWork } from 'src/type-work/entities/type-work.model';
+import { TypeWorkModule } from 'src/type-work/type-work.module';
 import { ScopeWork } from './entities/scope-work.model';
 import { UserScopeWork } from './entities/user-scope-work.model';
 import { ScopeWorkUserService } from './scope-work-user.service';
@@ -37,20 +34,13 @@ import { ScopeWorkService } from './scope-work.service';
                 },
             ]),
         ),
-        SequelizeModule.forFeature([
-            ScopeWork,
-            UserScopeWork,
-            TypeWork,
-            ObjectTypeWork,
-            NameList,
-            UserScopeWork,
-            ListNameWork,
-        ]),
+        SequelizeModule.forFeature([ScopeWork, UserScopeWork]),
         DatabaseModule,
         TableAddingDataModule,
         forwardRef(() => ObjectsModule),
         NameListModule,
         ListNameWorkModule,
+        TypeWorkModule,
     ],
     exports: [
         ScopeWorkUserService,

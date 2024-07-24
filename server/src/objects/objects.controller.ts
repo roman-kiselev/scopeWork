@@ -1,4 +1,5 @@
 import {
+    ConflictException,
     Controller,
     Get,
     HttpException,
@@ -17,9 +18,13 @@ import {
 import { RolesGuard } from 'src/iam/authorization/guards/roles/roles.guard';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { Roles } from 'src/iam/decorators/roles-auth.decorator';
+import { RoleName } from 'src/iam/enums/RoleName';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { AssignDto } from './dto/assign-type.dto';
-import { CreateObjectDto } from './dto/create-object.dto';
+import { AssignDto } from './dto/assign/assign-type.dto';
+import { CreateObjectDto } from './dto/create/create-object.dto';
+import { ObjectShortDataDto } from './dto/response/object-short-data.dto';
+import { ObjectWithoutDelDto } from './dto/response/object-without-del.dto';
+import { ObjectDto } from './dto/response/object.dto';
 import { Objects } from './entities/objects.model';
 import { ObjectsService } from './objects.service';
 
@@ -30,26 +35,20 @@ export class ObjectsController {
     constructor(private objectsService: ObjectsService) {}
 
     @ApiOperation({ summary: 'Получение всех объектов' })
-    @ApiResponse({ status: HttpStatus.OK, type: [Objects] })
+    @ApiResponse({ status: HttpStatus.OK, type: [ObjectDto] })
     @ApiResponse({ type: HttpException })
-    // @Roles('admin')
-    // @UseGuards(RolesGuard)
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
     @Get('/')
     getAllObjects(@ActiveUser() user: ActiveUserData) {
-        return this.objectsService.getAllByWith(
-            { criteria: {}, relations: [] },
-            user.organizationId,
-        );
+        return this.objectsService.getAll(user.organizationId);
     }
 
-    @Get('/test')
-    async test(@ActiveUser() user: ActiveUserData) {
-        return this.objectsService.getAllScopeWorksWithFullData(
-            1,
-            user.organizationId,
-        );
-    }
-
+    @ApiOperation({ summary: 'Получение всех объектов' })
+    @ApiResponse({ status: HttpStatus.OK, type: [ObjectShortDataDto] })
+    @ApiResponse({ status: HttpStatus.CONFLICT, type: ConflictException })
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
     @Get('/shortData')
     async getAllDataShort(@ActiveUser() user: ActiveUserData) {
         return this.objectsService.getListObjectWithShortData(
@@ -58,18 +57,20 @@ export class ObjectsController {
     }
 
     @ApiOperation({ summary: 'Получение одного объекта' })
-    @ApiResponse({ status: HttpStatus.OK, type: Objects })
+    @ApiResponse({ status: HttpStatus.OK, type: ObjectDto })
     @ApiResponse({ type: HttpException })
-    // @Roles('admin')
-    // @UseGuards(RolesGuard)
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
     @Get('/:id')
     getOneObject(@Param('id') id: number, @ActiveUser() user: ActiveUserData) {
-        return this.objectsService.getOneBy(
-            { criteria: { id } },
-            user.organizationId,
-        );
+        return this.objectsService.getOneObjectById(id, user.organizationId);
     }
 
+    @ApiOperation({ summary: 'Получение одного объекта с данными' })
+    @ApiResponse({ status: HttpStatus.OK, type: ObjectShortDataDto })
+    @ApiResponse({ type: HttpException })
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
     @Get('/getData/:id')
     getDataForOneObject(
         @Param('id') id: number,
@@ -78,11 +79,16 @@ export class ObjectsController {
         return this.objectsService.getDataByObjectId(id, user.organizationId);
     }
 
+    @ApiOperation({ summary: 'Получение одного объекта с полными данными' })
+    @ApiResponse({ status: HttpStatus.OK, type: ObjectShortDataDto })
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
     @Get('/fullData/:id')
     async getWithFullData(
         @Param('id') id: number,
         @ActiveUser() user: ActiveUserData,
     ) {
+        console.log('id', id);
         return this.objectsService.getAllScopeWorksWithFullData(
             id,
             user.organizationId,
@@ -90,13 +96,16 @@ export class ObjectsController {
     }
 
     @ApiOperation({ summary: 'Создание объектов' })
-    @ApiResponse({ status: HttpStatus.OK, type: Objects })
-    @ApiResponse({ type: HttpException })
-    // @Roles('admin')
-    // @UseGuards(RolesGuard)
+    @ApiResponse({ status: HttpStatus.OK, type: ObjectWithoutDelDto })
+    @ApiResponse({ status: HttpStatus.CONFLICT, type: ConflictException })
+    @Roles('admin')
+    @UseGuards(RolesGuard)
     @Post('/')
-    async createOneObject(@Body() dto: CreateObjectDto) {
-        return this.objectsService.createObject(dto);
+    async createOneObject(
+        @Body() dto: CreateObjectDto,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.objectsService.createObject(dto, user.organizationId);
     }
 
     @ApiOperation({ summary: 'Добавляем связь с типом работ' })

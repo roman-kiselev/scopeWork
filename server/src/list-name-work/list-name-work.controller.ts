@@ -8,13 +8,21 @@ import {
     Param,
     Post,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateListDto } from './dto/create-list.dto';
 import { ListNameWorkEditDto } from './dto/list-name-work-edit.dto';
 import { ListNameWork } from './entities/list-name-work.model';
 import { ListNameWorkService } from './list-name-work.service';
 
 @ApiTags('Список листов')
+@ApiBearerAuth()
 @Controller('list-name-work')
 export class ListNameWorkController {
     constructor(private listNameWorkService: ListNameWorkService) {}
@@ -85,8 +93,11 @@ export class ListNameWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: ListNameWork })
     @ApiResponse({ type: HttpException })
     @Post('/edit')
-    editNameList(@Body() dto: ListNameWorkEditDto) {
-        return this.listNameWorkService.editList(dto);
+    editNameList(
+        @Body() dto: ListNameWorkEditDto,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.listNameWorkService.editList(dto, user.organizationId);
     }
 
     @ApiOperation({ summary: 'Удаление' })

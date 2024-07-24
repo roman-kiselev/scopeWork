@@ -15,9 +15,6 @@ import { NameList } from './entities/name-list.model';
 export class NameListService {
     constructor(
         @InjectModel(NameList) private nameListRepository: typeof NameList,
-        // @InjectModel(NameWork) private nameWorkRepositiry: typeof NameWork,
-        // @InjectModel(TableAddingData)
-        // private tableAddingDataRepository: typeof TableAddingData,
         private readonly tableAddingDataService: TableAddingDataService,
         private readonly nameWorkService: NameWorkService,
     ) {}
@@ -440,15 +437,6 @@ export class NameListService {
                 listNameWorkId,
                 quntity,
             } = list;
-            // Теперь нужны данные из tableAddingdData - выполненые работы
-            // const addingTableForOneList =
-            //     await this.tableAddingDataRepository.findAll({
-            //         where: {
-            //             nameListId,
-            //             scopeWorkId,
-            //             deletedAt: null,
-            //         },
-            //     });
 
             const addingTableForOneList =
                 await this.tableAddingDataService.getAllBy({

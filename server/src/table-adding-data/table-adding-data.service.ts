@@ -3,11 +3,8 @@ import { ClientProxy } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/sequelize';
 import { firstValueFrom } from 'rxjs';
 import { Op, QueryTypes, Sequelize } from 'sequelize';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
-import { NameWork } from 'src/name-work/entities/name-work.model';
-import { NameList } from 'src/name_list/entities/name-list.model';
-import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
-import { Unit } from 'src/unit/entities/unit.model';
+import { NameWorkService } from 'src/name-work/name-work.service';
+import { UnitService } from 'src/unit/unit.service';
 import { CreateDelTableDto } from './dto/create-deltable.dto';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { GetAllByDto } from './dto/get-all-by.dto';
@@ -20,20 +17,16 @@ import { IGetHistory } from './interfaces/IGetHistory';
 @Injectable()
 export class TableAddingDataService {
     constructor(
+        @InjectModel(DelTableAddingData)
+        private delTableAddingDataRepository: typeof DelTableAddingData,
         @InjectModel(TableAddingData)
         private tableAddingDataRepository: typeof TableAddingData,
 
-        @InjectModel(NameList) private nameListRepository: typeof NameList,
-        @InjectModel(NameWork) private nameWorkRepository: typeof NameWork,
-        @InjectModel(ScopeWork) private scopeWorkRepository: typeof ScopeWork,
-        @InjectModel(ListNameWork)
-        private listNameWorkRepository: typeof ListNameWork,
-        @InjectModel(Unit) private unitRepository: typeof Unit,
-        @InjectModel(DelTableAddingData)
-        private delTableAddingDataRepository: typeof DelTableAddingData,
         @Inject('USER_MAIN_SERVICE') private readonly clientUser: ClientProxy,
         @Inject('USER_DESCRIPTION_MAIN_SERVICE')
         private readonly clientDescriptionUser: ClientProxy,
+        private readonly unitService: UnitService,
+        private readonly nameWorkService: NameWorkService,
     ) {}
 
     /**
@@ -161,6 +154,7 @@ export class TableAddingDataService {
      * Please use newMethod instead.
      */
     async findAllString(
+        organizationId: number,
         page: string,
         limit: string,
         dateFrom?: string,
@@ -235,14 +229,23 @@ export class TableAddingDataService {
                 const userName = `${user.lastname} ${user.firstname}`;
 
                 // Получим наименование работ
-                const oneNameWork = await this.nameWorkRepository.findByPk(
-                    nameWorkId,
+                // const oneNameWork = await this.nameWorkRepository.findByPk(
+                //     nameWorkId,
+                // );
+                const oneNameWork = await this.nameWorkService.getOneNameWorkBy(
+                    {
+                        criteria: { id: nameWorkId },
+                        relations: [],
+                    },
+                    organizationId,
                 );
                 const nameWork = oneNameWork.name;
                 const finishDate = createdAt.toString().split('T')[0];
-                const unitName = (
-                    await this.unitRepository.findByPk(oneNameWork.unitId)
-                ).name;
+
+                const unitName = await this.unitService.getOneUnitBy(
+                    { criteria: { id: oneNameWork.unitId }, relations: [] },
+                    organizationId,
+                );
                 const log = {
                     id,
                     userId,
@@ -250,7 +253,7 @@ export class TableAddingDataService {
                     nameWorkId,
                     nameListId,
                     createdAt,
-                    text: `Пользователь ${userName} добавил в Объём №${scopeWorkId}: "${nameWork}" - ${quntity} ${unitName}.`,
+                    text: `Пользователь ${userName} добавил в Объём №${scopeWorkId}: "${nameWork}" - ${quntity} ${unitName.name}.`,
                 };
                 arr.push(log);
             }

@@ -57,8 +57,14 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: [IScopeworkShort] })
     @ApiResponse({ type: HttpException })
     @Get('/getShort/:id')
-    async getShort(@Param('id') id: string) {
-        return await this.scopeWorkService.getAllScopeWorkSqlShort(id);
+    async getShort(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return await this.scopeWorkService.getAllScopeWorkSqlShort(
+            id,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Быстрый запрос' })
@@ -126,9 +132,13 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
     @ApiResponse({ type: HttpException })
     @Get('/getListByScopeWorkId/:id')
-    async getListByScopeWorkId(@Param('id') id: string) {
+    async getListByScopeWorkId(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
         return await this.scopeWorkService.getAllListWorkForEditByScopeWorkId(
             id,
+            user.organizationId,
         );
     }
 

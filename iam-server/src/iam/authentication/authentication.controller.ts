@@ -48,7 +48,7 @@ export class AuthenticationController {
     })
     @Post('sign-up')
     signUp(@Body() signUpDto: SignUpDto) {
-        //return this.authenticationService.signUp(signUpDto);
+        return this.authenticationService.signUp(signUpDto);
     }
 
     @ApiOperation({

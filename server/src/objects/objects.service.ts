@@ -17,16 +17,15 @@ import { ScopeWorkUserService } from 'src/scope-work/scope-work-user.service';
 import { ScopeWorkService } from 'src/scope-work/scope-work.service';
 import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
 import { TypeWorkService } from 'src/type-work/type-work.service';
-import { CreateAssignDto } from './dto/create-assign.dto';
-import { CreateObjectDto } from './dto/create-object.dto';
-import { GetOneDto } from './dto/get-one-by.dto';
+import { CreateAssignDto } from './dto/create/create-assign.dto';
+import { CreateObjectDto } from './dto/create/create-object.dto';
+import { GetOneDto } from './dto/get/get-one-by.dto';
 import { Objects } from './entities/objects.model';
 import { IOneScopeWorkWithData } from './interfaces/IOneScopeWorkWithData';
 
 @Injectable()
 export class ObjectsService {
     constructor(
-        @Inject(forwardRef(() => ScopeWorkService))
         @InjectModel(Objects)
         private objectsRepository: typeof Objects,
         @Inject('USER_MAIN_SERVICE') private readonly clientUser: ClientProxy,
@@ -56,8 +55,9 @@ export class ObjectsService {
                 deletedAt: params.withDeleted ? params.withDeleted : null,
             },
             include: dto.relations || [],
-            rejectOnEmpty: !params.rejectOnEmpty ? true : params.rejectOnEmpty,
+            rejectOnEmpty: params.rejectOnEmpty || false,
         });
+
         if (!object) {
             throw new NotFoundException('Object with this criteria not found');
         }
@@ -83,28 +83,45 @@ export class ObjectsService {
             include: dto.relations || [],
         });
 
+        if (!objects) {
+            throw new NotFoundException('Objects with this criteria not found');
+        }
+
         return objects;
+    }
+
+    async getAll(organizationId: number) {
+        const objects = await this.getAllByWith(
+            { criteria: {}, relations: [] },
+            organizationId,
+        );
+
+        return objects;
+    }
+
+    async getOneObjectById(id: number, organizationId: number) {
+        const object = await this.getOneBy(
+            { criteria: { id } },
+            organizationId,
+        );
+
+        return object;
     }
 
     /**
      * Метод для создания объекта.
      * @returns Возвращает объект.
      */
-    async createObject(dto: CreateObjectDto) {
-        const foundObject = await this.getOneBy(
-            {
-                criteria: { name: dto.name },
-            },
-            dto.organizationId,
-        );
-
-        if (foundObject) {
-            throw new ConflictException('Object with this name already exists');
-        }
-        const object = await this.objectsRepository.create(dto);
+    async createObject(dto: CreateObjectDto, organizationId: number) {
+        const object = await this.objectsRepository.create({
+            name: dto.name,
+            address: dto.address,
+            organizationId,
+        });
         if (!object) {
             throw new ConflictException('Failed to create an object');
         }
+
         return object;
     }
 
@@ -325,6 +342,10 @@ export class ObjectsService {
             { criteria: { id: idObject }, relations: ['scopeWorks'] },
             organizationId,
         );
+        if (scopeWorks.length === 0) {
+            return { pinnedUserIds: [], notAssignedUser: [] };
+        }
+
         const scopeWorksIdArr: number[] = scopeWorks.map((item) => item.id);
         const usersPromise =
             this.tableAddingDataService.getParticipats(scopeWorksIdArr);
@@ -454,12 +475,12 @@ export class ObjectsService {
             return JSON.parse(dataRedis);
         }
 
-        const { scopeWorks } = await this.getOneBy(
+        const dataObject = await this.getOneBy(
             { criteria: { id: idObject }, relations: ['scopeWorks'] },
             organizationId,
         );
 
-        const filteredScopeWorks = scopeWorks.filter(
+        const filteredScopeWorks = dataObject.scopeWorks.filter(
             (item) => item.organizationId !== null,
         );
         const { pinnedUserIds, notAssignedUser } =

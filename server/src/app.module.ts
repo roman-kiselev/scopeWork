@@ -23,13 +23,10 @@ import { NameWorkModule } from './name-work/name-work.module';
 import { NameListModule } from './name_list/name_list.module';
 import { ObjectsModule } from './objects/objects.module';
 import { RedisModule } from './redis/redis.module';
-import { RolesModule } from './roles/roles.module';
 import { ScopeWorkModule } from './scope-work/scope-work.module';
 import { TableAddingDataModule } from './table-adding-data/table-adding-data.module';
 import { TypeWorkModule } from './type-work/type-work.module';
 import { UnitModule } from './unit/unit.module';
-import { UserDescriptionModule } from './user-description/user-description.module';
-import { UserModule } from './user/user.module';
 
 @Module({
     imports: [
@@ -51,7 +48,7 @@ import { UserModule } from './user/user.module';
             models: [],
             autoLoadModels: true,
             synchronize: true,
-            //sync: { force: true },
+            // sync: { force: true },
         }),
         forwardRef(() =>
             ClientsModule.register([
@@ -82,10 +79,6 @@ import { UserModule } from './user/user.module';
                 }),
             ),
         }),
-
-        UserModule,
-        RolesModule,
-        UserDescriptionModule,
         ObjectsModule,
         TypeWorkModule,
         ScopeWorkModule,
