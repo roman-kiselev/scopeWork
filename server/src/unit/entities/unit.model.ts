@@ -27,6 +27,7 @@ export class Unit extends Model<Unit, UnitAttr> {
     })
     name: string;
 
+    @ApiProperty({ example: '1', description: 'ID организации' })
     @Column({ type: DataType.INTEGER })
     organizationId: number;
 
@@ -37,11 +38,13 @@ export class Unit extends Model<Unit, UnitAttr> {
     })
     description: string;
 
+    @ApiProperty({ example: null, description: 'Время удаления' })
     @Column({
         type: DataType.DATE,
     })
     deletedAt?: Date;
 
+    @ApiProperty({ type: () => [NameWork], description: 'Список наименований' })
     @HasMany(() => NameWork)
     nameWork: NameWork[];
 }

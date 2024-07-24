@@ -1,4 +1,4 @@
-import { Unit } from '../entities/unit.model';
+import { Unit } from '../../entities/unit.model';
 
 export class GetOneUnitBy {
     criteria: Partial<Unit>;
