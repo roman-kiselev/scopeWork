@@ -6,8 +6,8 @@ import {
     NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { GetOneUnitBy } from './dto/get-one-unit-by.dto';
-import { CreateUniteDto } from './dto/unit.dto';
+import { CreateUniteDto } from './dto/create/create-unit.dto';
+import { GetOneUnitBy } from './dto/get/get-one-unit-by.dto';
 import { Unit } from './entities/unit.model';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class UnitService {
                 deletedAt: params.withDeleted ? params.withDeleted : null,
             },
             include: dto.relations || [],
-            rejectOnEmpty: !params.rejectOnEmpty ? true : params.rejectOnEmpty,
+            rejectOnEmpty: params.rejectOnEmpty || false,
         });
 
         if (!unit) {
@@ -61,11 +61,28 @@ export class UnitService {
     }
 
     /**
+     * Проверка существования еденицы измерения.
+     * @returns Возвращает объект или null.
+     */
+    async checkUnit(dto: GetOneUnitBy, organizationId: number) {
+        try {
+            const unit = await this.getOneUnitBy(
+                { criteria: { name: dto.criteria.name }, relations: [] },
+                organizationId,
+            );
+
+            return unit;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    /**
      * Метод создания еденицы измерения.
      * @returns Возвращает объект.
      */
     async createUnit(dto: CreateUniteDto, organizationId: number) {
-        const unit = await this.getOneUnitBy(
+        const unit = await this.checkUnit(
             { criteria: { name: dto.name }, relations: [] },
             organizationId,
         );
@@ -109,7 +126,9 @@ export class UnitService {
             organizationId,
         );
 
-        return unit.name;
+        return {
+            name: unit.name,
+        };
     }
 
     /**
