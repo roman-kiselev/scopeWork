@@ -34,20 +34,25 @@ export class ScopeWork extends Model<ScopeWork> {
     // })
     // number: number;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор организации' })
     @Column({ type: DataType.INTEGER })
     organizationId: number;
 
+    @ApiProperty({ example: '12.01.2099', description: 'Дата удаления' })
     @Column({ type: DataType.DATE })
     deletedAt!: Date;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор типа работы' })
     @ForeignKey(() => TypeWork)
     @Column({ type: DataType.INTEGER })
     typeWorkId: number;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор объекта' })
     @ForeignKey(() => Objects)
     @Column({ type: DataType.INTEGER })
     objectId: number;
 
+    @ApiProperty({ type: () => [ListNameWork], description: 'Список работ' })
     @HasMany(() => ListNameWork)
     listNameWork: ListNameWork[];
 
@@ -56,6 +61,10 @@ export class ScopeWork extends Model<ScopeWork> {
     // @Column({ type: DataType.INTEGER })
     // userId: number;
 
+    @ApiProperty({
+        type: () => [TableAddingData],
+        description: 'Таблица данных',
+    })
     @HasMany(() => TableAddingData)
     tableAddingData: TableAddingData[];
 }

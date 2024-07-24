@@ -48,22 +48,30 @@ export class ListNameWork extends Model<ListNameWork, ListNameWorkAttr> {
     } as ModelAttributeColumnOptions)
     description?: string;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор организации' })
     @Column({
         type: DataType.INTEGER,
     })
     organizationId: number;
 
+    @ApiProperty({
+        example: '12.01.2099',
+        description: 'Дата удаления',
+    })
     @Column({
         type: DataType.DATE,
     } as ModelAttributeColumnOptions)
     deletedAt!: Date;
 
+    @ApiProperty({ example: 1, description: 'Идентификатор типа работы' })
     @ForeignKey(() => TypeWork)
     typeWorkId: number;
 
+    @ApiProperty({ type: () => [NameWork], description: 'Список работ' })
     @BelongsToMany(() => NameWork, () => NameList)
     nameWorks: NameWork[];
 
+    @ApiProperty({ example: 1, description: 'Идентификатор объёма' })
     @ForeignKey(() => ScopeWork)
     scopeWorkId: number;
 }

@@ -41,25 +41,34 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
     })
     name: string;
 
+    @ApiProperty({ example: '1', description: 'Индефикатор организации' })
     @Column({
         type: DataType.INTEGER,
     })
     organizationId: number;
 
+    @ApiProperty({ example: '22.09.2022', description: 'Дата удаления' })
     @Column({
         type: DataType.DATE,
     })
     deletedAt?: Date;
 
+    @ApiProperty({ example: '1', description: 'Индефикатор еденицы измерения' })
     @ForeignKey(() => Unit)
     unitId: number;
 
+    @ApiProperty({
+        type: () => [TableAddingData],
+        description: 'Таблица добавления данных',
+    })
     @HasMany(() => TableAddingData)
     tableAddingData: TableAddingData[];
 
+    @ApiProperty({ type: () => [TypeWork], description: 'Тип работы' })
     @BelongsToMany(() => TypeWork, () => NameWorkTypeWork)
     typeWorks: TypeWork[];
 
+    @ApiProperty({ type: () => [ListNameWork], description: 'Список работ' })
     @BelongsToMany(() => ListNameWork, () => NameList)
     listNameWorks: ListNameWork[];
 }

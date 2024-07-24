@@ -1,12 +1,13 @@
 import {
+    ConflictException,
     HttpException,
     HttpStatus,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { CreateTypeWorkDto } from './dto/create-type-work.dto';
-import { GetOneByDto } from './dto/get-one-by.dto';
+import { CreateTypeWorkDto } from './dto/create/create-type-work.dto';
+import { GetOneByDto } from './dto/get/get-one-by.dto';
 import { TypeWork } from './entities/type-work.model';
 
 @Injectable()
@@ -15,6 +16,10 @@ export class TypeWorkService {
         @InjectModel(TypeWork) private typeWorkRepository: typeof TypeWork,
     ) {}
 
+    /**
+     * Метод для получения одного типа.
+     * @returns Возвращает тип
+     */
     async getOneBy(
         dto: GetOneByDto,
         organizationId: number,
@@ -28,10 +33,32 @@ export class TypeWorkService {
             },
             include: dto.relations || [],
         });
+
         if (!type) {
             throw new NotFoundException('Type with this criteria not found');
         }
+
         return type;
+    }
+
+    /**
+     * Метод для проверки наличия типа в базе.
+     * @returns Возвращает созданный тип
+     */
+    async checkOneBy(dto: GetOneByDto, organizationId: number) {
+        try {
+            const type = await this.getOneBy(
+                {
+                    criteria: dto.criteria,
+                    relations: [],
+                },
+                organizationId,
+            );
+
+            return type;
+        } catch (e) {
+            return null;
+        }
     }
 
     async checkTypeWorksByIds(ids: number[], organizationId: number) {
@@ -145,33 +172,32 @@ export class TypeWorkService {
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Метод для создания типа работ.
+     * @returns Возвращает созданный тип
      */
-    async createTypeWork(dto: CreateTypeWorkDto) {
+    async createTypeWork(dto: CreateTypeWorkDto, organizationId: number) {
+        const isType = await this.checkOneBy(
+            { criteria: { name: dto.name }, relations: [] },
+            organizationId,
+        );
+
+        if (isType) {
+            throw new ConflictException(
+                'Typework with this name already exists',
+            );
+        }
+
         try {
-            const isType = await this.checkOneObjectByName(dto.name);
-            if (isType) {
-                throw new HttpException(
-                    'Тип с таким наименованием существует',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-            const typeWork = await this.typeWorkRepository.create(dto);
-            if (!typeWork) {
-                throw new HttpException(
-                    'Неудалось создать наименование',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
+            const typeWork = await this.typeWorkRepository.create({
+                name: dto.name,
+                description: dto.description,
+                organizationId: organizationId,
+            });
+
             return typeWork;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                e.message,
-                HttpStatus.INTERNAL_SERVER_ERROR,
+        } catch (error) {
+            throw new ConflictException(
+                'Filed create TypeWork. Please try again',
             );
         }
     }
