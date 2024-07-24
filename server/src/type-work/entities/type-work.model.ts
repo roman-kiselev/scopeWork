@@ -20,6 +20,7 @@ interface TypeWorkAttr {
     name: string;
     description: string;
     deletedAt?: Date;
+    organizationId: number;
 }
 
 @Table({ tableName: 'type_work' })
@@ -47,6 +48,7 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
     })
     description: string;
 
+    @ApiProperty({ example: '1', description: 'Идентификатор организации' })
     @Column({ type: DataType.INTEGER })
     organizationId: number;
 
@@ -54,15 +56,22 @@ export class TypeWork extends Model<TypeWork, TypeWorkAttr> {
     @Column({ type: DataType.DATE })
     deletedAt!: Date;
 
+    @ApiProperty({ type: () => [Objects], description: 'Список объектов' })
     @BelongsToMany(() => Objects, () => ObjectTypeWork)
     objects: Objects[];
 
+    @ApiProperty({ type: () => [NameWork], description: 'Список названий' })
     @BelongsToMany(() => NameWork, () => NameWorkTypeWork)
     nameWorks: NameWork[];
 
+    @ApiProperty({ type: () => [ScopeWork], description: 'Список объёмов' })
     @HasMany(() => ScopeWork)
     scopeWork: ScopeWork[];
 
+    @ApiProperty({
+        type: () => [ListNameWork],
+        description: 'Список листов названий',
+    })
     @HasMany(() => ListNameWork)
     listNameWork: ListNameWork[];
 }
