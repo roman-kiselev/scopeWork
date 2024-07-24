@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateObjectDto {
     @ApiProperty({ example: 'Зеландия', description: 'Наименование' })
@@ -11,9 +11,4 @@ export class CreateObjectDto {
     @IsOptional()
     @IsString()
     readonly address: string;
-
-    @ApiProperty({ example: 1, description: 'id организации' })
-    @IsNotEmpty()
-    @IsNumber()
-    readonly organizationId: number;
 }

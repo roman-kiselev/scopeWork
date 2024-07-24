@@ -14,6 +14,8 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateNameListDto } from './dto/create-name-list.dto';
 import { NameList } from './entities/name-list.model';
 import { NameListService } from './name_list.service';
@@ -57,8 +59,14 @@ export class NameListController {
 
     @ApiOperation({ summary: 'Наименование для одного списка' })
     @Get('/getNames/:id')
-    getAllNameWorkByListId(@Param('id') id: number) {
-        return this.nameListService.getAllNameWorkByListId(id);
+    getAllNameWorkByListId(
+        @Param('id') id: number,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return this.nameListService.getAllNameWorkByListId(
+            id,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Создание' })

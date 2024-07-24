@@ -18,6 +18,8 @@ import { ObjectsService } from './objects.service';
     controllers: [ObjectsController],
     providers: [ObjectsService],
     imports: [
+        SequelizeModule.forFeature([Objects, ObjectTypeWork]),
+        IamModule,
         forwardRef(() =>
             ClientsModule.register([
                 {
@@ -33,14 +35,12 @@ import { ObjectsService } from './objects.service';
                 },
             ]),
         ),
-        SequelizeModule.forFeature([Objects, ObjectTypeWork]),
         RedisModule,
-        IamModule,
-        ScopeWorkModule,
-        NameListModule,
         TableAddingDataModule,
+        TypeWorkModule,
+        forwardRef(() => ScopeWorkModule),
+        NameListModule,
         ListNameWorkModule,
-        forwardRef(() => TypeWorkModule),
     ],
     exports: [
         ObjectsService,

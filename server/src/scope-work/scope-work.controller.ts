@@ -18,8 +18,10 @@ import {
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { RolesGuard } from 'src/iam/authorization/guards/roles/roles.guard';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { Roles } from 'src/iam/decorators/roles-auth.decorator';
 import { RoleName } from 'src/iam/enums/RoleName';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
 import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
 import { ScopeWork } from './entities/scope-work.model';
@@ -55,8 +57,14 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: [IScopeworkShort] })
     @ApiResponse({ type: HttpException })
     @Get('/getShort/:id')
-    async getShort(@Param('id') id: string) {
-        return await this.scopeWorkService.getAllScopeWorkSqlShort(id);
+    async getShort(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return await this.scopeWorkService.getAllScopeWorkSqlShort(
+            id,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Быстрый запрос' })
@@ -71,16 +79,28 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
     @ApiResponse({ type: HttpException })
     @Get('/:id')
-    async getOneById(@Param('id') id: string) {
-        return await this.scopeWorkService.getOneScopeWork(id);
+    async getOneById(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return await this.scopeWorkService.getOneScopeWork(
+            id,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Получить все для пользователя' })
     @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
     @ApiResponse({ type: HttpException })
     @Get('/getAllByUserId/:id')
-    async getAllByuserId(@Param('id') id: string) {
-        return await this.scopeWorkService.getAllScopeWorkByUserId(id);
+    async getAllByuserId(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return await this.scopeWorkService.getAllScopeWorkByUserId(
+            id,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Получить историю' })
@@ -112,9 +132,13 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
     @ApiResponse({ type: HttpException })
     @Get('/getListByScopeWorkId/:id')
-    async getListByScopeWorkId(@Param('id') id: string) {
+    async getListByScopeWorkId(
+        @Param('id') id: string,
+        @ActiveUser() user: ActiveUserData,
+    ) {
         return await this.scopeWorkService.getAllListWorkForEditByScopeWorkId(
             id,
+            user.organizationId,
         );
     }
 
@@ -122,8 +146,14 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
     @ApiResponse({ type: HttpException })
     @Post('/')
-    async createScope(@Body() dto: CreateScopeWorkDto) {
-        return await this.scopeWorkService.createScopeWork(dto);
+    async createScope(
+        @Body() dto: CreateScopeWorkDto,
+        @ActiveUser() user: ActiveUserData,
+    ) {
+        return await this.scopeWorkService.createScopeWork(
+            dto,
+            user.organizationId,
+        );
     }
 
     @ApiOperation({ summary: 'Редактирование объёма' })

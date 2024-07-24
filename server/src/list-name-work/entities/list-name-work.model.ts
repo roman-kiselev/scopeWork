@@ -49,6 +49,11 @@ export class ListNameWork extends Model<ListNameWork, ListNameWorkAttr> {
     description?: string;
 
     @Column({
+        type: DataType.INTEGER,
+    })
+    organizationId: number;
+
+    @Column({
         type: DataType.DATE,
     } as ModelAttributeColumnOptions)
     deletedAt!: Date;

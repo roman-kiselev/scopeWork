@@ -1,8 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { ListNameWork } from 'src/list-name-work/entities/list-name-work.model';
 import { NameWork } from 'src/name-work/entities/name-work.model';
-import { TableAddingData } from 'src/table-adding-data/entities/table-adding-data.model';
+import { NameWorkService } from 'src/name-work/name-work.service';
+import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.service';
 import {
     CreateNameListByNameDto,
     Item,
@@ -15,11 +15,8 @@ import { NameList } from './entities/name-list.model';
 export class NameListService {
     constructor(
         @InjectModel(NameList) private nameListRepository: typeof NameList,
-        @InjectModel(ListNameWork)
-        private listNameWorkRepository: typeof ListNameWork,
-        @InjectModel(NameWork) private nameWorkRepositiry: typeof NameWork,
-        @InjectModel(TableAddingData)
-        private tableAddingDataRepository: typeof TableAddingData,
+        private readonly tableAddingDataService: TableAddingDataService,
+        private readonly nameWorkService: NameWorkService,
     ) {}
 
     async getAllBy(dto: GetAllByDto) {
@@ -425,62 +422,50 @@ export class NameListService {
      * Please use newMethod instead.
      */
     async getDataProgressByList(listId: number, scopeWorkId: number) {
-        try {
-            const listArr = await this.nameListRepository.findAll({
-                where: {
-                    listNameWorkId: listId,
-                },
-            });
+        const listArr = await this.nameListRepository.findAll({
+            where: {
+                listNameWorkId: listId,
+            },
+        });
 
-            let dataList = [];
-            // Теперь получаем quntity и nameWorkId для получения изменений по этип спискам
-            for (const list of listArr) {
-                const {
-                    id: nameListId,
-                    nameWorkId,
-                    listNameWorkId,
-                    quntity,
-                } = list;
-                // Теперь нужны данные из tableAddingdData - выполненые работы
-                const addingTableForOneList =
-                    await this.tableAddingDataRepository.findAll({
-                        where: {
-                            nameListId,
-                            scopeWorkId,
-                            deletedAt: null,
-                        },
-                    });
+        let dataList = [];
+        // Теперь получаем quntity и nameWorkId для получения изменений по этип спискам
+        for (const list of listArr) {
+            const {
+                id: nameListId,
+                nameWorkId,
+                listNameWorkId,
+                quntity,
+            } = list;
 
-                const cloneAddingTableForOneList = [...addingTableForOneList];
-                const addingCount = cloneAddingTableForOneList
-                    .map((item) => Number(item.quntity))
-                    .reduce(
-                        (currentItem, nextItem) => currentItem + nextItem,
-                        0,
-                    );
-
-                dataList.push({
-                    listNameWorkId,
-                    nameListId,
-                    quntity,
-                    isDifference: addingCount > quntity ? true : false,
-                    quantityDifference:
-                        addingCount > quntity ? addingCount - quntity : 0,
-                    addingCount,
-                    percent: ((addingCount / quntity) * 100).toFixed(1),
+            const addingTableForOneList =
+                await this.tableAddingDataService.getAllBy({
+                    criteria: {
+                        nameListId,
+                        scopeWorkId,
+                        deletedAt: null,
+                    },
+                    relations: [],
                 });
-            }
 
-            return dataList;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            const cloneAddingTableForOneList = [...addingTableForOneList];
+            const addingCount = cloneAddingTableForOneList
+                .map((item) => Number(item.quntity))
+                .reduce((currentItem, nextItem) => currentItem + nextItem, 0);
+
+            dataList.push({
+                listNameWorkId,
+                nameListId,
+                quntity,
+                isDifference: addingCount > quntity ? true : false,
+                quantityDifference:
+                    addingCount > quntity ? addingCount - quntity : 0,
+                addingCount,
+                percent: ((addingCount / quntity) * 100).toFixed(1),
+            });
         }
+
+        return dataList;
     }
 
     /**
@@ -488,39 +473,30 @@ export class NameListService {
      * Please use newMethod instead.
      */
     // получение всех наименований работ для одного списка
-    async getAllNameWorkByListId(id: number) {
-        try {
-            const list = await this.nameListRepository.findAll({
-                where: {
-                    listNameWorkId: id,
+    async getAllNameWorkByListId(id: number, organizationId: number) {
+        const list = await this.nameListRepository.findAll({
+            where: {
+                listNameWorkId: id,
+            },
+        });
+
+        const listNames = [];
+        for (const { nameWorkId, quntity, id } of list) {
+            const nameWork = await this.nameWorkService.getOneNameWorkBy(
+                {
+                    criteria: { id: nameWorkId },
+                    relations: [],
                 },
-            });
-
-            const listNames = [];
-            for (const { nameWorkId, quntity, id } of list) {
-                const nameWork = await this.nameWorkRepositiry.findByPk(
-                    nameWorkId,
-                    {
-                        raw: true,
-                    },
-                );
-                listNames.push({
-                    ...nameWork,
-                    quntity,
-                    nameListId: id,
-                });
-            }
-
-            return listNames;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
+                organizationId,
             );
+            listNames.push({
+                ...nameWork,
+                quntity,
+                nameListId: id,
+            });
         }
+
+        return listNames;
     }
 
     /**

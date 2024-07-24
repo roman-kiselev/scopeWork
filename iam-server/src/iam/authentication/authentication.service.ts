@@ -77,12 +77,13 @@ export class AuthenticationService {
     }
 
     async signUp(dto: SignUpDto) {
-        const user = await this.userService.findOneBy({ email: dto.email });
+        const user = await this.userService.checkUniqueEmail(dto.email);
         if (user) {
             throw new ConflictException(
                 `User with email ${dto.email} already exists`,
             );
         }
+
         const hashPassword = await this.hashingService.hash(dto.password);
         const candidate = await this.userService.createUser({
             ...dto,

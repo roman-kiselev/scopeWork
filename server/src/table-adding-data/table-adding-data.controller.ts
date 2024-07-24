@@ -8,6 +8,8 @@ import {
     Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
+import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { CreateDelTableDto } from './dto/create-deltable.dto';
 import { CreateTableAddingDatumDto } from './dto/create-table-adding-datum.dto';
 import { UpdateTableAddingDatumDto } from './dto/update-table-adding-datum.dto';
@@ -37,8 +39,10 @@ export class TableAddingDataController {
         @Query('limit') limit: string,
         @Query('dateFrom') dateFrom: string,
         @Query('dateTo') dateTo: string,
+        @ActiveUser() user: ActiveUserData,
     ) {
         return this.tableAddingDataService.findAllString(
+            user.organizationId,
             page,
             limit,
             dateFrom,

@@ -36,24 +36,23 @@ export class NameWork extends Model<NameWork, NameWorkAttr> {
 
     @ApiProperty({ example: 'Товар', description: 'Товар' })
     @Column({
-        type: DataType.TEXT,
+        type: DataType.STRING,
         unique: true,
     })
     name: string;
+
+    @Column({
+        type: DataType.INTEGER,
+    })
+    organizationId: number;
 
     @Column({
         type: DataType.DATE,
     })
     deletedAt?: Date;
 
-    @Column({ type: DataType.INTEGER })
-    organizationId: number;
-
     @ForeignKey(() => Unit)
     unitId: number;
-
-    // @HasMany(() => TotalVolume)
-    // totalVolume: TotalVolume[];
 
     @HasMany(() => TableAddingData)
     tableAddingData: TableAddingData[];

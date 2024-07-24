@@ -55,6 +55,7 @@ export class ScopeWorkUserService {
             group: ['userId'],
             attributes: ['userId'],
         });
+
         if (!userScopeWork) {
             throw new NotFoundException(
                 'UserScopeWork with this criteria not found',

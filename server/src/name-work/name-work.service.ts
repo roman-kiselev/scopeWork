@@ -28,7 +28,7 @@ export class NameWorkService {
      * Универсальный метод для получения одного объекта.
      * @returns Возвращает объект.
      */
-    private async getOneNameWorkBy(
+    async getOneNameWorkBy(
         dto: GetOneNameWorkBy,
         organizationId: number,
         params: {
@@ -59,7 +59,7 @@ export class NameWorkService {
      * Универсальный метод для получения списка.
      * @returns Возвращает список.
      */
-    private async getAllNameWorkBy(
+    async getAllNameWorkBy(
         dto: GetOneNameWorkBy,
         organizationId: number,
         params: { withDeleted?: boolean } = {},

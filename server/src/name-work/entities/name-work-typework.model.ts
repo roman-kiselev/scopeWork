@@ -6,7 +6,6 @@ import {
     Model,
     Table,
 } from 'sequelize-typescript';
-
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 import { NameWork } from './name-work.model';
 
