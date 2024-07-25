@@ -34,7 +34,6 @@ export class Unit extends Model<Unit, UnitAttr> {
     @ApiProperty({ example: 'Штуки', description: 'Описание' })
     @Column({
         type: DataType.STRING,
-        unique: true,
     })
     description: string;
 

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTypeWorkDto {
     @ApiProperty({ example: 'АСКУЭ', description: 'Наименование' })
@@ -11,7 +11,7 @@ export class CreateTypeWorkDto {
         example: 'Автоматизированная система',
         description: 'Описание',
     })
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    readonly description: string;
+    readonly description?: string;
 }

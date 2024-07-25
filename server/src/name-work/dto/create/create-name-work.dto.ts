@@ -1,6 +1,12 @@
-import { Optional } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+    ArrayNotEmpty,
+    IsArray,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsString,
+} from 'class-validator';
 
 export class CreateNameWorkDto {
     @ApiProperty({ example: 'Товар', description: 'Наименование товара' })
@@ -8,13 +14,15 @@ export class CreateNameWorkDto {
     @IsString()
     name: string;
 
-    @ApiProperty({ example: '1', description: 'id Типа работ' })
+    @ApiProperty({ example: [1, 2], description: 'id Типа работ' })
     @IsNotEmpty()
+    @ArrayNotEmpty()
     @IsArray()
+    @IsNumber({}, { each: true })
     typeWorkId: number[];
 
     @ApiProperty({ example: '1', description: 'id еденицы измерения' })
-    @Optional()
+    @IsOptional()
     @IsNumber()
     unitId?: number;
 }
