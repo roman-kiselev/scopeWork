@@ -136,10 +136,11 @@ export class UnitService {
      * @returns Возвращает объект.
      */
     async getDefaultUnit(organizationId: number) {
-        const unit = await this.getOneUnitBy(
+        const unit = await this.checkUnit(
             { criteria: { name: 'шт' }, relations: [] },
             organizationId,
         );
+
         if (!unit) {
             const newUnit = await this.createUnit(
                 { name: 'шт', description: 'Штуки' },
@@ -148,6 +149,21 @@ export class UnitService {
             return newUnit;
         }
         return unit;
+    }
+
+    async createUnitByName(name: string, organizationId: number) {
+        const unit = await this.checkUnit(
+            { criteria: { name }, relations: [] },
+            organizationId,
+        );
+        if (unit) {
+            return unit;
+        }
+        const newUnit = await this.createUnit(
+            { name, description: 'Пусто' },
+            organizationId,
+        );
+        return newUnit;
     }
 }
 

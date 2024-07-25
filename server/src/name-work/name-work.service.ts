@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     ConflictException,
     Injectable,
     NotFoundException,
@@ -8,11 +9,12 @@ import { DatabaseService } from 'src/database/database.service';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 import { TypeWorkService } from 'src/type-work/type-work.service';
 import { UnitService } from 'src/unit/unit.service';
-import { CreateNameWorkArrDto } from './dto/create-name-work-arr.dto';
-import { CreateNameWorkRowDto } from './dto/create-name-work-row.dto';
-import { CreateNameWorkDto } from './dto/create-name-work.dto';
-import { GetOneNameWorkBy } from './dto/get-one-name-work-by.dto';
-import { UpdateNameWorkDto } from './dto/update-name-work.dto';
+import { CreateNameWorkArrDto } from './dto/create/create-name-work-arr.dto';
+import { CreateNameWorkRowDto } from './dto/create/create-name-work-row.dto';
+import { CreateNameWorkDto } from './dto/create/create-name-work.dto';
+import { CreateNameworkWithNameUnitDto } from './dto/create/create-namework-with-name-unit';
+import { GetOneNameWorkByDto } from './dto/get/get-one-namework-by.dto';
+import { UpdateNameWorkDto } from './dto/update/update-name-work.dto';
 import { NameWork } from './entities/name-work.model';
 
 @Injectable()
@@ -29,7 +31,7 @@ export class NameWorkService {
      * @returns Возвращает объект.
      */
     async getOneNameWorkBy(
-        dto: GetOneNameWorkBy,
+        dto: GetOneNameWorkByDto,
         organizationId: number,
         params: {
             rejectOnEmpty?: boolean;
@@ -43,7 +45,7 @@ export class NameWorkService {
                 deletedAt: params.withDeleted ? params.withDeleted : null,
             },
             include: dto.relations || [],
-            rejectOnEmpty: !params.rejectOnEmpty ? true : params.rejectOnEmpty,
+            rejectOnEmpty: params.rejectOnEmpty || false,
         });
 
         if (!nameWork) {
@@ -60,7 +62,7 @@ export class NameWorkService {
      * @returns Возвращает список.
      */
     async getAllNameWorkBy(
-        dto: GetOneNameWorkBy,
+        dto: GetOneNameWorkByDto,
         organizationId: number,
         params: { withDeleted?: boolean } = {},
     ) {
@@ -74,6 +76,22 @@ export class NameWorkService {
         });
 
         return nameWorks;
+    }
+
+    async checkNameWorkByName(name: string, organizationId: number) {
+        try {
+            const nameWork = await this.getOneNameWorkBy(
+                {
+                    criteria: { name: name.trim() },
+                    relations: [],
+                },
+                organizationId,
+            );
+
+            return nameWork;
+        } catch (e) {
+            return null;
+        }
     }
 
     /**
@@ -126,6 +144,7 @@ export class NameWorkService {
         const unit = await this.unitService.getOneUnitBy(
             { criteria: { id: dto.unitId }, relations: [] },
             organizationId,
+            { rejectOnEmpty: false },
         );
 
         const nameWork = await this.nameWorkRepository.create({
@@ -139,8 +158,9 @@ export class NameWorkService {
                 dto.typeWorkId,
                 organizationId,
             );
+
         const promises = promisesResolve.map((item) => {
-            return nameWork.$set('typeWorks', [dto.typeWorkId[item.id]]);
+            return nameWork.$add('typeWorks', [item.id]);
         });
         const result = await Promise.all(promises);
         if (!result || !nameWork) {
@@ -159,6 +179,7 @@ export class NameWorkService {
         organizationId: number,
     ) {
         const unit = await this.unitService.getDefaultUnit(organizationId);
+
         const nameWork = this.createNameWorkWithUnit(
             {
                 name: dto.name.trim(),
@@ -175,6 +196,42 @@ export class NameWorkService {
     }
 
     /**
+     * Создаёт unit по наименованию и создаёт namework
+     * @returns Возвращает созданный объект.
+     */
+    private async createNameWorkWithUnitByName(
+        dto: CreateNameworkWithNameUnitDto,
+        organizationId: number,
+    ) {
+        const unit = await this.unitService.createUnitByName(
+            dto.unitName.trim(),
+            organizationId,
+        );
+
+        const nameWork = await this.nameWorkRepository.create({
+            name: dto.name,
+            unitId: unit.id,
+            organizationId,
+        });
+
+        const { promisesResolve } =
+            await this.typeWorkService.checkTypeWorksByIds(
+                dto.typeWorkId,
+                organizationId,
+            );
+
+        const promises = promisesResolve.map((item) => {
+            return nameWork.$add('typeWorks', [item.id]);
+        });
+        const result = await Promise.all(promises);
+        if (!result || !nameWork) {
+            throw new ConflictException('NameWork not created');
+        }
+
+        return nameWork;
+    }
+
+    /**
      * Создание наименования по умолчанию со штуками.
      * @returns объект наименования.
      */
@@ -182,14 +239,10 @@ export class NameWorkService {
         dto: CreateNameWorkDto,
         organizationId: number,
     ) {
-        const nameWork = await this.getOneNameWorkBy(
-            { criteria: { name: dto.name.trim() }, relations: [] },
-            organizationId,
-        );
-        if (nameWork) {
-            throw new ConflictException(
-                'NameWork with this name already exists',
-            );
+        const isName = await this.checkNameWorkByName(dto.name, organizationId);
+
+        if (isName) {
+            throw new ConflictException('NameWork already exists');
         }
 
         if (!dto.unitId) {
@@ -481,78 +534,96 @@ export class NameWorkService {
         return newNames;
     }
 
-    // Создать из excel файла - получаем массив
-    // TODO требуется доработать
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Подготовка массива для добавления.
+     * @returns список.
+     */
+    private async prepareCreateNameWorkArr(
+        dto: CreateNameWorkArrDto[],
+        organizationId: number,
+    ) {
+        const arrNames = dto.map((name) => {
+            return name.name.trim();
+        });
+
+        const names = await this.nameWorkRepository.findAll({
+            where: {
+                name: arrNames,
+                organizationId,
+                deletedAt: null,
+            },
+        });
+
+        const finishArr: CreateNameWorkArrDto[] = [];
+
+        dto.forEach((name) => {
+            const findIndex = names.findIndex(
+                (n) => n.name === name.name.trim(),
+            );
+            if (findIndex === -1) {
+                finishArr.push(name);
+            }
+        });
+
+        return finishArr;
+    }
+
+    // Создать из excel файла - получаем массив
+    /**
+     * Создаем массив наименований.
+     * @returns список.
      */
     async createArrNameWork(
         dto: CreateNameWorkArrDto[],
         organizationId: number,
     ) {
-        const arr = [];
+        const prepareArr = await this.prepareCreateNameWorkArr(
+            dto,
+            organizationId,
+        );
 
-        for (const { name, typeWork, unit } of dto) {
-            const findedTypeWork = await this.typeWorkService.getOneBy(
-                { criteria: { name: typeWork.trim() }, relations: [] },
+        const t = await this.nameWorkRepository.sequelize.transaction();
+        try {
+            const typeWorks = await this.typeWorkService.getAllBy(
+                { criteria: { organizationId }, relations: [] },
                 organizationId,
             );
-            const findedName = await this.nameWorkRepository.findOne({
-                where: { name: name.trim() },
+
+            const arr = prepareArr.map((nameWork) => {
+                const typeWork = typeWorks.find(
+                    (t) => t.name === nameWork.typeWork,
+                );
+                return {
+                    name: nameWork.name.trim(),
+                    unitName: nameWork.unit.trim(),
+                    typeWorkId: typeWork.id,
+                    organizationId: organizationId,
+                };
             });
-            const findedUnit = await this.unitService.getOneUnitBy(
-                {
-                    criteria: { name: unit.trim() },
-                    relations: [],
-                },
-                organizationId,
-            );
 
-            let isFindedNameTypeWork = false;
+            const newArrPromises = arr.map((nameWork) => {
+                return this.createNameWorkWithUnitByName(
+                    {
+                        name: nameWork.name,
+                        typeWorkId: [nameWork.typeWorkId],
+                        unitName: nameWork.unitName,
+                    },
+                    nameWork.organizationId,
+                );
+            });
 
-            if (findedTypeWork && findedName) {
-                const findedNameTypeWork =
-                    await this.nameWorkRepository.findOne({
-                        where: {
-                            id: findedName.id,
-                        },
-                        include: [
-                            {
-                                model: TypeWork,
-                                where: {
-                                    id: findedTypeWork.id,
-                                },
-                            },
-                        ],
-                    });
-                if (findedNameTypeWork) {
-                    isFindedNameTypeWork = true;
-                }
-            }
+            const newArr = await Promise.all(newArrPromises);
 
-            if (findedTypeWork && findedUnit && !isFindedNameTypeWork) {
-                arr.push({
-                    name,
-                    typeWorkId: findedTypeWork.id,
-                    unitId: findedUnit.id,
-                });
-            }
+            await t.commit();
+            return newArr;
+        } catch (e) {
+            await t.rollback();
+            throw new BadRequestException(e);
         }
-
-        const responseArr = [];
-
-        // Здесь ошибка с createNoChecks
-        // for (const item of arr) {
-        //     const itemCreate = await this.createNoChecks(item);
-        //     responseArr.push(itemCreate);
-        // }
-
-        return responseArr;
     }
 
     // Создаём наименования и отдаём список
-    // TODO требуется доработать
+    // TODO требуется доработать(Протестировать)
     /**
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
@@ -607,8 +678,9 @@ export class NameWorkService {
      * @returns список.
      */
     async findNameWorksByName(text: string, organizationId: number) {
+        // TODO: доработать проблема с базой данных (изменить наименование)
         const query = `
-      SELECT * FROM scopework.name_work
+      SELECT * FROM sw.name_work
       WHERE name LIKE :textForFind AND organizationId = :organizationId
       ORDER BY CASE WHEN name LIKE :textStart THEN 0 ELSE 1 END, name
       LIMIT 10;

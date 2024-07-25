@@ -42,6 +42,27 @@ export class TypeWorkService {
     }
 
     /**
+     * Метод для получения списка типов.
+     * @returns Возвращает список
+     */
+    async getAllBy(
+        dto: GetOneByDto,
+        organizationId: number,
+        params: { withDeleted?: boolean } = {},
+    ) {
+        const types = await this.typeWorkRepository.findAll({
+            where: {
+                ...dto.criteria,
+                organizationId,
+                deletedAt: params.withDeleted ? params.withDeleted : null,
+            },
+            include: dto.relations || [],
+        });
+
+        return types;
+    }
+
+    /**
      * Метод для проверки наличия типа в базе.
      * @returns Возвращает созданный тип
      */

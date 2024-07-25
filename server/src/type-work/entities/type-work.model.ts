@@ -18,7 +18,7 @@ import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
 interface TypeWorkAttr {
     id: number;
     name: string;
-    description: string;
+    description?: string;
     deletedAt?: Date;
     organizationId: number;
 }
