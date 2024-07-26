@@ -1,7 +1,10 @@
 import {
+    BadRequestException,
     ConflictException,
+    forwardRef,
     HttpException,
     HttpStatus,
+    Inject,
     Injectable,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
@@ -14,6 +17,7 @@ import {
 } from './dto/create/create-name-list-by-name.dto';
 import { CreateNameListDto } from './dto/create/create-name-list.dto';
 
+import { ListNameWorkService } from 'src/list-name-work/list-name-work.service';
 import { GetAllByDto } from './dto/get/get-all-by.dto';
 import { NameList } from './entities/name-list.model';
 
@@ -23,15 +27,29 @@ export class NameListService {
         @InjectModel(NameList) private nameListRepository: typeof NameList,
         private readonly tableAddingDataService: TableAddingDataService,
         private readonly nameWorkService: NameWorkService,
+        @Inject(forwardRef(() => ListNameWorkService))
+        private readonly listNameWorkService: ListNameWorkService,
     ) {}
 
-    async getAllBy(dto: GetAllByDto) {
-        const result = await this.nameListRepository.findAll({
-            where: { ...dto.criteria, deletedAt: null },
-            include: dto.relations || [],
-        });
+    async getAllBy(
+        dto: GetAllByDto,
+        listNameWorkId: number,
+        organizationId: number,
+    ) {
+        const listNameWork = await this.listNameWorkService.getOneBy(
+            { criteria: { id: listNameWorkId }, relations: [] },
+            organizationId,
+        );
+        if (listNameWork) {
+            const result = await this.nameListRepository.findAll({
+                where: { ...dto.criteria, deletedAt: null },
+                include: dto.relations || [],
+            });
 
-        return result;
+            return result;
+        }
+
+        throw new BadRequestException('ListNameWork not found');
     }
 
     /**
@@ -278,115 +296,112 @@ export class NameListService {
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Asynchronously retrieves data by name work ID and list ID.
+     *
+     * @param {number} nameWorkId - The ID of the name work.
+     * @param {number} listId - The ID of the list.
+     * @return {Promise<Array<{ nameListId: number, quntity: number, nameWorkId: number, listNameWorkId: number, count: number, percent: string, tableAddingData: Array<TableAddingData>, users: Array<{ userId: number, count: number, percent: string, percentTwo: string }> }>>} - A promise that resolves to an array of objects containing the retrieved data.
      */
-    async getDateByNameWorkIdAndListId(nameWorkId: number, listId: number) {
-        try {
-            // Ф. получает id Наименования и id списка
-            const data = await this.nameListRepository.findAll({
-                where: {
-                    nameWorkId,
-                    listNameWorkId: listId,
-                },
-                include: { all: true },
-            });
+    async getDataByNameWorkIdAndListId(
+        nameWorkId: number,
+        listId: number,
+        organizationId: number,
+    ) {
+        // Ф. получает id Наименования и id списка
+        const data = await this.getAllBy(
+            {
+                criteria: { nameWorkId, listNameWorkId: listId },
+                relations: ['tableAddingData'],
+            },
+            listId,
+            organizationId,
+        );
 
-            const arr = data.map((item) => {
-                const {
-                    tableAddingData,
-                    id: nameListId,
-                    quntity,
-                    nameWorkId,
-                    listNameWorkId,
-                } = item;
+        const arr = data.map((item) => {
+            const {
+                tableAddingData,
+                id: nameListId,
+                quntity,
+                nameWorkId,
+                listNameWorkId,
+            } = item;
 
-                const users = [];
-                // Получим уникальные id пользователей что бы посчитать выполнение
-                const uniqueUsers = [];
-                const usersInTableAddingData = tableAddingData.map(
-                    (item) => item.userId,
+            const users = [];
+
+            // Получим уникальные id пользователей что бы посчитать выполнение
+            const uniqueUsers = new Set();
+            for (const { userId } of tableAddingData) {
+                uniqueUsers.add(userId);
+            }
+
+            const uniqueUserIds = Array.from(uniqueUsers);
+            const sumEdit = tableAddingData
+                .map((item) => Number(item.quntity))
+                .reduce(
+                    (currentSum, currentNumber) => currentSum + currentNumber,
+                    0,
                 );
-                for (let i = 0; i < usersInTableAddingData.length; i++) {
-                    const findedUser = uniqueUsers.find(
-                        (item) => item === usersInTableAddingData[i],
-                    );
-                    if (!findedUser) {
-                        uniqueUsers.push(usersInTableAddingData[i]);
-                    }
-                }
-                const sumEdit = tableAddingData
+
+            // Подсчёт данных для пользователя
+            for (const userId of uniqueUserIds) {
+                const filterOneUser = tableAddingData.filter(
+                    (item) => item.userId === userId,
+                );
+
+                const countUser = filterOneUser
                     .map((item) => Number(item.quntity))
                     .reduce(
                         (currentSum, currentNumber) =>
                             currentSum + currentNumber,
                         0,
                     );
-                // Подсчёт данных для пользователя
-                for (let i = 0; i < uniqueUsers.length; i++) {
-                    const filterOneUser = tableAddingData.filter(
-                        (item) => item.userId === uniqueUsers[i],
-                    );
-                    const countUser = filterOneUser
-                        .map((item) => Number(item.quntity))
-                        .reduce(
-                            (currentSum, currentNumber) =>
-                                currentSum + currentNumber,
-                            0,
-                        );
 
-                    users.push({
-                        userId: uniqueUsers[i],
-                        count: countUser,
-                        percent: ((countUser / quntity) * 100).toFixed(1),
-                        percentTwo: ((countUser / sumEdit) * 100).toFixed(1),
-                    });
-                }
-
-                return {
-                    nameListId,
-                    quntity,
-                    nameWorkId,
-                    listNameWorkId,
-                    count: sumEdit,
-                    percent: ((sumEdit / quntity) * 100).toFixed(1),
-                    tableAddingData,
-                    users,
-                };
-            });
-
-            return arr;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
+                users.push({
+                    userId: userId,
+                    count: countUser,
+                    percent: ((countUser / quntity) * 100).toFixed(1),
+                    percentTwo: ((countUser / sumEdit) * 100).toFixed(1),
+                });
             }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
-        }
+
+            return {
+                nameListId,
+                quntity,
+                nameWorkId,
+                listNameWorkId,
+                count: sumEdit,
+                percent: ((sumEdit / quntity) * 100).toFixed(1),
+                tableAddingData,
+                users,
+            };
+        });
+
+        return arr;
     }
 
     /**
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async getDataProgressByList(listId: number, scopeWorkId: number) {
-        const listArr = await this.nameListRepository.findAll({
-            where: {
-                listNameWorkId: listId,
+    async getDataProgressByList(
+        listId: number,
+        scopeWorkId: number,
+        organizationId: number,
+    ) {
+        const listArr = await this.getAllBy(
+            {
+                criteria: { listNameWorkId: listId },
+                relations: [],
             },
-        });
+            listId,
+            organizationId,
+        );
 
         let dataList = [];
+
         // Теперь получаем quntity и nameWorkId для получения изменений по этип спискам
         for (const list of listArr) {
-            const {
-                id: nameListId,
-                nameWorkId,
-                listNameWorkId,
-                quntity,
-            } = list;
+            const { id: nameListId, listNameWorkId, quntity } = list;
 
             const addingTableForOneList =
                 await this.tableAddingDataService.getAllBy({

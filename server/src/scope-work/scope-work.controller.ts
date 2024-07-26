@@ -41,8 +41,8 @@ export class ScopeWorkController {
     @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
     @ApiResponse({ type: HttpException })
     @Get('/')
-    async getAll() {
-        return await this.scopeWorkService.getAllScopeWork();
+    async getAll(@ActiveUser() user: ActiveUserData) {
+        return await this.scopeWorkService.getAllScopeWork(user.organizationId);
     }
 
     @Get('/getSw')
