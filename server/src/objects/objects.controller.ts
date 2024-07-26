@@ -28,7 +28,7 @@ import { ObjectDto } from './dto/response/object.dto';
 import { Objects } from './entities/objects.model';
 import { ObjectsService } from './objects.service';
 
-@ApiTags('Объекты')
+@ApiTags('Objects')
 @ApiBearerAuth()
 @Controller('objects')
 export class ObjectsController {

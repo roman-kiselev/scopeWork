@@ -1,4 +1,4 @@
-import { NameList } from '../entities/name-list.model';
+import { NameList } from 'src/name_list/entities/name-list.model';
 
 export class GetAllByDto {
     criteria: Partial<NameList>;

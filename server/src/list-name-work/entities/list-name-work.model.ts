@@ -14,9 +14,10 @@ import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
 import { TypeWork } from 'src/type-work/entities/type-work.model';
 
 interface ListNameWorkAttr {
-    name?: string;
+    name: string;
+    typeWorkId: number;
+    organizationId: number;
     description?: string;
-    typeWorkId?: number;
     scopeWorkId?: number;
 }
 

@@ -33,18 +33,28 @@ export class NameList
     } as ModelAttributeColumnOptions)
     id: number;
 
+    @ApiProperty({ example: 6, description: 'Количество' })
     @Column({
         type: DataType.FLOAT,
         allowNull: true,
     })
     quntity: number;
 
+    @ApiProperty({ example: 1, description: 'Идентификатор списка' })
     @ForeignKey(() => ListNameWork)
     listNameWorkId: number;
 
+    @ApiProperty({
+        example: 1,
+        description: 'Идентификатор наименования работы',
+    })
     @ForeignKey(() => NameWork)
     nameWorkId: number;
 
+    @ApiProperty({
+        type: () => [TableAddingData],
+        description: 'Список выполненных работ',
+    })
     @HasMany(() => TableAddingData)
     tableAddingData: TableAddingData[];
 }

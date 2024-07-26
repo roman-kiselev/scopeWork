@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+    ConflictException,
+    HttpException,
+    HttpStatus,
+    Injectable,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { NameWork } from 'src/name-work/entities/name-work.model';
 import { NameWorkService } from 'src/name-work/name-work.service';
@@ -6,9 +11,10 @@ import { TableAddingDataService } from 'src/table-adding-data/table-adding-data.
 import {
     CreateNameListByNameDto,
     Item,
-} from './dto/create-name-list-by-name.dto';
-import { CreateNameListDto } from './dto/create-name-list.dto';
-import { GetAllByDto } from './dto/get-all-by.dto';
+} from './dto/create/create-name-list-by-name.dto';
+import { CreateNameListDto } from './dto/create/create-name-list.dto';
+
+import { GetAllByDto } from './dto/get/get-all-by.dto';
 import { NameList } from './entities/name-list.model';
 
 @Injectable()
@@ -29,216 +35,160 @@ export class NameListService {
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Creates a new name list entry in the database.
+     *
+     * @param {CreateNameListDto} dto - The data transfer object containing the necessary information to create the name list entry.
+     * @return {Promise<NameList>} - A promise that resolves to the newly created name list entry.
+     * @throws {ConflictException} - If the name list entry already exists in the database.
      */
-    // Сооздание
     async create(dto: CreateNameListDto) {
-        try {
-            const { listNameWorkId, nameWorkId, quntity } = dto;
+        const { listNameWorkId, nameWorkId, quntity } = dto;
 
-            const newName = await this.nameListRepository.create({
-                listNameWorkId,
-                nameWorkId,
-                quntity,
-            });
+        const newName = await this.nameListRepository.create({
+            listNameWorkId,
+            nameWorkId,
+            quntity,
+        });
 
-            if (!newName) {
-                throw new HttpException(
-                    'Не удалось создать',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-            return newName;
-        } catch (e) {
-            console.error(e);
-            if (e instanceof HttpException) {
-                throw e;
-            }
-
-            throw new HttpException(
-                'Ошибка сервера штука',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+        if (!newName) {
+            throw new ConflictException('Name list entry already exists');
         }
+        return newName;
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Edits a name list entry by updating its quantity.
+     *
+     * @param {CreateNameListDto} dto - The data transfer object containing the listNameWorkId, quntity, and nameWorkId.
+     * @return {Promise<boolean>} - Returns true if the name list entry was successfully updated, false otherwise.
      */
     async edit(dto: CreateNameListDto) {
-        try {
-            const { listNameWorkId, quntity, nameWorkId } = dto;
-            const updateName = await this.nameListRepository.findOne({
-                where: {
-                    listNameWorkId,
-                    nameWorkId,
-                },
-            });
-
+        const { listNameWorkId, quntity, nameWorkId } = dto;
+        const updateName = await this.nameListRepository.findOne({
+            where: {
+                listNameWorkId,
+                nameWorkId,
+            },
+        });
+        if (updateName) {
             updateName.quntity = quntity;
-            const x = await updateName.save();
-            if (!x) {
-                return false;
-            }
-            return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+            const result = await updateName.save();
+
+            return result;
+        } else {
+            return false;
         }
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Deletes a name list entry by destroying the corresponding record in the database.
+     *
+     * @param {CreateNameListDto} dto - The data transfer object containing the listNameWorkId and nameWorkId.
+     * @return {Promise<boolean>} - Returns true if the name list entry was successfully deleted, false otherwise.
      */
     async del(dto: CreateNameListDto) {
-        try {
-            const { listNameWorkId, quntity, nameWorkId } = dto;
-            const updateName = await this.nameListRepository.destroy({
-                where: {
-                    listNameWorkId,
-                    nameWorkId,
-                },
-                force: true,
-            });
+        const { listNameWorkId, nameWorkId } = dto;
+        const updateName = await this.nameListRepository.destroy({
+            where: {
+                listNameWorkId,
+                nameWorkId,
+            },
+            force: true,
+        });
 
-            if (!updateName) {
-                return false;
-            }
-
-            return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
+        if (!updateName) {
+            return false;
         }
+
+        return true;
     }
 
+    // TODO выполнил рефактор, нужно проверить
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Edits an array of `CreateNameListDto` objects asynchronously.
+     *
+     * @param {CreateNameListDto[]} dto - An array of `CreateNameListDto` objects to be edited.
+     * @return {Promise<{resultFullfilled: any[], resultRejected: any[], status: boolean}>} - A promise that resolves to an object containing the following properties:
+     *   - `resultFullfilled`: An array of values resulting from successful edits.
+     *   - `resultRejected`: An array of reasons for unsuccessful edits.
+     *   - `status`: A boolean indicating whether all edits were successful (true) or not (false).
      */
     async editArr(dto: CreateNameListDto[]) {
-        try {
-            const errArr = [];
-            if (dto.length === 0) {
-                return true;
-            }
-            for (const item of dto) {
-                const candidate = await this.edit(item);
-
-                if (!candidate) {
-                    errArr.push(item);
-                }
-            }
-            if (errArr.length > 0) {
-                throw new HttpException(
-                    'Не удалось обновить все данные',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
+        if (dto.length === 0) {
             return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
         }
+        const promises = dto.map((item) => this.edit(item));
+        const results = await Promise.allSettled(promises);
+        const resultFullfilled = results
+            .filter((item) => item.status === 'fulfilled')
+            .map((item) => item.value);
+        const resultRejected = results
+            .filter((item) => item.status === 'rejected')
+            .map((item) => item.reason);
+
+        return {
+            resultFullfilled,
+            resultRejected,
+            status: resultRejected.length === 0,
+        };
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Deletes an array of name list entries asynchronously.
+     *
+     * @param {CreateNameListDto[]} dto - An array of data transfer objects containing the listNameWorkId and nameWorkId.
+     * @return {Promise<{resultFullfilled: boolean[], resultRejected: any[], status: boolean}>} - A promise that resolves to an object containing the resultFullfilled, resultRejected, and status properties.
+     *                                       - resultFullfilled: An array of boolean values indicating whether each name list entry was successfully deleted.
+     *                                       - resultRejected: An array of reasons for the rejection of each name list entry deletion.
+     *                                       - status: A boolean value indicating whether all name list entries were successfully deleted.
      */
     async delArr(dto: CreateNameListDto[]) {
-        try {
-            const errArr = [];
-            if (dto.length === 0) {
-                return true;
-            }
-            for (const item of dto) {
-                const candidate = await this.del(item);
-                if (!candidate) {
-                    errArr.push(item);
-                }
-            }
-            if (errArr.length > 0) {
-                return false;
-            }
+        if (dto.length === 0) {
             return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера ',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
         }
+        const promises = dto.map((item) => this.del(item));
+        const results = await Promise.allSettled(promises);
+        const resultFullfilled = results
+            .filter((item) => item.status === 'fulfilled')
+            .map((item) => item.value);
+        const resultRejected = results
+            .filter((item) => item.status === 'rejected')
+            .map((item) => item.reason);
+
+        return {
+            resultFullfilled,
+            resultRejected,
+            status: resultRejected.length === 0,
+        };
     }
 
     /**
-     * @deprecated This method is deprecated and will be removed in the future.
-     * Please use newMethod instead.
+     * Creates an array of `CreateNameListDto` objects asynchronously.
+     *
+     * @param {CreateNameListDto[]} dto - An array of `CreateNameListDto` objects to be created.
+     * @return {Promise<{resultFullfilled: any[], resultRejected: any[], status: boolean}>} - A promise that resolves to an object containing the following properties:
+     *   - `resultFullfilled`: An array of values resulting from successful creations.
+     *   - `resultRejected`: An array of reasons for unsuccessful creations.
+     *   - `status`: A boolean indicating whether all creations were successful (true) or not (false).
      */
     async createArr(dto: CreateNameListDto[]) {
-        try {
-            if (!Array.isArray(dto)) {
-                throw new HttpException(
-                    'Некорректный формат данных',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
-
-            if (dto.length === 0) {
-                return true; // Вернуть true, если массив пустой
-            }
-
-            const errArr = [];
-
-            for (const item of dto) {
-                if (typeof item !== 'object' || item === null) {
-                    throw new HttpException(
-                        'Некорректный формат данных',
-                        HttpStatus.BAD_REQUEST,
-                    );
-                }
-
-                const candidate = await this.create(item);
-                if (!candidate) {
-                    errArr.push(item);
-                }
-            }
-            if (errArr.length > 0) {
-                throw new HttpException(
-                    'Не удалось создать некоторые элементы',
-                    HttpStatus.BAD_REQUEST,
-                );
-            }
+        if (dto.length === 0) {
             return true;
-        } catch (e) {
-            if (e instanceof HttpException) {
-                throw e;
-            }
-            throw new HttpException(
-                'Ошибка сервера массив',
-                HttpStatus.INTERNAL_SERVER_ERROR,
-            );
         }
+        const promises = dto.map((item) => this.create(item));
+        const results = await Promise.allSettled(promises);
+        const resultFullfilled = results
+            .filter((item) => item.status === 'fulfilled')
+            .map((item) => item.value);
+        const resultRejected = results
+            .filter((item) => item.status === 'rejected')
+            .map((item) => item.reason);
+
+        return {
+            resultFullfilled,
+            resultRejected,
+            status: resultRejected.length === 0,
+        };
     }
 
     /**
@@ -248,7 +198,7 @@ export class NameListService {
     // Создание по наименованию
     async createByName(dto: CreateNameListByNameDto) {
         try {
-            const { typeWorkId, list, listNameWorkId } = dto;
+            const { list, listNameWorkId } = dto;
             // Проверяем существование наименований по типам
             const checkList = Promise.all(
                 list.map(async (item) => {
