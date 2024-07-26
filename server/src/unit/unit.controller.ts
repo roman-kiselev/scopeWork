@@ -25,7 +25,7 @@ import { UnitWithoutDelDto } from './dto/response/unit-without-del.dto';
 import { UnitDto } from './dto/response/unit.dto';
 import { UnitService } from './unit.service';
 
-@ApiTags('Единица измерения')
+@ApiTags('Units')
 @ApiBearerAuth()
 @Roles(RoleName.ADMIN, RoleName.MANAGER, RoleName.DRIVER)
 @UseGuards(RolesGuard)

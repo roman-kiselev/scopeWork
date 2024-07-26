@@ -16,7 +16,7 @@ import {
 } from '@nestjs/swagger';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { CreateNameListDto } from './dto/create-name-list.dto';
+import { CreateNameListDto } from './dto/create/create-name-list.dto';
 import { NameList } from './entities/name-list.model';
 import { NameListService } from './name_list.service';
 
