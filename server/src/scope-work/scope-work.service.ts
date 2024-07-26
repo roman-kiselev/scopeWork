@@ -192,7 +192,7 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    private async _getDataCount(arr: ScopeWork[]) {
+    private async _getDataCount(arr: ScopeWork[], organizationId: number) {
         let dataProgress = [];
 
         for (const scopeWork of arr) {
@@ -203,6 +203,7 @@ export class ScopeWorkService {
                 const item = await this.nameListService.getDataProgressByList(
                     listNameWorkId,
                     idScopeWork,
+                    organizationId,
                 );
                 const itemClone = [...item];
                 const quntityNumber = itemClone
@@ -269,7 +270,7 @@ export class ScopeWorkService {
         }
         return dataProgress;
     }
-    private async getDataCount(arr: ScopeWork[]) {
+    private async getDataCount(arr: ScopeWork[], organizationId: number) {
         const dataProgress = [];
 
         for (const scopeWork of arr) {
@@ -281,6 +282,7 @@ export class ScopeWorkService {
                 const item = await this.nameListService.getDataProgressByList(
                     listNameWorkId,
                     scopeWork.id,
+                    organizationId,
                 );
 
                 const quntityNumber = item.reduce(
@@ -699,7 +701,7 @@ export class ScopeWorkService {
      * @deprecated This method is deprecated and will be removed in the future.
      * Please use newMethod instead.
      */
-    async getAllScopeWork() {
+    async getAllScopeWork(organizationId: number) {
         try {
             const scopeWorks = await this.scopeWorkRepository.findAll({
                 include: { all: true },
@@ -716,6 +718,7 @@ export class ScopeWorkService {
                         await this.nameListService.getDataProgressByList(
                             listNameWorkId,
                             idScopeWork,
+                            organizationId,
                         );
                     const itemClone = [...item];
                     const quntityNumber = itemClone
@@ -827,7 +830,10 @@ export class ScopeWorkService {
                     listScopeWork.push(findedScopeWork);
                 }
 
-                const data = await this.getDataCount(listScopeWork);
+                const data = await this.getDataCount(
+                    listScopeWork,
+                    organizationId,
+                );
 
                 return data;
             }
@@ -845,7 +851,7 @@ export class ScopeWorkService {
                 );
                 listScopeWork.push(findedScopeWork);
             }
-            const data = await this.getDataCount(listScopeWork);
+            const data = await this.getDataCount(listScopeWork, organizationId);
 
             return data;
         } catch (e) {
@@ -903,9 +909,10 @@ export class ScopeWorkService {
                     NameList,
                 } of finishNameWorks) {
                     const findedData =
-                        await this.nameListService.getDateByNameWorkIdAndListId(
+                        await this.nameListService.getDataByNameWorkIdAndListId(
                             nameWorkId,
                             idListNameWork,
+                            organizationId,
                         );
 
                     const newFindedData = findedData.map((item) => {

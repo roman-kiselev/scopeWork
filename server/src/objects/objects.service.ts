@@ -230,10 +230,14 @@ export class ObjectsService {
         const { listNameWork, tableAddingData } = scopeWork;
 
         const promises = listNameWork.map(async (item) => {
-            return this.nameListService.getAllBy({
-                criteria: { listNameWorkId: item.id },
-                relations: [],
-            });
+            return this.nameListService.getAllBy(
+                {
+                    criteria: { listNameWorkId: item.id },
+                    relations: [],
+                },
+                item.id,
+                organizationId,
+            );
         });
 
         const results = await Promise.all(promises);

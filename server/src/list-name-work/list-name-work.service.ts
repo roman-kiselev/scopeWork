@@ -1,7 +1,9 @@
 import {
     ConflictException,
+    forwardRef,
     HttpException,
     HttpStatus,
+    Inject,
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
@@ -21,6 +23,7 @@ export class ListNameWorkService {
     constructor(
         @InjectModel(ListNameWork)
         private listNameWorkRepository: typeof ListNameWork,
+        @Inject(forwardRef(() => NameListService))
         private nameListService: NameListService,
     ) {}
 
