@@ -22,13 +22,14 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { Roles } from 'src/iam/decorators/roles-auth.decorator';
 import { RoleName } from 'src/iam/enums/RoleName';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
-import { CreateScopeWorkDto } from './dto/create-scope-work.dto';
-import { EditScopeWorkDto } from './dto/edit-scope-work.dto';
+import { CreateScopeWorkDto } from './dto/create/create-scope-work.dto';
+import { GetOneScopeworkResDto } from './dto/response/get-one-scopework-res.dto';
+import { EditScopeWorkDto } from './dto/update/edit-scope-work.dto';
 import { ScopeWork } from './entities/scope-work.model';
 import { IScopeworkShort } from './interfaces/IScopeworkShort';
 import { ScopeWorkService } from './scope-work.service';
 
-@ApiTags('Объём работ')
+@ApiTags('Scope Work')
 @ApiBearerAuth()
 // @UseGuards(AccessTokenGuards)
 @Roles(RoleName.ADMIN)
@@ -45,6 +46,10 @@ export class ScopeWorkController {
         return await this.scopeWorkService.getAllScopeWork(user.organizationId);
     }
 
+    // TODO не тестировался
+
+    @ApiOperation({ summary: 'Получить все объёмы' })
+    @ApiResponse({ status: HttpStatus.OK, type: [ScopeWork] })
     @Get('/getSw')
     async getSw(@Query('user') user: string, @Query('object') object: string) {
         return await this.scopeWorkService.getScopeWorkByUserIdAndObjectId({
@@ -76,7 +81,7 @@ export class ScopeWorkController {
     }
 
     @ApiOperation({ summary: 'Получить один' })
-    @ApiResponse({ status: HttpStatus.OK, type: ScopeWork })
+    @ApiResponse({ status: HttpStatus.OK, type: GetOneScopeworkResDto })
     @ApiResponse({ type: HttpException })
     @Get('/:id')
     async getOneById(

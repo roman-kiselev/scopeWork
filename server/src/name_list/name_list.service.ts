@@ -19,6 +19,7 @@ import { CreateNameListDto } from './dto/create/create-name-list.dto';
 
 import { ListNameWorkService } from 'src/list-name-work/list-name-work.service';
 import { GetAllByDto } from './dto/get/get-all-by.dto';
+import { GetDataProgressByListResponseDto } from './dto/response/get-data-progress-by-list-response.dto';
 import { NameList } from './entities/name-list.model';
 
 @Injectable()
@@ -397,7 +398,7 @@ export class NameListService {
             organizationId,
         );
 
-        let dataList = [];
+        let dataList: GetDataProgressByListResponseDto[] = [];
 
         // Теперь получаем quntity и nameWorkId для получения изменений по этип спискам
         for (const list of listArr) {
@@ -426,7 +427,7 @@ export class NameListService {
                 quantityDifference:
                     addingCount > quntity ? addingCount - quntity : 0,
                 addingCount,
-                percent: ((addingCount / quntity) * 100).toFixed(1),
+                percent: Number(((addingCount / quntity) * 100).toFixed(1)),
             });
         }
 
