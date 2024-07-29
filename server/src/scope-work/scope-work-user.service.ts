@@ -1,8 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ConflictException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-
 import { Op } from 'sequelize';
-import { GetUserScopeWorkDto } from './dto/get-user-scopework.dto';
+import { GetUserScopeWorkDto } from './dto/get/get-user-scopework.dto';
 import { UserScopeWork } from './entities/user-scope-work.model';
 
 @Injectable()
@@ -61,6 +64,24 @@ export class ScopeWorkUserService {
                 'UserScopeWork with this criteria not found',
             );
         }
+        return userScopeWork;
+    }
+
+    /**
+     * Метод для создания пользователя в рабочей области.
+     * @returns Возвращает объект.
+     */
+    async createUserScopeWork(userId: number, scopeWorkId: number) {
+        const userScopeWork = await this.userScopeWorkRepository.create({
+            userId,
+            scopeWorkId,
+        });
+        if (!userScopeWork) {
+            throw new ConflictException(
+                'UserScopeWork not created, please try again',
+            );
+        }
+
         return userScopeWork;
     }
 }

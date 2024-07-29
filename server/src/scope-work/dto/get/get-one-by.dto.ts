@@ -1,4 +1,4 @@
-import { ScopeWork } from '../entities/scope-work.model';
+import { ScopeWork } from 'src/scope-work/entities/scope-work.model';
 
 type relationsKey = keyof ScopeWork;
 
