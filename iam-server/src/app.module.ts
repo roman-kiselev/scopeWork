@@ -1,3 +1,4 @@
+import { MailerModule } from '@nestjs-modules/mailer';
 import { MiddlewareConsumer, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
@@ -9,6 +10,7 @@ import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
 import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
 import { IamModule } from './iam/iam.module';
+import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { OrganizationsModule } from './organizations/organizations.module';
 import { RolesModule } from './roles/roles.module';
@@ -16,6 +18,7 @@ import { UserDescriptionModule } from './user-description/user-description.modul
 import { UsersModule } from './users/users.module';
 
 type DBName = 'postgres';
+
 @Module({
     providers: [
         {
@@ -56,7 +59,14 @@ type DBName = 'postgres';
 
                 THROTTLE_TTL_SECONDS: Joi.number().integer().required(),
                 THROTTLE_LIMIT: Joi.number().integer().required(),
+
+                MAIL_HOST: Joi.string().required(),
+                MAIL_PORT: Joi.number().integer().required(),
+                MAIL_USERNAME: Joi.string().required(),
+                MAIL_PASSWORD: Joi.string().required(),
+                MAIL_FROM: Joi.string().required(),
             }),
+            isGlobal: true,
         }),
         TypeOrmModule.forRoot({
             type: process.env.DB_TYPE as DBName,
@@ -84,11 +94,23 @@ type DBName = 'postgres';
                 }),
             ),
         }),
+        MailerModule.forRoot({
+            transport: {
+                host: process.env.MAIL_HOST,
+                //port: Number(process.env.MAIL_PORT),
+                secure: true,
+                auth: {
+                    user: process.env.MAIL_USERNAME,
+                    pass: process.env.MAIL_PASSWORD,
+                },
+            },
+        }),
         IamModule,
         UserDescriptionModule,
         RolesModule,
         OrganizationsModule,
         UsersModule,
+        MailModule,
     ],
     controllers: [],
 })
