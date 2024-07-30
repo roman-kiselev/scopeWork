@@ -4,18 +4,8 @@ import { Navigate } from "react-router";
 import { RoleString } from "../../shared/config";
 
 function findRole(roles: string[], roleState: string[]): boolean {
-    //const { role, roleState } = arg;
-    // Пробегаеимся по roleState
-    // Разрешённые роли в массиве role
-    let foundMatch = false;
-    roleState.forEach((oneRole: string) => {
-        roles.forEach((role: string) => {
-            if (role === oneRole) {
-                foundMatch = true;
-            }
-        });
-    });
-    return foundMatch;
+    // Используем метод some для упрощения логики
+    return roleState.some((oneRole) => roles.includes(oneRole));
 }
 
 interface CheckRoleProps {
@@ -31,14 +21,12 @@ const CheckRole: React.FC<CheckRoleProps> = ({
     rolesState,
     roles,
     location,
-    isLoading,
+    isLoading = false,
 }) => {
-    if (isLoading) {
-        return <Spin />;
-    }
+    if (isLoading) <Spin />;
 
-    const isRole = findRole(roles, rolesState);
-    if (!isRole) {
+    const hasAccess = findRole(roles, rolesState);
+    if (!hasAccess) {
         return <Navigate to="/no_access" state={{ from: location }} />;
     }
     return <>{children}</>;

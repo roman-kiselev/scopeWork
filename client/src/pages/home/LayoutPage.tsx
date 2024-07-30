@@ -16,23 +16,12 @@ const LayoutPage = () => {
     const [collapsed, setCollapsed] = useState(false);
     const { email } = useAppSelector((store) => store.auth);
 
-    // const onTab1Change = (key: string) => {
-    //     setActiveTabKey1(key);
-    // };
     const toggleMenu = () => {
         setCollapsed(!collapsed);
     };
     const width = window.innerWidth;
 
     const items: MenuProps["items"] = [
-        // {
-        //     label: <a href="https://www.antgroup.com">1st menu item</a>,
-        //     key: "0",
-        // },
-        // {
-        //     label: <a href="https://www.aliyun.com">2nd menu item</a>,
-        //     key: "1",
-        // },
         {
             type: "divider",
         },
@@ -59,7 +48,7 @@ const LayoutPage = () => {
                 <div style={{ margin: "10px" }}>
                     <div style={{ fontSize: 20, paddingTop: 10 }}>
                         <a style={{ textDecoration: "none", color: "black" }}>
-                            "ООО ГК КРОН"
+                            LOGO
                         </a>
                     </div>
                 </div>

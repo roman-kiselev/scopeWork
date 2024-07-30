@@ -12,7 +12,7 @@ const AuthMiddleware: React.FC<IAuthMiddlewareProps> = ({ children }) => {
         refreshToken();
     }, []);
 
-    if (isLoading) <Spin />;
+    if (isLoading) <Spin tip="Загрузка..." />;
 
     return <>{children}</>;
 };

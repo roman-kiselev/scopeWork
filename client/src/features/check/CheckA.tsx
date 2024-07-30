@@ -1,18 +1,14 @@
 import React from "react";
+import { Location } from "react-router";
 import { CheckAuth } from "../../entities";
 import { useAppSelector } from "../../shared/hooks";
 
 interface ICheckA {
     children: React.ReactNode;
-    location: any;
+    location: Location;
 }
 
 const CheckA: React.FC<ICheckA> = ({ children, location }) => {
-    // const [refreshToken, { isSuccess, isLoading: isLoadingCheck }] =
-    //     authApi.useRefreshMutation();
-    // useEffect(() => {
-    //     refreshToken();
-    // }, []);
     const { token, isLoading, isAuth } = useAppSelector((state) => state.auth);
 
     return (

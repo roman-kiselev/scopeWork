@@ -3,10 +3,14 @@ import { Route, Routes } from "react-router";
 import { SuspenseLoad } from "../entities";
 import { SuspenseLoadCheckAR, SuspenseLoadCheckR } from "../features";
 import { RoleString } from "../shared/config";
+import WelcomePage from "./home/WelcomePage";
 import NoAccess from "./noAccess";
 import ScopeWorkAddData from "./scopeWork/ScopeWorkAddData";
 
 const LoginPage = lazy(() => import("./auth/LoginPage"));
+const LoginWithoutPasswordPage = lazy(
+    () => import("./auth/LoginWithoutPasswordPage")
+);
 const RegisterPage = lazy(() => import("./auth/RegisterPage"));
 const HomePage = lazy(() => import("./home/HomePage"));
 const HomePageWarehousemanRoutes = lazy(
@@ -124,6 +128,9 @@ const Routing = () => {
                     }
                 /> */}
             </Route>
+
+            <Route path="/welcome" element={<WelcomePage />} />
+
             <Route
                 path="/login"
                 element={
@@ -132,6 +139,16 @@ const Routing = () => {
                     </SuspenseLoad>
                 }
             />
+
+            <Route
+                path="/login-without-password"
+                element={
+                    <SuspenseLoad>
+                        <LoginWithoutPasswordPage />
+                    </SuspenseLoad>
+                }
+            ></Route>
+
             <Route
                 path="/register"
                 element={
