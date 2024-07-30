@@ -22,7 +22,7 @@ import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorators';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpWithOrganizationDto } from './dto/sign-up-with-organization.dto';
-import { SignUpDto } from './dto/sign-up.dto';
+import { SignUpWithTokenDto } from './dto/sign-up-with-token.dto';
 import { AuthType } from './enums/auth-type.enum';
 import { TokensResponse } from './responses/tokens.response';
 
@@ -47,7 +47,7 @@ export class AuthenticationController {
         description: 'Информация о том что пользователь уже существует',
     })
     @Post('sign-up')
-    signUp(@Body() signUpDto: SignUpDto) {
+    signUp(@Body() signUpDto: SignUpWithTokenDto) {
         return this.authenticationService.signUp(signUpDto);
     }
 

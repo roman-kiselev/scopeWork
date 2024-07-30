@@ -8,6 +8,8 @@ import {
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
+import { TimeHelper } from 'src/invite-tokens/helpers/time.helper';
+import { InviteTokensService } from 'src/invite-tokens/invite-tokens.service';
 import { OrganizationsService } from 'src/organizations/organizations.service';
 import { RoleName } from 'src/roles/enums/RoleName';
 import { User } from 'src/users/entities/user.entity';
@@ -19,7 +21,7 @@ import { RefreshTokenData } from '../interfaces/refresh-token-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpWithOrganizationDto } from './dto/sign-up-with-organization.dto';
-import { SignUpDto } from './dto/sign-up.dto';
+import { SignUpWithTokenDto } from './dto/sign-up-with-token.dto';
 import { InvalidatedRefreshTokenError } from './errors/invalidated-refresh-token.error';
 import { RefreshTokenIdsStorage } from './guards/refresh-token/refresh-token-ids.storage';
 
@@ -33,6 +35,7 @@ export class AuthenticationService {
         @Inject(jwtConfig.KEY)
         private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+        private readonly inviteTokenService: InviteTokensService,
     ) {}
 
     private async signToken<T>(userId: number, expiresIn: string, payload?: T) {
@@ -76,12 +79,24 @@ export class AuthenticationService {
         return { accessToken, refreshToken };
     }
 
-    async signUp(dto: SignUpDto) {
+    async signUp(dto: SignUpWithTokenDto) {
         const user = await this.userService.checkUniqueEmail(dto.email);
         if (user) {
             throw new ConflictException(
                 `User with email ${dto.email} already exists`,
             );
+        }
+
+        const inviteToken = await this.inviteTokenService.getTokenByEmail(
+            dto.email,
+            dto.organizationId,
+        );
+        const isInviteToken = dto.token === inviteToken.token;
+        const isExpired = new TimeHelper().isExpired(
+            new Date(inviteToken.expires_at).toISOString(),
+        );
+        if (!isInviteToken || isExpired) {
+            throw new ForbiddenException('Invalid invite token');
         }
 
         const hashPassword = await this.hashingService.hash(dto.password);
@@ -92,6 +107,11 @@ export class AuthenticationService {
         if (!candidate) {
             throw new ConflictException('User not created');
         }
+
+        await this.inviteTokenService.setIsUsed(
+            inviteToken.id,
+            dto.organizationId,
+        );
 
         return candidate;
     }

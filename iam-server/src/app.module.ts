@@ -10,6 +10,7 @@ import { ThrottlerStorageRedisService } from 'nestjs-throttler-storage-redis';
 import { HttpExceptionFilter } from './exception-filters/http.exception-filter';
 import { ValidationExceptionFilter } from './exception-filters/validation-exception.filter';
 import { IamModule } from './iam/iam.module';
+import { InviteTokensModule } from './invite-tokens/invite-tokens.module';
 import { MailModule } from './mail/mail.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
 import { OrganizationsModule } from './organizations/organizations.module';
@@ -111,6 +112,7 @@ type DBName = 'postgres';
         OrganizationsModule,
         UsersModule,
         MailModule,
+        InviteTokensModule,
     ],
     controllers: [],
 })
