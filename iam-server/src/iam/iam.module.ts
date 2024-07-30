@@ -13,6 +13,7 @@ import { RolesGuard } from './authorization/guards/roles/roles.guard';
 import jwtConfig from './config/jwt.config';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
+import { InviteTokensModule } from 'src/invite-tokens/invite-tokens.module';
 
 @Module({
     controllers: [AuthenticationController],
@@ -38,7 +39,7 @@ import { HashingService } from './hashing/hashing.service';
         ConfigModule.forFeature(jwtConfig),
         UsersModule,
         OrganizationsModule,
-
+        InviteTokensModule,
         // forwardRef(() =>
         //     ClientsModule.register([
         //         {
