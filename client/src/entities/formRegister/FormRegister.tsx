@@ -104,6 +104,42 @@ const propsConfirm: IInputPasswordFormItemProps = {
     ],
 };
 
+const propsOrganizationName: IInputFormItemProps = {
+    input: {
+        placeholder: "ООО 'РогАиКопыта'",
+        type: "nickname",
+        size: "large",
+    },
+    name: "nameOrganization",
+    label: "Наименование организации",
+    tooltip: "Введите наименование организации",
+    rules: [
+        {
+            required: true,
+            message: "Обязательное поле",
+            whitespace: true,
+        },
+    ],
+};
+
+const propsOrganizationAddress: IInputFormItemProps = {
+    input: {
+        placeholder: "г. Москва, ул. Ленина, д. 1",
+        type: "nickname",
+        size: "large",
+    },
+    name: "addressOrganization",
+    label: "Адрес организации",
+    tooltip: "Введите адрес организации",
+    rules: [
+        {
+            required: true,
+            message: "Обязательное поле",
+            whitespace: true,
+        },
+    ],
+};
+
 interface IFormRegisterProps {
     form: any;
     onFinish: (values: any) => void;
@@ -119,7 +155,7 @@ const FormRegister: React.FC<IFormRegisterProps> = ({
 }) => {
     return (
         <>
-            <Card title="Регистрация" bordered={true} style={{ maxWidth: 400 }}>
+            <Card title="Регистрация" bordered={true} style={{ width: "50vw" }}>
                 <Form form={form} name="register" onFinish={onFinish}>
                     <InputFormItem
                         input={propsEmail.input}
@@ -155,6 +191,20 @@ const FormRegister: React.FC<IFormRegisterProps> = ({
                         label={propsLastname.label}
                         tooltip={propsLastname.tooltip}
                         rules={propsLastname.rules}
+                    />
+                    <InputFormItem
+                        input={propsOrganizationName.input}
+                        name={propsOrganizationName.name}
+                        label={propsOrganizationName.label}
+                        tooltip={propsOrganizationName.tooltip}
+                        rules={propsOrganizationName.rules}
+                    />
+                    <InputFormItem
+                        input={propsOrganizationAddress.input}
+                        name={propsOrganizationAddress.name}
+                        label={propsOrganizationAddress.label}
+                        tooltip={propsOrganizationAddress.tooltip}
+                        rules={propsOrganizationAddress.rules}
                     />
                     <Row>
                         <Text>У Вас уже есть аккаунт?</Text>

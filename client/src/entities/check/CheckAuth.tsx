@@ -12,14 +12,13 @@ interface ICheckAuthProps {
 const CheckAuth: React.FC<ICheckAuthProps> = ({
     children,
     isAuth,
-    isLoading,
+    isLoading = false,
     location,
 }) => {
-    if (isLoading) {
-        return <Spin />;
-    }
+    if (isLoading) <Spin />;
+
     if (!isAuth) {
-        return <Navigate to="/login" state={{ from: location }} replace />;
+        return <Navigate to="/welcome" state={{ from: location }} replace />;
     }
 
     return <>{children}</>;

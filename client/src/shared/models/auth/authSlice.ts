@@ -105,7 +105,6 @@ export const authSlice = createSlice({
         builder.addMatcher(
             authApi.endpoints.refresh.matchFulfilled,
             (state, action) => {
-                console.log(action.payload);
                 state.isAuth = true;
                 const { accessToken } = action.payload.data;
                 const user: IUserToken = jwt_decode(accessToken);

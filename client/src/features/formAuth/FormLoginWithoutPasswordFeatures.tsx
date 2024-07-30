@@ -1,11 +1,11 @@
 import { Form, Spin } from "antd";
 import { Navigate, useLocation, useNavigate } from "react-router";
-import { FormLogin } from "../../entities";
-import { LayoutAuth } from "../../entities/layoutAuth";
-import { authApi } from "../../shared/api";
-import { useAppSelector } from "../../shared/hooks";
+import { FormLoginWithoutPassword } from "src/entities";
+import { LayoutAuth } from "src/entities/layoutAuth";
+import { authApi } from "src/shared/api";
+import { useAppSelector } from "src/shared/hooks";
 
-const FormLoginFeatures = () => {
+const FormLoginWithoutPasswordFeatures = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const [form] = Form.useForm();
@@ -34,16 +34,17 @@ const FormLoginFeatures = () => {
             />
         );
     }
+
     return (
         <LayoutAuth>
-            <FormLogin
-                isError={isError}
-                dataError={dataError}
+            <FormLoginWithoutPassword
                 form={form}
                 onFinish={onFinish}
+                dataError={dataError}
+                isError={isError}
             />
         </LayoutAuth>
     );
 };
 
-export default FormLoginFeatures;
+export default FormLoginWithoutPasswordFeatures;

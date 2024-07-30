@@ -10,7 +10,7 @@ const FormRegistrationFeatures = () => {
     const data = Form.useWatch([], form);
 
     const [registered, { isSuccess, isLoading, isError }] =
-        authApi.useRegisterMutation();
+        authApi.useRegisterOrganizationMutation();
     const onFinish = async () => {
         registered(data);
 

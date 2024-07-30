@@ -16,11 +16,6 @@ const CheckAR: React.FC<ICheckAR> = ({ children, roles, location }) => {
         token,
     } = useAppSelector((state) => state.auth);
 
-    // const [refreshToken, { isSuccess, isLoading: isLoadingCheck }] =
-    //     authApi.useRefreshMutation();
-    // useEffect(() => {
-    //     refreshToken();
-    // }, []);
     return (
         <CheckAuth
             isAuth={isAuth}

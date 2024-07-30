@@ -1,6 +1,5 @@
+import { Col, Layout, Row } from "antd";
 import React from "react";
-import { Row, Col } from "antd";
-import { Layout } from "antd";
 const { Content } = Layout;
 
 interface LayoutAuthProps {
@@ -27,11 +26,9 @@ const LayoutAuth: React.FC<LayoutAuthProps> = ({ children }) => {
                 <Row
                     align="middle"
                     justify="center"
-                    style={{ minHeight: "100vh" }}
+                    style={{ height: "100vh" }}
                 >
-                    <Col xs={20} sm={12} md={8} lg={6}>
-                        {children}
-                    </Col>
+                    <Col>{children}</Col>
                 </Row>
             </Content>
         </Layout>

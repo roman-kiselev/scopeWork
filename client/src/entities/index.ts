@@ -1,5 +1,5 @@
 export { CheckAuth, CheckRole, SuspenseLoad } from "./check";
-export { FormLogin } from "./formLogin";
+export { FormLogin, FormLoginWithoutPassword } from "./formLogin";
 export { FormRegister } from "./formRegister";
 export { SimpleShortItemForList, SimpleShortList } from "./list";
 export { ListNameWorkTable } from "./listNameWorks";

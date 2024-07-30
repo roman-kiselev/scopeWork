@@ -65,6 +65,7 @@ axiosInstanceIam.interceptors.response.use(
                 }
             );
             localStorage.setItem("token", data.data.accessToken);
+
             return axiosInstanceIam.request(originalRequest);
         }
     }
@@ -72,6 +73,7 @@ axiosInstanceIam.interceptors.response.use(
 
 axiosInstanceManager.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
+
     return config;
 });
 axiosInstanceManager.interceptors.response.use(

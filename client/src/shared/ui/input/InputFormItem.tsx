@@ -1,6 +1,6 @@
-import React from "react";
 import { Form } from "antd";
 import Input from "antd/es/input";
+import React from "react";
 import { IInputFormItemProps } from "../../interfaces";
 
 const InputFormItem: React.FC<IInputFormItemProps> = ({

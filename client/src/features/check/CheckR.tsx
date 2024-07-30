@@ -1,19 +1,19 @@
-import React from 'react'
-import { CheckRole } from '../../entities'
-import { RoleString } from '../../shared/config'
-import { useAppSelector } from '../../shared/hooks'
-
+import React from "react";
+import { Location } from "react-router";
+import { CheckRole } from "../../entities";
+import { RoleString } from "../../shared/config";
+import { useAppSelector } from "../../shared/hooks";
 
 interface ICheckR {
     children: React.ReactNode;
     roles: RoleString[];
-    location: any;
+    location: Location;
 }
 
 const CheckR: React.FC<ICheckR> = ({ children, roles, location }) => {
     const { roles: rolesState, isLoading } = useAppSelector(
         (state) => state.auth
-    )
+    );
 
     return (
         <CheckRole
@@ -24,7 +24,7 @@ const CheckR: React.FC<ICheckR> = ({ children, roles, location }) => {
         >
             {children}
         </CheckRole>
-    )
-}
+    );
+};
 
-export default CheckR
+export default CheckR;

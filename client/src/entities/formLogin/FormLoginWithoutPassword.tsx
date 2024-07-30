@@ -1,12 +1,8 @@
 import { Button, Card, Form, Row, Typography } from "antd";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import {
-    IDataError,
-    IInputFormItemProps,
-    IInputPasswordFormItemProps,
-} from "../../shared/interfaces";
-import { InputFormItem, InputPasswordFormItem } from "../../shared/ui";
+import { IDataError, IInputFormItemProps } from "../../shared/interfaces";
+import { InputFormItem } from "../../shared/ui";
 
 const { Text } = Typography;
 
@@ -30,21 +26,6 @@ const propsEmail: IInputFormItemProps = {
         },
     ],
 };
-const propsPassword: IInputPasswordFormItemProps = {
-    input: {
-        placeholder: "Пароль",
-        type: "password",
-        size: "large",
-    },
-    label: "Пароль",
-    name: "password",
-    rules: [
-        {
-            required: true,
-            message: "Введите пароль",
-        },
-    ],
-};
 
 interface IFormLoginProps {
     form: any;
@@ -53,7 +34,14 @@ interface IFormLoginProps {
     dataError: IDataError | null;
 }
 
-const FormLogin: React.FC<IFormLoginProps> = ({ form, onFinish }) => {
+const FormLoginWithoutPassword: React.FC<IFormLoginProps> = ({
+    form,
+    onFinish,
+    isError,
+    dataError,
+}) => {
+    const [stateClickOtpCode, setStateClickOtpCode] = useState(false);
+
     return (
         <>
             <Card title="Вход" bordered={true} style={{ maxWidth: 400 }}>
@@ -65,40 +53,36 @@ const FormLogin: React.FC<IFormLoginProps> = ({ form, onFinish }) => {
                         tooltip={propsEmail.tooltip}
                         rules={propsEmail.rules}
                     />
-                    <InputPasswordFormItem
-                        input={propsPassword.input}
-                        name={propsPassword.name}
-                        label={propsPassword.label}
-                        tooltip={propsPassword.tooltip}
-                        rules={propsPassword.rules}
-                    />
-                    {/* {isError && (
-                        <Row>
-                            <Alert
-                                message={dataError?.data.message}
-                                type="error"
-                            />
-                        </Row>
-                    )} */}
-                    <Row>
-                        <Link to={"/login-without-password"}>
-                            Войти без пароля
-                        </Link>
+
+                    <Row
+                        style={{
+                            marginTop: 10,
+                            justifyContent: "center",
+                            width: "100%",
+                        }}
+                    >
+                        <Button type="primary" htmlType="submit">
+                            Отправить код на почту
+                        </Button>
+                    </Row>
+
+                    <Row style={{ marginTop: 20 }}>
+                        <Link to={"/login"}>Войти c паролем</Link>
                     </Row>
                     <Row>
                         <Text>Нет аккаунта?</Text>
                         <Link to={"/register"}>Зарегистрироваться</Link>
                     </Row>
 
-                    <Row style={{ marginTop: 10 }}>
+                    {/* <Row style={{ marginTop: 10 }}>
                         <Button type="primary" htmlType="submit">
                             Вход
                         </Button>
-                    </Row>
+                    </Row> */}
                 </Form>
             </Card>
         </>
     );
 };
 
-export default FormLogin;
+export default FormLoginWithoutPassword;

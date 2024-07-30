@@ -6,7 +6,11 @@ export {
     SuspenseLoadCheckAR,
     SuspenseLoadCheckR,
 } from "./check";
-export { FormLoginFeatures, FormRegistrationFeatures } from "./formAuth";
+export {
+    FormLoginFeatures,
+    FormLoginWithoutPasswordFeatures,
+    FormRegistrationFeatures,
+} from "./formAuth";
 export {
     CreateNameWorkFeatures,
     CreateUnitForm,
