@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorators';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
@@ -18,12 +18,15 @@ export class MailController {
     @Auth(AuthType.None)
     @ApiOperation({ summary: 'Отправка кода OTP на почту' })
     @Post('send-otp')
-    async sendOtp(@Body() dto: EmailDto): Promise<{ message: string }> {
-        const otpCode = Math.floor(100000 + Math.random() * 900000).toString(); // Генерация случайного 6-значного кода
+    async sendOtp(
+        @Body() dto: EmailDto,
+    ): Promise<{ message: string; code: number }> {
+        await this.mailService.sendOtpCode(dto.email);
 
-        await this.mailService.sendOtpCode(dto.email, otpCode);
-
-        return { message: 'OTP код отправлен на вашу почту' };
+        return {
+            message: 'OTP код отправлен на вашу почту',
+            code: HttpStatus.OK,
+        };
     }
 
     @ApiBearerAuth()

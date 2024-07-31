@@ -2,7 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import { InviteTokensModule } from 'src/invite-tokens/invite-tokens.module';
 import { OrganizationsModule } from 'src/organizations/organizations.module';
+import { RedisModule } from 'src/redis/redis.module';
 import { UsersModule } from 'src/users/users.module';
 import { AuthenticationController } from './authentication/authentication.controller';
 import { AuthenticationService } from './authentication/authentication.service';
@@ -13,7 +15,6 @@ import { RolesGuard } from './authorization/guards/roles/roles.guard';
 import jwtConfig from './config/jwt.config';
 import { BcryptService } from './hashing/bcrypt.service';
 import { HashingService } from './hashing/hashing.service';
-import { InviteTokensModule } from 'src/invite-tokens/invite-tokens.module';
 
 @Module({
     controllers: [AuthenticationController],
@@ -40,6 +41,7 @@ import { InviteTokensModule } from 'src/invite-tokens/invite-tokens.module';
         UsersModule,
         OrganizationsModule,
         InviteTokensModule,
+        RedisModule,
         // forwardRef(() =>
         //     ClientsModule.register([
         //         {
