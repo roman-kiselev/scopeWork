@@ -17,6 +17,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { RolesModule } from './roles/roles.module';
 import { UserDescriptionModule } from './user-description/user-description.module';
 import { UsersModule } from './users/users.module';
+import { RedisModule } from './redis/redis.module';
 
 type DBName = 'postgres';
 
@@ -113,6 +114,7 @@ type DBName = 'postgres';
         UsersModule,
         MailModule,
         InviteTokensModule,
+        RedisModule,
     ],
     controllers: [],
 })

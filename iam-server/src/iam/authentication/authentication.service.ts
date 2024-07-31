@@ -11,6 +11,7 @@ import { randomUUID } from 'crypto';
 import { TimeHelper } from 'src/invite-tokens/helpers/time.helper';
 import { InviteTokensService } from 'src/invite-tokens/invite-tokens.service';
 import { OrganizationsService } from 'src/organizations/organizations.service';
+import { RedisService } from 'src/redis/redis.service';
 import { RoleName } from 'src/roles/enums/RoleName';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
@@ -20,6 +21,7 @@ import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { RefreshTokenData } from '../interfaces/refresh-token-data.interface';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { SignInWithoutPasswordDto } from './dto/sign-in/sign-in-without-password.dto';
 import { SignUpWithOrganizationDto } from './dto/sign-up-with-organization.dto';
 import { SignUpWithTokenDto } from './dto/sign-up-with-token.dto';
 import { InvalidatedRefreshTokenError } from './errors/invalidated-refresh-token.error';
@@ -36,6 +38,7 @@ export class AuthenticationService {
         private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
         private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
         private readonly inviteTokenService: InviteTokensService,
+        private readonly redisService: RedisService,
     ) {}
 
     private async signToken<T>(userId: number, expiresIn: string, payload?: T) {
@@ -169,6 +172,38 @@ export class AuthenticationService {
         }
     }
 
+    async signInWithoutPassword(dto: SignInWithoutPasswordDto) {
+        const user = await this.userService.findOneWithRelation(
+            { email: dto.email },
+            ['organization', 'roles'],
+        );
+
+        if (user instanceof User) {
+            if (user.banned === true) {
+                throw new ForbiddenException('User is banned');
+            }
+
+            // Проверим не истёкло ли время кода
+            const isExpired = await this.redisService.ttl(
+                `verification_code:${dto.email}`,
+            );
+
+            if (isExpired < 0) {
+                throw new ForbiddenException('Code expired');
+            }
+            const isEqual =
+                (await this.redisService.get(
+                    `verification_code:${dto.email}`,
+                )) === dto.code;
+
+            if (!isEqual) {
+                throw new ForbiddenException('Code is incorrect');
+            }
+
+            const result = await this.generateTokens(user);
+            return result;
+        }
+    }
     async refreshTokens(refreshTokenDto: RefreshTokenDto) {
         try {
             const { sub, refreshTokenId } =

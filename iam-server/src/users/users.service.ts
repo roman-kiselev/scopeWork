@@ -37,9 +37,13 @@ export class UsersService {
                 where: criteria,
                 relations,
             });
+            if (!user) {
+                throw new NotFoundException('User not found');
+            }
 
             return user;
         } catch (e) {
+            console.log(e);
             const error = new Error(e);
             return new NotFoundException(error);
         }

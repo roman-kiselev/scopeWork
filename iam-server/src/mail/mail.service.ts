@@ -1,13 +1,19 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 import { InviteTokensService } from 'src/invite-tokens/invite-tokens.service';
+import { RedisService } from 'src/redis/redis.service';
 
 @Injectable()
 export class MailService {
     constructor(
         private readonly mailerService: MailerService,
         private readonly inviteTokensService: InviteTokensService,
+        private readonly redisService: RedisService,
     ) {}
+
+    private generateOtpCode(): string {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+    }
 
     async sendMailAsHtml(to: string, subject: string, html: string) {
         const mailOptions = {
@@ -17,7 +23,9 @@ export class MailService {
             html: html,
         };
 
-        await this.mailerService.sendMail(mailOptions);
+        const result = await this.mailerService.sendMail(mailOptions);
+
+        return result;
     }
 
     async sendMailAsText(to: string, subject: string, text: string) {
@@ -28,19 +36,24 @@ export class MailService {
             text,
         };
 
-        await this.mailerService.sendMail(mailOptions);
+        const result = await this.mailerService.sendMail(mailOptions);
+
+        return result;
     }
 
-    async sendOtpCode(email: string, otpCode: string): Promise<void> {
-        const subject = 'Ваш код';
+    async sendOtpCode(email: string): Promise<void> {
+        const otpCode = this.generateOtpCode();
+        const subject = 'Ваш код для входа';
+        const key = `verification_code:${email}`;
+        await this.redisService.set(key, otpCode, 60);
 
         const htmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9;">
-            <h2 style="color: #333;">Ваш код</h2>
+            <h2 style="color: #333;">Ваш код для входа</h2>
             <p style="font-size: 16px; color: #555;">Здравствуйте!</p>
             <p style="font-size: 18px; font-weight: bold; color: #0084ff;">${otpCode}</p>
-            <p style="font-size: 16px; color: #555;">Пожалуйста, введите этот код для подтверждения вашей идентификации.</p>
-            <p style="font-size: 14px; color: #777;">Обратите внимание: код действителен в течение 10 минут.</p>
+            <p style="font-size: 16px; color: #555;">Пожалуйста, введите этот код для входа в систему.</p>
+            <p style="font-size: 14px; color: #777;">Обратите внимание: код действителен в течение 60 секунд.</p>
             <footer style="margin-top: 20px; font-size: 12px; color: #aaa;">
                 <p>С уважением,<br>Ваша команда</p>
             </footer>
