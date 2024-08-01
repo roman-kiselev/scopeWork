@@ -67,6 +67,12 @@ export const authApi = iamApi.injectEndpoints({
                 body: data,
             }),
         }),
+        logout: builder.mutation<any, void>({
+            query: () => ({
+                url: "/authentication/sign-out",
+                method: "POST",
+            }),
+        }),
     }),
     // login: builder.mutation<IUserResponseToken, IUserLogin>({
     //     query: (userData) => ({

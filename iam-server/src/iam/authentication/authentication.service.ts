@@ -172,6 +172,10 @@ export class AuthenticationService {
         }
     }
 
+    async logout(id: number) {
+        return await this.refreshTokenIdsStorage.invalidate(id);
+    }
+
     async signInWithoutPassword(dto: SignInWithoutPasswordDto) {
         const user = await this.userService.findOneWithRelation(
             { email: dto.email },
