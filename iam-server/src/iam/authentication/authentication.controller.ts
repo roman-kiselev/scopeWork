@@ -7,6 +7,7 @@ import {
     Req,
     Res,
     UnauthorizedException,
+    UseGuards,
 } from '@nestjs/common';
 import { EventPattern } from '@nestjs/microservices';
 import {
@@ -18,6 +19,8 @@ import {
 } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import jwtConfig from '../config/jwt.config';
+import { ActiveUser } from '../decorators/active-user.decorator';
+import { ActiveUserData } from '../interfaces/active-user-data.interface';
 import { AuthenticationService } from './authentication.service';
 import { Auth } from './decorators/auth.decorators';
 import { SignInDto } from './dto/sign-in.dto';
@@ -25,6 +28,7 @@ import { SignInWithoutPasswordDto } from './dto/sign-in/sign-in-without-password
 import { SignUpWithOrganizationDto } from './dto/sign-up-with-organization.dto';
 import { SignUpWithTokenDto } from './dto/sign-up-with-token.dto';
 import { AuthType } from './enums/auth-type.enum';
+import { AccessTokenGuard } from './guards/access-token/access-token.guard';
 import { TokensResponse } from './responses/tokens.response';
 
 @ApiTags('Authentication')
@@ -89,6 +93,24 @@ export class AuthenticationController {
             // secure: true, // TODO: Потребуется ли включение в production ?
         });
         return res.json({ data: result });
+    }
+
+    @ApiOperation({
+        summary: 'Выход',
+        description: 'Удаляет refresh токен и завершает сессию пользователя.',
+    })
+    @ApiBearerAuth()
+    @UseGuards(AccessTokenGuard)
+    @Post('sign-out')
+    async logout(@ActiveUser() user: ActiveUserData, @Res() res: Response) {
+        await this.authenticationService.logout(user.sub);
+        // // Удаляем refresh токен из cookies
+        res.clearCookie('refreshToken', {
+            httpOnly: true,
+            // secure: true, // Можно раскомментировать для production
+        });
+
+        return res.json({ message: 'Successfully logged out', code: 200 });
     }
 
     @ApiOperation({

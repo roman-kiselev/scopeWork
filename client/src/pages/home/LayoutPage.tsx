@@ -5,16 +5,23 @@ import {
 } from "@ant-design/icons";
 import { Button, Dropdown, Layout, MenuProps } from "antd";
 import React, { useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
+import { authApi } from "src/shared/api";
 import { LeftMenu } from "../../features";
-import { useAppDispatch, useAppSelector } from "../../shared/hooks";
-import { logout } from "../../shared/models";
+import { useAppSelector } from "../../shared/hooks";
 const { Header, Sider, Content, Footer } = Layout;
 
 const LayoutPage = () => {
-    const dispatch = useAppDispatch();
     const [collapsed, setCollapsed] = useState(false);
-    const { email } = useAppSelector((store) => store.auth);
+    const { email, isAuth, token } = useAppSelector((store) => store.auth);
+    const [logout] = authApi.useLogoutMutation();
+    const handleClickLogout = () => {
+        logout();
+    };
+
+    if (!isAuth || !token) {
+        return <Navigate to="/welcome" />;
+    }
 
     const toggleMenu = () => {
         setCollapsed(!collapsed);
@@ -26,7 +33,7 @@ const LayoutPage = () => {
             type: "divider",
         },
         {
-            label: <Button onClick={() => dispatch(logout())}>Выход</Button>,
+            label: <Button onClick={handleClickLogout}>Выход</Button>,
             key: "3",
         },
     ];

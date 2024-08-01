@@ -179,6 +179,35 @@ export const authSlice = createSlice({
                 };
             }
         );
+        //
+        builder.addMatcher(authApi.endpoints.logout.matchPending, (state) => {
+            state.isLoading = true;
+            state.isError = false;
+            state.dataError = null;
+        });
+        builder.addMatcher(authApi.endpoints.logout.matchFulfilled, (state) => {
+            state.isAuth = false;
+            state.token = null;
+            const cookie = new Cookies();
+            cookie.remove("refreshToken");
+            localStorage.removeItem("token");
+            state.isLoading = false;
+        });
+        builder.addMatcher(
+            authApi.endpoints.logout.matchRejected,
+            (state, action) => {
+                state.isLoading = false;
+                state.isAuth = false;
+                state.isError = true;
+                state.token = null;
+                localStorage.removeItem("token");
+                const { data, status } = action.payload as IDataError;
+                state.dataError = {
+                    status: Number(status),
+                    data,
+                };
+            }
+        );
     },
 });
 
