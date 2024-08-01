@@ -104,3 +104,5 @@ export type {
     IOrderReceiptCreateName,
     IOrderReceiptGetResponse,
 } from "./order-receipt-name";
+
+export type { IMailSendOtpDto, IMailSendOtpResDto } from "./mail";

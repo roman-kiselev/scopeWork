@@ -7,6 +7,7 @@ export type {
     IUserResponseToken,
 } from "./api";
 export type {
+    IAcceptRowDto,
     IAddRowInOrderReceipt,
     IAuthSlice,
     IChangeStatusOrder,
@@ -32,6 +33,8 @@ export type {
     IListData,
     IListNamesWithData,
     ILogList,
+    IMailSendOtpDto,
+    IMailSendOtpResDto,
     IMainFinishUserAddingForScopeWork,
     INameListForNameWork,
     INameListWork,

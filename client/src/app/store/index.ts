@@ -20,8 +20,26 @@ import {
 import { authApi } from "./../../shared/api/auth/index";
 
 const listenerMiddleware = createListenerMiddleware();
+const listenerMiddlewareTwo = createListenerMiddleware();
 listenerMiddleware.startListening({
     matcher: authApi.endpoints.login.matchFulfilled,
+    effect: (action, listenerApi) => {
+        listenerApi.cancelActiveListeners();
+        if (
+            action.payload.data.accessToken &&
+            action.payload.data.refreshToken
+        ) {
+            localStorage.setItem("token", action.payload.data.accessToken);
+            const cookie = new Cookies();
+            cookie.set("refreshToken", action.payload.data.refreshToken);
+            // Перенаправление на главную страницу
+            // window.location.href = "/";
+        }
+    },
+});
+
+listenerMiddlewareTwo.startListening({
+    matcher: authApi.endpoints.loginWithoutPassword.matchFulfilled,
     effect: (action, listenerApi) => {
         listenerApi.cancelActiveListeners();
         if (
@@ -62,7 +80,10 @@ const store = configureStore({
                 mainManagerApi.middleware,
                 iamApi.middleware
             )
-            .prepend(listenerMiddleware.middleware);
+            .prepend(
+                listenerMiddleware.middleware,
+                listenerMiddlewareTwo.middleware
+            );
     },
 });
 

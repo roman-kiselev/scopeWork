@@ -1,5 +1,5 @@
 import { MailerService } from '@nestjs-modules/mailer';
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { InviteTokensService } from 'src/invite-tokens/invite-tokens.service';
 import { RedisService } from 'src/redis/redis.service';
 
@@ -41,10 +41,11 @@ export class MailService {
         return result;
     }
 
-    async sendOtpCode(email: string): Promise<void> {
+    async sendOtpCode(email: string) {
         const otpCode = this.generateOtpCode();
         const subject = 'Ваш код для входа';
         const key = `verification_code:${email}`;
+        await this.redisService.del(key);
         await this.redisService.set(key, otpCode, 60);
 
         const htmlContent = `
@@ -60,7 +61,21 @@ export class MailService {
         </div>
     `;
 
-        await this.sendMailAsHtml(email, subject, htmlContent);
+        try {
+            await this.redisService.get(key);
+
+            await this.sendMailAsHtml(email, subject, htmlContent);
+
+            return {
+                message: 'OTP code sent successfully',
+                code: HttpStatus.OK,
+            };
+        } catch (error) {
+            return {
+                message: 'Failed to send OTP code',
+                code: HttpStatus.INTERNAL_SERVER_ERROR,
+            };
+        }
     }
 
     async sendInviteTokenAsHtml(email: string, token: string) {

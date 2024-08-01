@@ -1,5 +1,10 @@
 import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+    ApiBearerAuth,
+    ApiOperation,
+    ApiResponse,
+    ApiTags,
+} from '@nestjs/swagger';
 import { Auth } from 'src/iam/authentication/decorators/auth.decorators';
 import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
@@ -8,6 +13,7 @@ import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RoleName } from 'src/roles/enums/RoleName';
 import { EmailDto } from './dto/email.dto';
+import { SendOtpResDto } from './dto/response/send-otp-res.dto';
 import { MailService } from './mail.service';
 
 @ApiTags('Mail')
@@ -17,6 +23,7 @@ export class MailController {
 
     @Auth(AuthType.None)
     @ApiOperation({ summary: 'Отправка кода OTP на почту' })
+    @ApiResponse({ status: HttpStatus.OK, type: SendOtpResDto })
     @Post('send-otp')
     async sendOtp(
         @Body() dto: EmailDto,
