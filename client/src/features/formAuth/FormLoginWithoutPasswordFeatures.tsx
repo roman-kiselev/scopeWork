@@ -10,12 +10,13 @@ const FormLoginWithoutPasswordFeatures = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
     const data = Form.useWatch([], form);
-
+    // console.log(form.getFieldValue("email"));
     const { dataError, isError, isLoading, isAuth, token } = useAppSelector(
         (state) => state.auth
     );
 
-    const [login, { isLoading: isLoadingLogin }] = authApi.useLoginMutation();
+    const [login, { isLoading: isLoadingLogin }] =
+        authApi.useLoginWithoutPasswordMutation();
     const onFinish = async () => {
         await login(data);
         navigate(location.state?.from || "/", { replace: true });

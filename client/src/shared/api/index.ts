@@ -1,6 +1,7 @@
 export { authApi } from "./auth";
 export { axiosInstance } from "./axiosInstance";
 export { listNameWorkApi } from "./listNameWork";
+export { mailApi } from "./mail";
 export { iamApi, mainApi, mainManagerApi } from "./main";
 export { nameWorkApi } from "./nameWork";
 export { objectsApi } from "./objects";

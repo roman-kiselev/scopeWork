@@ -1,6 +1,8 @@
-import { Button, Card, Form, Row, Typography } from "antd";
-import React, { useState } from "react";
+import { Button, Card, Form, Row, Spin, Typography } from "antd";
+import { FormInstance } from "antd/lib/form";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { mailApi } from "src/shared/api";
 import { IDataError, IInputFormItemProps } from "../../shared/interfaces";
 import { InputFormItem } from "../../shared/ui";
 
@@ -27,8 +29,25 @@ const propsEmail: IInputFormItemProps = {
     ],
 };
 
+const propsOtpCode: IInputFormItemProps = {
+    input: {
+        placeholder: "123456",
+        type: "code",
+        size: "large",
+    },
+    name: "code",
+    label: "Код",
+    tooltip: "Введите код",
+    rules: [
+        {
+            required: true,
+            message: "Введите код",
+        },
+    ],
+};
+
 interface IFormLoginProps {
-    form: any;
+    form: FormInstance<any>;
     onFinish: (values: any) => void;
     isError: boolean;
     dataError: IDataError | null;
@@ -37,10 +56,30 @@ interface IFormLoginProps {
 const FormLoginWithoutPassword: React.FC<IFormLoginProps> = ({
     form,
     onFinish,
-    isError,
-    dataError,
 }) => {
     const [stateClickOtpCode, setStateClickOtpCode] = useState(false);
+    const [timer, setTimer] = useState(60);
+    const [sendOtp, { isLoading: isLoadingSendOtp }] =
+        mailApi.useSendOtpMutation();
+
+    const onFinishSendOtp = async () => {
+        await sendOtp({ email: form.getFieldValue("email") });
+        setStateClickOtpCode(true);
+    };
+
+    useEffect(() => {
+        let countdown: any;
+        if (stateClickOtpCode && timer > 0) {
+            countdown = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(countdown);
+    }, [stateClickOtpCode, timer]);
+    if (timer === 0) {
+        setStateClickOtpCode(false);
+        setTimer(60);
+    }
 
     return (
         <>
@@ -53,18 +92,75 @@ const FormLoginWithoutPassword: React.FC<IFormLoginProps> = ({
                         tooltip={propsEmail.tooltip}
                         rules={propsEmail.rules}
                     />
+                    {stateClickOtpCode && (
+                        <InputFormItem
+                            input={propsOtpCode.input}
+                            name={propsOtpCode.name}
+                            label={propsOtpCode.label}
+                            tooltip={propsOtpCode.tooltip}
+                            rules={propsOtpCode.rules}
+                        />
+                    )}
 
-                    <Row
-                        style={{
-                            marginTop: 10,
-                            justifyContent: "center",
-                            width: "100%",
-                        }}
-                    >
-                        <Button type="primary" htmlType="submit">
-                            Отправить код на почту
-                        </Button>
-                    </Row>
+                    {isLoadingSendOtp ? (
+                        <Spin />
+                    ) : (
+                        <>
+                            {stateClickOtpCode && (
+                                <>
+                                    <Row
+                                        style={{
+                                            marginTop: 20,
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        {timer > 0 ? (
+                                            `Код будет действителен еще ${timer} секунд`
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </Row>
+                                </>
+                            )}
+
+                            {!stateClickOtpCode && (
+                                <Row
+                                    style={{
+                                        marginTop: 10,
+                                        justifyContent: "center",
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={onFinishSendOtp}
+                                        type="primary"
+                                        disabled={
+                                            !form.getFieldValue("email") ||
+                                            !form.isFieldsTouched(
+                                                ["email"],
+                                                true
+                                            ) ||
+                                            !!form.getFieldError("email").length
+                                        }
+                                    >
+                                        Отправить код на почту
+                                    </Button>
+                                </Row>
+                            )}
+
+                            {stateClickOtpCode && (
+                                <Row style={{ marginTop: 10 }}>
+                                    <Button
+                                        type="primary"
+                                        onClick={onFinish}
+                                        disabled={timer === 0}
+                                    >
+                                        Войти с кодом
+                                    </Button>
+                                </Row>
+                            )}
+                        </>
+                    )}
 
                     <Row style={{ marginTop: 20 }}>
                         <Link to={"/login"}>Войти c паролем</Link>

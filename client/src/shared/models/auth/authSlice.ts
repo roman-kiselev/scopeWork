@@ -138,6 +138,47 @@ export const authSlice = createSlice({
             }
         );
         // End Check //
+        builder.addMatcher(
+            authApi.endpoints.loginWithoutPassword.matchPending,
+            (state) => {
+                state.isLoading = true;
+                state.isError = false;
+                state.dataError = null;
+                const cookie = new Cookies();
+                cookie.remove("refreshToken");
+            }
+        );
+        builder.addMatcher(
+            authApi.endpoints.loginWithoutPassword.matchFulfilled,
+            (state, action) => {
+                state.isAuth = true;
+                const { accessToken } = action.payload.data;
+                const user: IUserToken = jwt_decode(accessToken);
+                state.id = user.sub;
+                state.email = user.email;
+                state.banned = user.banned;
+                state.organizationId = user.organizationId;
+                const { roles } = user;
+                state.roles = roles;
+                state.token = accessToken;
+                state.isLoading = false;
+            }
+        );
+        builder.addMatcher(
+            authApi.endpoints.loginWithoutPassword.matchRejected,
+            (state, action) => {
+                state.isLoading = false;
+                state.isAuth = false;
+                state.isError = true;
+                state.token = null;
+                localStorage.removeItem("token");
+                const { data, status } = action.payload as IDataError;
+                state.dataError = {
+                    status: Number(status),
+                    data,
+                };
+            }
+        );
     },
 });
 
