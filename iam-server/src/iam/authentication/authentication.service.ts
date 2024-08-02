@@ -120,6 +120,7 @@ export class AuthenticationService {
     }
 
     async signUpWithOrganization(dto: SignUpWithOrganizationDto) {
+        const key = `verification_code:${dto.email}`;
         const user = await this.userService.checkUniqueEmail(dto.email);
         if (user) {
             throw new ConflictException(
@@ -127,23 +128,28 @@ export class AuthenticationService {
             );
         }
 
-        const organization = await this.organizationService.create({
-            name: dto.nameOrganization,
-            address: dto.addressOrganization,
-        });
+        const otpToken = await this.redisService.get(key);
+        if (otpToken === dto.code) {
+            const organization = await this.organizationService.create({
+                name: dto.nameOrganization,
+                address: dto.addressOrganization,
+            });
 
-        const hashPassword = await this.hashingService.hash(dto.password);
-        const candidate = await this.userService.createUser({
-            email: dto.email,
-            password: hashPassword,
-            role: RoleName.ADMIN,
-            organizationId: organization.id,
-        });
-        if (!candidate) {
-            throw new ConflictException('User not created');
+            const hashPassword = await this.hashingService.hash(dto.password);
+            const candidate = await this.userService.createUser({
+                email: dto.email,
+                password: hashPassword,
+                role: RoleName.ADMIN,
+                organizationId: organization.id,
+            });
+            if (!candidate) {
+                throw new ConflictException('User not created');
+            }
+            await this.redisService.del(key); // Удаляем OTP после использования
+            return candidate;
         }
 
-        return candidate;
+        throw new ForbiddenException('Invalid code');
     }
 
     async signIn(dto: SignInDto) {

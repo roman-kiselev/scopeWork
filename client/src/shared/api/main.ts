@@ -125,7 +125,6 @@ export const mainApi = createApi({
     baseQuery: axiosBaseQuery({
         baseUrl: process.env.REACT_APP_URL_API || "",
     }),
-
     refetchOnMountOrArgChange: true,
     endpoints: () => ({}),
 });

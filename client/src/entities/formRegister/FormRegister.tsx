@@ -1,6 +1,8 @@
 import { Button, Card, Form, Row, Spin, Typography } from "antd";
-import React from "react";
+import { FormInstance } from "antd/lib/form";
+import React, { useEffect, useState } from "react";
 import { Link as LinkDom } from "react-router-dom";
+import { mailApi } from "src/shared/api";
 import {
     IInputFormItemProps,
     IInputPasswordFormItemProps,
@@ -140,8 +142,25 @@ const propsOrganizationAddress: IInputFormItemProps = {
     ],
 };
 
+const propsOtpCode: IInputFormItemProps = {
+    input: {
+        placeholder: "123456",
+        type: "code",
+        size: "large",
+    },
+    name: "code",
+    label: "Код",
+    tooltip: "Введите код",
+    rules: [
+        {
+            required: true,
+            message: "Введите код",
+        },
+    ],
+};
+
 interface IFormRegisterProps {
-    form: any;
+    form: FormInstance<any>;
     onFinish: (values: any) => void;
     isLoading: boolean;
     isError: boolean;
@@ -153,6 +172,29 @@ const FormRegister: React.FC<IFormRegisterProps> = ({
     isLoading,
     isError,
 }) => {
+    const [stateClickOtpCode, setStateClickOtpCode] = useState(false);
+    const [timer, setTimer] = useState(60);
+    const [sendOtp, { isLoading: isLoadingSendOtp }] =
+        mailApi.useSendOtpMutation();
+    const onFinishSendOtp = async () => {
+        await sendOtp({ email: form.getFieldValue("email") });
+        setStateClickOtpCode(true);
+    };
+
+    useEffect(() => {
+        let countdown: any;
+        if (stateClickOtpCode && timer > 0) {
+            countdown = setInterval(() => {
+                setTimer((prev) => prev - 1);
+            }, 1000);
+        }
+        return () => clearInterval(countdown);
+    }, [stateClickOtpCode, timer]);
+    if (timer === 0) {
+        setStateClickOtpCode(false);
+        setTimer(60);
+    }
+
     return (
         <>
             <Card title="Регистрация" bordered={true} style={{ width: "50vw" }}>
@@ -206,6 +248,75 @@ const FormRegister: React.FC<IFormRegisterProps> = ({
                         tooltip={propsOrganizationAddress.tooltip}
                         rules={propsOrganizationAddress.rules}
                     />
+                    {stateClickOtpCode && (
+                        <InputFormItem
+                            input={propsOtpCode.input}
+                            name={propsOtpCode.name}
+                            label={propsOtpCode.label}
+                            tooltip={propsOtpCode.tooltip}
+                            rules={propsOtpCode.rules}
+                        />
+                    )}
+                    {isLoadingSendOtp ? (
+                        <Spin />
+                    ) : (
+                        <>
+                            {stateClickOtpCode && (
+                                <>
+                                    <Row
+                                        style={{
+                                            marginTop: 20,
+                                            justifyContent: "center",
+                                        }}
+                                    >
+                                        {timer > 0 ? (
+                                            `Код будет действителен еще ${timer} секунд`
+                                        ) : (
+                                            <></>
+                                        )}
+                                    </Row>
+                                </>
+                            )}
+
+                            {!stateClickOtpCode && (
+                                <Row
+                                    style={{
+                                        marginTop: 10,
+                                        justifyContent: "center",
+                                        width: "100%",
+                                    }}
+                                >
+                                    <Button
+                                        onClick={onFinishSendOtp}
+                                        type="primary"
+                                        disabled={
+                                            !form.getFieldValue("email") ||
+                                            !form.isFieldsTouched(
+                                                ["email"],
+                                                true
+                                            ) ||
+                                            !!form.getFieldError("email").length
+                                        }
+                                    >
+                                        Отправить код на почту
+                                    </Button>
+                                </Row>
+                            )}
+
+                            {/* {stateClickOtpCode && (
+                                <Row style={{ marginTop: 10 }}>
+                                    <Button
+                                        type="primary"
+                                        onClick={onFinish}
+                                        disabled={timer === 0}
+                                    >
+                                        Войти с кодом
+                                    </Button>
+                                </Row>
+                            )} */}
+                        </>
+                    )}
+
                     <Row>
                         <Text>У Вас уже есть аккаунт?</Text>
                         <LinkDom to={"/login"}>Войти</LinkDom>
@@ -215,7 +326,11 @@ const FormRegister: React.FC<IFormRegisterProps> = ({
                         {isLoading ? (
                             <Spin />
                         ) : (
-                            <Button type="primary" htmlType="submit">
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                disabled={!stateClickOtpCode}
+                            >
                                 Зарегистрироваться
                             </Button>
                         )}

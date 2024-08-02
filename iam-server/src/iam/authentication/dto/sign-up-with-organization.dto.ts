@@ -15,4 +15,9 @@ export class SignUpWithOrganizationDto extends SignUpMainDto {
     @IsNotEmpty()
     @IsString()
     addressOrganization: string;
+
+    @ApiProperty({ example: '123456', description: 'Код' })
+    @IsNotEmpty()
+    @IsString()
+    code: string;
 }
