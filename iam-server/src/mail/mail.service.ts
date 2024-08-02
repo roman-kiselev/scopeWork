@@ -50,10 +50,10 @@ export class MailService {
 
         const htmlContent = `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9;">
-            <h2 style="color: #333;">Ваш код для входа</h2>
+            <h2 style="color: #333;">Ваш код для подтверждения</h2>
             <p style="font-size: 16px; color: #555;">Здравствуйте!</p>
             <p style="font-size: 18px; font-weight: bold; color: #0084ff;">${otpCode}</p>
-            <p style="font-size: 16px; color: #555;">Пожалуйста, введите этот код для входа в систему.</p>
+            <p style="font-size: 16px; color: #555;">Пожалуйста, введите этот код для подтверждения.</p>
             <p style="font-size: 14px; color: #777;">Обратите внимание: код действителен в течение 60 секунд.</p>
             <footer style="margin-top: 20px; font-size: 12px; color: #aaa;">
                 <p>С уважением,<br>Ваша команда</p>
