@@ -83,7 +83,16 @@ const LeftMenu = () => {
                             <UserAddOutlined />
                         ),
                         getItem(
-                            <Link to="/admin/users">Лист пользователей</Link>,
+                            <Link to="/admin/users/users-invite">
+                                Приглашения
+                            </Link>,
+                            "usersInvite",
+                            [RoleString.ADMIN],
+                            rolesState,
+                            <UnorderedListOutlined />
+                        ),
+                        getItem(
+                            <Link to="/admin/users">Список</Link>,
 
                             "usersList",
                             [RoleString.ADMIN],

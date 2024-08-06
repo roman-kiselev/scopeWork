@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { CreateInviteTokenDto } from './dto/create/create-invite-token.dto';
+import { InviteTokenWithExpiredDto } from './dto/response/invite-token-with-expired.dto';
 import { InviteToken } from './entities/invite-token.entity';
 import { TimeHelper } from './helpers/time.helper';
 
@@ -58,10 +59,9 @@ export class InviteTokensService {
         });
     }
 
-    async checkExpiredToken(token: string, organizationId: number) {
+    async checkExpiredToken(token: string) {
         const inviteToken = await this.inviteTokenRepository.findOneBy({
             token,
-            org_id: organizationId,
         });
         if (!inviteToken) {
             throw new NotFoundException('Invite token not found');
@@ -86,6 +86,18 @@ export class InviteTokensService {
             throw new NotFoundException('Invite token not found');
         }
         return inviteToken.is_used;
+    }
+
+    async isTokenWithOrganization(token: string, organizationId: number) {
+        const inviteToken = await this.inviteTokenRepository.findOneBy({
+            token: token,
+            org_id: organizationId,
+            is_used: false,
+        });
+        if (!inviteToken) {
+            throw new NotFoundException('Invite token not found');
+        }
+        return inviteToken;
     }
 
     async updateToken(id: number, organizationId: number) {
@@ -113,5 +125,20 @@ export class InviteTokensService {
         }
         inviteToken.is_used = true;
         return await this.inviteTokenRepository.save(inviteToken);
+    }
+
+    async getInviteTokensWithIsExpired(organizationId: number) {
+        const tokens = await this.getAllTokens(organizationId);
+        const newTokens: InviteTokenWithExpiredDto[] = tokens.map((token) => {
+            const isExpired = new TimeHelper().isExpired(
+                new Date(token.expires_at).toISOString(),
+            );
+            return {
+                ...token,
+                expired: isExpired,
+            };
+        });
+
+        return newTokens;
     }
 }

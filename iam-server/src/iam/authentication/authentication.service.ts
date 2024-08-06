@@ -107,6 +107,7 @@ export class AuthenticationService {
             ...dto,
             password: hashPassword,
         });
+
         if (!candidate) {
             throw new ConflictException('User not created');
         }
@@ -141,6 +142,8 @@ export class AuthenticationService {
                 password: hashPassword,
                 role: RoleName.ADMIN,
                 organizationId: organization.id,
+                firstname: dto.firstname,
+                lastname: dto.lastname,
             });
             if (!candidate) {
                 throw new ConflictException('User not created');

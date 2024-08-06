@@ -1,7 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { InviteTokensService } from 'src/invite-tokens/invite-tokens.service';
 import { Repository } from 'typeorm';
-import { CreateOrganizationDto } from './dto/create-organization.dto';
+import { CreateOrganizationDto } from './dto/create/create-organization.dto';
 import { Organization } from './entities/organization.entity';
 
 @Injectable()
@@ -9,6 +10,7 @@ export class OrganizationsService {
     constructor(
         @InjectRepository(Organization)
         private readonly organizationRepository: Repository<Organization>,
+        private readonly inviteTokenService: InviteTokensService,
     ) {}
 
     async findUnique(id: number) {
@@ -41,5 +43,16 @@ export class OrganizationsService {
 
     delete(id: number) {
         return this.organizationRepository.delete(id);
+    }
+
+    async getOrganizationByIdWithToken(token: string, id: number) {
+        const inviteToken =
+            await this.inviteTokenService.isTokenWithOrganization(token, id);
+        if (!token) {
+            throw new NotFoundException('Invite token not found');
+        }
+        const organization = await this.findUnique(inviteToken.org_id);
+
+        return organization;
     }
 }

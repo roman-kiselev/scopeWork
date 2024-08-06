@@ -15,6 +15,8 @@ import {
     ApiResponse,
     ApiTags,
 } from '@nestjs/swagger';
+import { Auth } from 'src/iam/authentication/decorators/auth.decorators';
+import { AuthType } from 'src/iam/authentication/enums/auth-type.enum';
 import { Roles } from 'src/iam/authorization/decorators/roles.decorator';
 import { RolesGuard } from 'src/iam/authorization/guards/roles/roles.guard';
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator';
@@ -22,6 +24,7 @@ import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface';
 import { RoleName } from 'src/roles/enums/RoleName';
 import { CreateInviteTokenDto } from './dto/create/create-invite-token.dto';
 import { CheckTokenDto } from './dto/get/check-token.dto';
+import { InviteTokenWithExpiredDto } from './dto/response/invite-token-with-expired.dto';
 import { InviteTokenDto } from './dto/response/invite-token.dto';
 import { InviteToken } from './entities/invite-token.entity';
 import { InviteTokensService } from './invite-tokens.service';
@@ -39,6 +42,20 @@ export class InviteTokensController {
     @Get('/')
     async getInviteTokens(@ActiveUser() user: ActiveUserData) {
         return await this.inviteTokensService.getAllTokens(user.organizationId);
+    }
+
+    @ApiBearerAuth()
+    @ApiOperation({
+        summary: 'Получение всех токенов для орагнизации со сроком действия',
+    })
+    @ApiResponse({ status: HttpStatus.OK, type: [InviteTokenWithExpiredDto] })
+    @Roles(RoleName.ADMIN)
+    @UseGuards(RolesGuard)
+    @Get('/list')
+    async getInviteTokensWithExpired(@ActiveUser() user: ActiveUserData) {
+        return await this.inviteTokensService.getInviteTokensWithIsExpired(
+            user.organizationId,
+        );
     }
 
     @ApiBearerAuth()
@@ -62,17 +79,12 @@ export class InviteTokensController {
     }
 
     @ApiBearerAuth()
+    @Auth(AuthType.None)
     @ApiOperation({ summary: 'Проверка токена' })
     @ApiResponse({ status: HttpStatus.OK, type: InviteTokenDto })
-    @Get('check')
-    async checkToken(
-        @Query() queryDto: CheckTokenDto,
-        @ActiveUser() user: ActiveUserData,
-    ) {
-        return await this.inviteTokensService.checkExpiredToken(
-            queryDto.token,
-            user.organizationId,
-        );
+    @Get('/check')
+    async checkToken(@Query() queryDto: CheckTokenDto) {
+        return await this.inviteTokensService.checkExpiredToken(queryDto.token);
     }
 
     @ApiBearerAuth()
