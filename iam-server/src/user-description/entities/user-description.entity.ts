@@ -7,15 +7,15 @@ export class UserDecription {
     @PrimaryGeneratedColumn()
     id: number;
 
+    @ApiProperty({ example: 'Иван', description: 'Имя' })
     @Column()
     firstname: string;
 
+    @ApiProperty({ example: 'Иванов', description: 'Фамилия' })
     @Column()
     lastname: string;
 
-    @Column()
-    createdAt: Date;
-
+    @ApiProperty({ example: null, description: 'Время удаления' })
     @Column({ nullable: true })
     deletedAt: Date;
 }
